@@ -1,235 +1,87 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🐾 Chọn chó chụp ảnh</title>
   <style>
     body {
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      background-color: #fff8f0;
-      margin: 0;
-      padding: 0;
+      font-family: 'Comic Sans MS', cursive;
+      background: #fff8f0;
+      margin: 20px;
     }
-
     h1 {
-      text-align: center;
-      color: #d2691e;
-      margin: 30px 10px 10px;
-      font-size: 32px;
+      font-size: 2em;
+      margin-bottom: 10px;
     }
-
-    form {
-      max-width: 900px;
-      margin: auto;
-      background-color: #ffffff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-
-    .dog-list {
+    #dog-list {
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
-      justify-content: center;
     }
-
     .dog-card {
-      width: 180px;
-      border: 2px solid #f2cba0;
-      border-radius: 15px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      background-color: #fffefb;
-      position: relative;
-    }
-
-    .dog-card:hover {
-      transform: scale(1.03);
-      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-    }
-
-    .dog-card input[type="checkbox"] {
-      display: none;
-    }
-
-    .dog-card input[type="checkbox"]:checked + .dog-content {
-      border: 2px solid #ff6f61;
-      background-color: #fff1eb;
-    }
-
-    .dog-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      width: 200px;
+      border: 2px solid #ccc;
+      border-radius: 12px;
       padding: 10px;
-      border-radius: 15px;
-      transition: all 0.2s;
+      background-color: #fff;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
     }
-
-    .dog-content img {
+    .dog-card img {
       width: 100%;
-      height: 140px;
-      object-fit: cover;
       border-radius: 10px;
     }
-
-    .dog-info {
-      text-align: center;
-      margin-top: 10px;
+    .dog-card h3 {
+      font-size: 1.2em;
+      margin: 0.5em 0 0.2em;
     }
-
-    .dog-name {
-      font-weight: bold;
-      font-size: 18px;
-      color: #333;
-    }
-
-    .dog-breed {
-      display: block;
-      font-size: 14px;
-      color: #777;
-    }
-
-    .submit-btn {
-      margin-top: 30px;
-      display: block;
-      width: 100%;
-      padding: 15px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #fff;
-      background-color: #ff6f61;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .submit-btn:hover {
-      background-color: #e85c4f;
-    }
-
-    #counter {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #ff6f61;
+    .dog-card p {
+      margin: 0;
     }
   </style>
 </head>
 <body>
-  <h1>🐶 Chọn 3 bạn chó bạn muốn chụp ảnh cùng!</h1>
+  <h1>📸 Danh sách chó để chọn</h1>
+  <div id="dog-list"></div>
 
-  <form id="dogForm">
-    <div class="dog-list" id="dogList">
-      <!-- Dữ liệu Firebase sẽ hiển thị ở đây -->
-    </div>
-
-    <p id="counter">Đã chọn: 0 / 3</p>
-    <button type="submit" class="submit-btn">Gửi yêu cầu</button>
-  </form>
-
-  <!-- Firebase SDK -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <!-- Cấu hình Firebase -->
   <script>
+    // Cấu hình Firebase
     const firebaseConfig = {
-      apiKey: "AIzaSyDqhkD4i-vQF6jUGADcMPUL4ECtd3NluI4",
+      apiKey: "AIzaSyDyN-vzvtdAmMBqEQXet5GAgGMx03IS6xM",
       authDomain: "choncho-f2d37.firebaseapp.com",
-      databaseURL: "https://choncho-f2d37-default-rtdb.firebaseio.com",
+      databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
       projectId: "choncho-f2d37",
       storageBucket: "choncho-f2d37.appspot.com",
-      messagingSenderId: "647476245619",
-      appId: "1:647476245619:web:600ab188ec9924359a8282"
+      messagingSenderId: "342432453586",
+      appId: "1:342432453586:web:9983b8b6f6f05551492ff7"
     };
 
+    // Khởi tạo Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-  </script>
 
-  <!-- Script lấy và hiển thị dữ liệu -->
-  <script>
-    const counter = document.getElementById("counter");
+    const dogList = document.getElementById("dog-list");
 
-    function updateCounter() {
-      const selected = document.querySelectorAll('input[name="dogs"]:checked').length;
-      counter.textContent = `Đã chọn: ${selected} / 3`;
-    }
-
-    function renderDog(id, dog) {
-      const dogList = document.getElementById("dogList");
-
-      const label = document.createElement("label");
-      label.className = "dog-card";
-
-      const input = document.createElement("input");
-      input.type = "checkbox";
-      input.name = "dogs";
-      input.value = dog.name;
-
-      input.addEventListener("change", () => {
-        const selected = document.querySelectorAll('input[name="dogs"]:checked');
-        if (selected.length > 3) {
-          input.checked = false;
-          alert("🐾 Bạn chỉ được chọn tối đa 3 chú chó thôi!");
-        }
-        updateCounter();
-      });
-
-      const content = document.createElement("div");
-      content.className = "dog-content";
-
-      const img = document.createElement("img");
-      img.src = dog.image;
-      img.alt = dog.name;
-
-      const info = document.createElement("div");
-      info.className = "dog-info";
-
-      const name = document.createElement("span");
-      name.className = "dog-name";
-      name.textContent = dog.name;
-
-      const breed = document.createElement("span");
-      breed.className = "dog-breed";
-      breed.textContent = dog.breed;
-
-      info.appendChild(name);
-      info.appendChild(breed);
-      content.appendChild(img);
-      content.appendChild(info);
-
-      label.appendChild(input);
-      label.appendChild(content);
-
-      dogList.appendChild(label);
-    }
-
+    // Lấy danh sách chó từ Firebase và hiển thị
     db.ref("dogs").once("value").then(snapshot => {
       const dogs = snapshot.val();
       for (const id in dogs) {
-        renderDog(id, dogs[id]);
+        const dog = dogs[id];
+        const div = document.createElement("div");
+        div.className = "dog-card";
+        div.innerHTML = `
+          <img src="${dog.image}" alt="${dog.name}" />
+          <h3>${dog.name}</h3>
+          <p>Giống: ${dog.breed}</p>
+        `;
+        dogList.appendChild(div);
       }
-      updateCounter();
-    });
-
-    document.getElementById("dogForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const selected = [...document.querySelectorAll('input[name="dogs"]:checked')]
-        .map(cb => cb.value);
-
-      if (selected.length === 0) {
-        alert("🐶 Bạn chưa chọn chú chó nào!");
-        return;
-      }
-
-      alert("💌 Bạn đã chọn: " + selected.join(", ") + ". Yêu cầu đã được gửi!");
+    }).catch(error => {
+      console.error("Lỗi lấy dữ liệu:", error);
     });
   </script>
 </body>
