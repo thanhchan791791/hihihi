@@ -9,27 +9,36 @@
       font-family: 'Comic Sans MS', cursive;
       background: #fff8f0;
       margin: 20px;
+      text-align: center;
     }
     h1 {
-      font-size: 2em;
+      font-size: 2.5em;
       margin-bottom: 10px;
+      color: #d76d77;
     }
     #dog-list {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
       gap: 20px;
     }
     .dog-card {
       width: 200px;
-      border: 2px solid #ccc;
-      border-radius: 12px;
+      border: 2px dashed #ffc0cb;
+      border-radius: 15px;
       padding: 10px;
-      background-color: #fff;
-      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+      background-color: #fff0f5;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    .dog-card:hover {
+      transform: scale(1.05);
     }
     .dog-card img {
       width: 100%;
-      border-radius: 10px;
+      border-radius: 12px;
     }
     .dog-card h3 {
       font-size: 1.2em;
@@ -37,36 +46,56 @@
     }
     .dog-card p {
       margin: 0;
+      font-size: 0.9em;
+      color: #555;
+    }
+    .selected {
+      border: 3px solid #ff69b4;
+      background-color: #ffe4ec;
+    }
+    #submit-btn {
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #ff69b4;
+      color: white;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #submit-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
-  <h1>📸 Danh sách chó để chọn</h1>
+  <h1>📸 Chọn tối đa 3 bé iu 🐶</h1>
   <div id="dog-list"></div>
+  <button id="submit-btn" disabled>🐾 Chọn bé iu</button>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
   <script>
-    // Cấu hình Firebase
-   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
-  authDomain: "dogs-be72b.firebaseapp.com",
-  projectId: "dogs-be72b",
-  storageBucket: "dogs-be72b.firebasestorage.app",
-  messagingSenderId: "1003873040746",
-  appId: "1:1003873040746:web:607f4ff587afc430d3cd13",
-  measurementId: "G-Y72BF1RQ2C"
-};
-    // Khởi tạo Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+      authDomain: "dogs-be72b.firebaseapp.com",
+      databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+      projectId: "dogs-be72b",
+      storageBucket: "dogs-be72b.appspot.com",
+      messagingSenderId: "1003873040746",
+      appId: "1:1003873040746:web:607f4ff587afc430d3cd13",
+      measurementId: "G-Y72BF1RQ2C"
+    };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-
     const dogList = document.getElementById("dog-list");
+    const submitBtn = document.getElementById("submit-btn");
 
-    // Lấy danh sách chó từ Firebase và hiển thị
+    let selectedDogs = [];
+
     db.ref("dogs").once("value").then(snapshot => {
       const dogs = snapshot.val();
       for (const id in dogs) {
@@ -78,10 +107,26 @@ const firebaseConfig = {
           <h3>${dog.name}</h3>
           <p>Giống: ${dog.breed}</p>
         `;
+        div.addEventListener("click", () => {
+          if (div.classList.contains("selected")) {
+            div.classList.remove("selected");
+            selectedDogs = selectedDogs.filter(d => d !== id);
+          } else {
+            if (selectedDogs.length < 3) {
+              div.classList.add("selected");
+              selectedDogs.push(id);
+            } else {
+              alert("Chỉ được chọn tối đa 3 bé nha!");
+            }
+          }
+          submitBtn.disabled = selectedDogs.length === 0;
+        });
         dogList.appendChild(div);
       }
-    }).catch(error => {
-      console.error("Lỗi lấy dữ liệu:", error);
+    });
+
+    submitBtn.addEventListener("click", () => {
+      alert(`Bạn đã chọn các bé: ${selectedDogs.join(", ")}`);
     });
   </script>
 </body>
