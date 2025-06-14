@@ -1,9 +1,28 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🐾 Chọn chó chụp ảnh</title>
+  <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+  apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+  authDomain: "dogs-be72b.firebaseapp.com",
+  projectId: "dogs-be72b",
+  storageBucket: "dogs-be72b.firebasestorage.app",
+  messagingSenderId: "1003873040746",
+  appId: "1:1003873040746:web:607f4ff587afc430d3cd13",
+  measurementId: "G-Y72BF1RQ2C"
+};
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
   <style>
     body {
       font-family: 'Comic Sans MS', cursive, sans-serif;
