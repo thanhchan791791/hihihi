@@ -102,31 +102,39 @@
         const dog = dogs[id];
         const div = document.createElement("div");
         div.className = "dog-card";
+        div.dataset.name = dog.name;
+
         div.innerHTML = `
           <img src="${dog.image}" alt="${dog.name}" />
           <h3>${dog.name}</h3>
           <p>Giống: ${dog.breed}</p>
         `;
+
         div.addEventListener("click", () => {
-          if (div.classList.contains("selected")) {
+          const dogName = dog.name;
+          const isSelected = div.classList.contains("selected");
+
+          if (isSelected) {
             div.classList.remove("selected");
-            selectedDogs = selectedDogs.filter(d => d !== id);
+            selectedDogs = selectedDogs.filter(name => name !== dogName);
           } else {
             if (selectedDogs.length < 3) {
               div.classList.add("selected");
-              selectedDogs.push(id);
+              selectedDogs.push(dogName);
             } else {
-              alert("Chỉ được chọn tối đa 3 bé nha!");
+              alert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!");
             }
           }
+
           submitBtn.disabled = selectedDogs.length === 0;
         });
+
         dogList.appendChild(div);
       }
     });
 
     submitBtn.addEventListener("click", () => {
-      alert(`Bạn đã chọn các bé: ${selectedDogs.join(", ")}`);
+      alert(`📸 Bạn đã chọn các bé: ${selectedDogs.join(", ")}`);
     });
   </script>
 </body>
