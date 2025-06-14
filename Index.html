@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>🐾 Chọn chó chụp ảnh</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #fff0f5;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      color: #d96c94;
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    #counter {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #a64f72;
+    }
+
+    .dog-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    label.dog-card {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: #ffeef5;
+      border: 2px dashed #f8b8c6;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.3s;
+    }
+
+    label.dog-card:hover {
+      transform: scale(1.02);
+    }
+
+    label.dog-card input[type="checkbox"] {
+      display: none;
+    }
+
+    label.dog-card input:checked + .dog-content {
+      background-color: #ffdce6;
+      border-radius: 16px;
+    }
+
+    .dog-content {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .dog-content img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-right: 15px;
+      border: 2px solid #f8b8c6;
+    }
+
+    .dog-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dog-name {
+      font-size: 17px;
+      color: #a64f72;
+      margin-bottom: 4px;
+    }
+
+    .dog-breed {
+      font-size: 14px;
+      color: #7c4b5f;
+      font-style: italic;
+    }
+
+    .submit-btn {
+      display: block;
+      margin: 30px auto 0;
+      padding: 12px 35px;
+      font-size: 16px;
+      background: linear-gradient(to right, #ff9eb5, #ffbfd3);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      transition: background 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(to right, #ff8fa7, #ffb0c7);
+    }
+  </style>
+</head>
+<body>
+  <h2>🐶 Chọn chú chó bạn muốn chụp hình cùng</h2>
+  <div id="counter">Đã chọn: 0 / 3</div>
+
+  <form id="dogForm">
+    <div class="dog-list">
+      <!-- 5 chú chó đầu -->
+      <label class="dog-card">
+        <input type="checkbox" name="dogs" value="Boy 🐶">
+        <div class="dog-content">
+          <img src="https://placedog.net/201?id=1" alt="Boy">
+          <div class="dog-info">
+            <span class="dog-name">Boy 🐶</span>
+            <span class="dog-breed">Golden Retriever</span>
+          </div>
+        </div>
+      </label>
+
+      <label class="dog-card">
+        <input type="checkbox" name="dogs" value="Ngáo 🐕">
+        <div class="dog-content">
+          <img src="https://placedog.net/202?id=2" alt="Ngáo">
+          <div class="dog-info">
+            <span class="dog-name">Ngáo 🐕</span>
+            <span class="dog-breed">Husky</span>
+          </div>
+        </div>
+      </label>
+
+      <label class="dog-card">
+        <input type="checkbox" name="dogs" value="Lego 🧱">
+        <div class="dog-content">
+          <img src="https://placedog.net/203?id=3" alt="Lego">
+          <div class="dog-info">
+            <span class="dog-name">Lego 🧱</span>
+            <span class="dog-breed">Shiba Inu</span>
+          </div>
+        </div>
+      </label>
+
+      <label class="dog-card">
+        <input type="checkbox" name="dogs" value="Trung Thu 🌕">
+        <div class="dog-content">
+          <img src="https://placedog.net/204?id=4" alt="Trung Thu">
+          <div class="dog-info">
+            <span class="dog-name">Trung Thu 🌕</span>
+            <span class="dog-breed">Corgi</span>
+          </div>
+        </div>
+      </label>
+
+      <label class="dog-card">
+        <input type="checkbox" name="dogs" value="Bánh Pía 🥮">
+        <div class="dog-content">
+          <img src="https://placedog.net/205?id=5" alt="Bánh Pía">
+          <div class="dog-info">
+            <span class="dog-name">Bánh Pía 🥮</span>
+            <span class="dog-breed">Pomeranian</span>
+          </div>
+        </div>
+      </label>
+
+      <!-- Các chú chó còn lại nằm trong phần cuộn -->
+      <label class="dog-card">
+        <input type="checkbox" name="dogs" value="Pudding 🍮">
+        <div class="dog-content">
+          <img src="https://placedog.net/206?id=6" alt="Pudding">
+          <div class="dog-info">
+            <span class="dog-name">Pudding 🍮</span>
+            <span class="dog-breed">Poodle</span>
+          </div>
+        </div>
+      </label>
+
+      <label class="dog-card">
+        <input type="checkbox" name="dogs" value="Rio 🐾">
+        <div class="dog-content">
+          <img src="https://placedog.net/207?id=7" alt="Rio">
+          <div class="dog-info">
+            <span class="dog-name">Rio 🐾</span>
+            <span class="dog-breed">Labrador</span>
+          </div>
+        </div>
+      </label>
+
+      <label class="dog-card">
+        <input type="checkbox" name="dogs" value="Jack 🧒">
+        <div class="dog-content">
+          <img src="https://placedog.net/208?id=8" alt="Jack">
+          <div class="dog-info">
+            <span class="dog-name">Jack 🧒</span>
+            <span class="dog-breed">Beagle</span>
+          </div>
+        </div>
+      </label>
+
+      <label class="dog-card">
+        <input type="checkbox" name="dogs" value="Dumbo 🐘">
+        <div class="dog-content">
+          <img src="https://placedog.net/209?id=9" alt="Dumbo">
+          <div class="dog-info">
+            <span class="dog-name">Dumbo 🐘</span>
+            <span class="dog-breed">Bulldog</span>
+          </div>
+        </div>
+      </label>
+
+      <label class="dog-card">
+        <input type="checkbox" name="dogs" value="Corgi ❤️">
+        <div class="dog-content">
+          <img src="https://placedog.net/210?id=10" alt="Corgi">
+          <div class="dog-info">
+            <span class="dog-name">Corgi ❤️</span>
+            <span class="dog-breed">Corgi Pembroke</span>
+          </div>
+        </div>
+      </label>
+
+    </div>
+
+    <button class="submit-btn" type="submit">🐶 Chốt bé cưng nè!</button>
+  </form>
+
+  <script>
+    const checkboxes = document.querySelectorAll('input[name="dogs"]');
+    const counter = document.getElementById("counter");
+
+    function updateCounter() {
+      const selected = document.querySelectorAll('input[name="dogs"]:checked').length;
+      counter.textContent = `Đã chọn: ${selected} / 3`;
+    }
+
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        const selected = document.querySelectorAll('input[name="dogs"]:checked');
+        if (selected.length > 3) {
+          checkbox.checked = false;
+          alert("🐾 Bạn chỉ được chọn tối đa 3 chú chó thôi!");
+        }
+        updateCounter();
+      });
+    });
+
+    updateCounter();
+
+    document.getElementById('dogForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const selected = [...document.querySelectorAll('input[name="dogs"]:checked')]
+        .map(cb => cb.value);
+
+      if (selected.length === 0) {
+        alert("🐶 Bạn chưa chọn chú chó nào!");
+        return;
+      }
+
+      alert("💌 Bạn đã chọn: " + selected.join(", ") + ". Yêu cầu đã được gửi!");
+    });
+  </script>
+</body>
+</html>
