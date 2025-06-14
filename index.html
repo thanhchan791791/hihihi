@@ -1,260 +1,160 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🐾 Chọn chó chụp ảnh</title>
-  <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<script>
-  const firebaseConfig = {
-  apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
-  authDomain: "dogs-be72b.firebaseapp.com",
-  projectId: "dogs-be72b",
-  storageBucket: "dogs-be72b.firebasestorage.app",
-  messagingSenderId: "1003873040746",
-  appId: "1:1003873040746:web:607f4ff587afc430d3cd13",
-  measurementId: "G-Y72BF1RQ2C"
-};
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-</script>
-
   <style>
     body {
       font-family: 'Comic Sans MS', cursive, sans-serif;
-      background-color: #fff0f5;
-      padding: 20px;
-      max-width: 100%;
+      background-color: #fff8f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #d2691e;
+      margin: 30px 10px 10px;
+      font-size: 32px;
+    }
+
+    form {
+      max-width: 900px;
       margin: auto;
-    }
-
-    h2 {
-      text-align: center;
-      color: #d96c94;
-      font-size: 6vw;
-      margin-bottom: 10px;
-    }
-
-    #counter {
-      text-align: center;
-      margin-bottom: 20px;
-      font-weight: bold;
-      color: #a64f72;
-      font-size: 5vw;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
 
     .dog-list {
       display: flex;
-      flex-direction: column;
-      gap: 15px;
-      max-height: 65vh;
-      overflow-y: auto;
-      padding-right: 5px;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
     }
 
-    label.dog-card {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      background: #ffeef5;
-      border: 2px dashed #f8b8c6;
-      border-radius: 20px;
+    .dog-card {
+      width: 180px;
+      border: 2px solid #f2cba0;
+      border-radius: 15px;
+      overflow: hidden;
       cursor: pointer;
-      transition: transform 0.2s ease, background-color 0.3s;
+      transition: transform 0.2s, box-shadow 0.2s;
+      background-color: #fffefb;
+      position: relative;
     }
 
-    label.dog-card:hover {
-      transform: scale(1.02);
+    .dog-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
     }
 
-    label.dog-card input[type="checkbox"] {
+    .dog-card input[type="checkbox"] {
       display: none;
     }
 
-    label.dog-card input:checked + .dog-content {
-      background-color: #ffdce6;
-      border-radius: 16px;
+    .dog-card input[type="checkbox"]:checked + .dog-content {
+      border: 2px solid #ff6f61;
+      background-color: #fff1eb;
     }
 
     .dog-content {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      width: 100%;
+      padding: 10px;
+      border-radius: 15px;
+      transition: all 0.2s;
     }
 
     .dog-content img {
-      width: 20vw;
-      height: 20vw;
+      width: 100%;
+      height: 140px;
       object-fit: cover;
-      border-radius: 15px;
-      margin-right: 10px;
-      border: 2px solid #f8b8c6;
+      border-radius: 10px;
     }
 
     .dog-info {
-      display: flex;
-      flex-direction: column;
+      text-align: center;
+      margin-top: 10px;
     }
 
     .dog-name {
-      font-size: 4.5vw;
-      color: #a64f72;
-      margin-bottom: 4px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #333;
     }
 
     .dog-breed {
-      font-size: 4vw;
-      color: #7c4b5f;
-      font-style: italic;
+      display: block;
+      font-size: 14px;
+      color: #777;
     }
 
     .submit-btn {
+      margin-top: 30px;
       display: block;
       width: 100%;
-      margin: 25px 0 0;
-      padding: 12px 20px;
-      font-size: 5vw;
-      background: linear-gradient(to right, #ff9eb5, #ffbfd3);
-      color: white;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+      background-color: #ff6f61;
       border: none;
-      border-radius: 30px;
+      border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-      transition: background 0.3s ease;
+      transition: background-color 0.2s;
     }
 
     .submit-btn:hover {
-      background: linear-gradient(to right, #ff8fa7, #ffb0c7);
+      background-color: #e85c4f;
+    }
+
+    #counter {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #ff6f61;
     }
   </style>
 </head>
 <body>
-  <h2>🐶 Chọn chú chó bạn muốn chụp hình cùng</h2>
-  <div id="counter">Đã chọn: 0 / 3</div>
+  <h1>🐶 Chọn 3 bạn chó bạn muốn chụp ảnh cùng!</h1>
 
   <form id="dogForm">
-    <div class="dog-list">
-      <!-- Danh sách chó -->
-      <label class="dog-card">
-        <input type="checkbox" name="dogs" value="Boy 🐶">
-        <div class="dog-content">
-          <img src="https://placedog.net/201?id=1" alt="Boy">
-          <div class="dog-info">
-            <span class="dog-name">Boy 🐶</span>
-            <span class="dog-breed">Golden Retriever</span>
-          </div>
-        </div>
-      </label>
-
-      <label class="dog-card">
-        <input type="checkbox" name="dogs" value="Ngáo 🐕">
-        <div class="dog-content">
-          <img src="https://placedog.net/202?id=2" alt="Ngáo">
-          <div class="dog-info">
-            <span class="dog-name">Ngáo 🐕</span>
-            <span class="dog-breed">Husky</span>
-          </div>
-        </div>
-      </label>
-
-      <label class="dog-card">
-        <input type="checkbox" name="dogs" value="Lego 🧱">
-        <div class="dog-content">
-          <img src="https://placedog.net/203?id=3" alt="Lego">
-          <div class="dog-info">
-            <span class="dog-name">Lego 🧱</span>
-            <span class="dog-breed">Shiba Inu</span>
-          </div>
-        </div>
-      </label>
-
-      <label class="dog-card">
-        <input type="checkbox" name="dogs" value="Trung Thu 🌕">
-        <div class="dog-content">
-          <img src="https://placedog.net/204?id=4" alt="Trung Thu">
-          <div class="dog-info">
-            <span class="dog-name">Trung Thu 🌕</span>
-            <span class="dog-breed">Corgi</span>
-          </div>
-        </div>
-      </label>
-
-      <label class="dog-card">
-        <input type="checkbox" name="dogs" value="Bánh Pía 🥮">
-        <div class="dog-content">
-          <img src="https://placedog.net/205?id=5" alt="Bánh Pía">
-          <div class="dog-info">
-            <span class="dog-name">Bánh Pía 🥮</span>
-            <span class="dog-breed">Pomeranian</span>
-          </div>
-        </div>
-      </label>
-
-      <label class="dog-card">
-        <input type="checkbox" name="dogs" value="Pudding 🍮">
-        <div class="dog-content">
-          <img src="https://placedog.net/206?id=6" alt="Pudding">
-          <div class="dog-info">
-            <span class="dog-name">Pudding 🍮</span>
-            <span class="dog-breed">Poodle</span>
-          </div>
-        </div>
-      </label>
-
-      <label class="dog-card">
-        <input type="checkbox" name="dogs" value="Rio 🐾">
-        <div class="dog-content">
-          <img src="https://placedog.net/207?id=7" alt="Rio">
-          <div class="dog-info">
-            <span class="dog-name">Rio 🐾</span>
-            <span class="dog-breed">Labrador</span>
-          </div>
-        </div>
-      </label>
-
-      <label class="dog-card">
-        <input type="checkbox" name="dogs" value="Jack 🧒">
-        <div class="dog-content">
-          <img src="https://placedog.net/208?id=8" alt="Jack">
-          <div class="dog-info">
-            <span class="dog-name">Jack 🧒</span>
-            <span class="dog-breed">Beagle</span>
-          </div>
-        </div>
-      </label>
-
-      <label class="dog-card">
-        <input type="checkbox" name="dogs" value="Dumbo 🐘">
-        <div class="dog-content">
-          <img src="https://placedog.net/209?id=9" alt="Dumbo">
-          <div class="dog-info">
-            <span class="dog-name">Dumbo 🐘</span>
-            <span class="dog-breed">Bulldog</span>
-          </div>
-        </div>
-      </label>
-
-      <label class="dog-card">
-        <input type="checkbox" name="dogs" value="Corgi ❤️">
-        <div class="dog-content">
-          <img src="https://placedog.net/210?id=10" alt="Corgi">
-          <div class="dog-info">
-            <span class="dog-name">Corgi ❤️</span>
-            <span class="dog-breed">Corgi Pembroke</span>
-          </div>
-        </div>
-      </label>
+    <div class="dog-list" id="dogList">
+      <!-- Dữ liệu Firebase sẽ hiển thị ở đây -->
     </div>
 
-    <button class="submit-btn" type="submit">🐶 Chốt bé cưng nè!</button>
+    <p id="counter">Đã chọn: 0 / 3</p>
+    <button type="submit" class="submit-btn">Gửi yêu cầu</button>
   </form>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- Cấu hình Firebase -->
   <script>
-    const checkboxes = document.querySelectorAll('input[name="dogs"]');
+    const firebaseConfig = {
+      apiKey: "AIzaSyDqhkD4i-vQF6jUGADcMPUL4ECtd3NluI4",
+      authDomain: "choncho-f2d37.firebaseapp.com",
+      databaseURL: "https://choncho-f2d37-default-rtdb.firebaseio.com",
+      projectId: "choncho-f2d37",
+      storageBucket: "choncho-f2d37.appspot.com",
+      messagingSenderId: "647476245619",
+      appId: "1:647476245619:web:600ab188ec9924359a8282"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+
+  <!-- Script lấy và hiển thị dữ liệu -->
+  <script>
     const counter = document.getElementById("counter");
 
     function updateCounter() {
@@ -262,20 +162,64 @@
       counter.textContent = `Đã chọn: ${selected} / 3`;
     }
 
-    checkboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
+    function renderDog(id, dog) {
+      const dogList = document.getElementById("dogList");
+
+      const label = document.createElement("label");
+      label.className = "dog-card";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = "dogs";
+      input.value = dog.name;
+
+      input.addEventListener("change", () => {
         const selected = document.querySelectorAll('input[name="dogs"]:checked');
         if (selected.length > 3) {
-          checkbox.checked = false;
+          input.checked = false;
           alert("🐾 Bạn chỉ được chọn tối đa 3 chú chó thôi!");
         }
         updateCounter();
       });
+
+      const content = document.createElement("div");
+      content.className = "dog-content";
+
+      const img = document.createElement("img");
+      img.src = dog.image;
+      img.alt = dog.name;
+
+      const info = document.createElement("div");
+      info.className = "dog-info";
+
+      const name = document.createElement("span");
+      name.className = "dog-name";
+      name.textContent = dog.name;
+
+      const breed = document.createElement("span");
+      breed.className = "dog-breed";
+      breed.textContent = dog.breed;
+
+      info.appendChild(name);
+      info.appendChild(breed);
+      content.appendChild(img);
+      content.appendChild(info);
+
+      label.appendChild(input);
+      label.appendChild(content);
+
+      dogList.appendChild(label);
+    }
+
+    db.ref("dogs").once("value").then(snapshot => {
+      const dogs = snapshot.val();
+      for (const id in dogs) {
+        renderDog(id, dogs[id]);
+      }
+      updateCounter();
     });
 
-    updateCounter();
-
-    document.getElementById('dogForm').addEventListener('submit', function(e) {
+    document.getElementById("dogForm").addEventListener("submit", function (e) {
       e.preventDefault();
       const selected = [...document.querySelectorAll('input[name="dogs"]:checked')]
         .map(cb => cb.value);
