@@ -6,63 +6,76 @@
   <title>🐾 Chọn chó chụp ảnh</title>
   <style>
     body {
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
       background: #fff8f0;
-      margin: 20px;
+      margin: 0;
+      padding: 20px;
       text-align: center;
     }
+
     h1 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
+      font-size: 1.8em;
+      margin-bottom: 20px;
       color: #d76d77;
+      padding: 0 10px;
     }
+
     #dog-list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 15px;
+      padding: 10px;
     }
+
     .dog-card {
-      width: 200px;
       border: 2px dashed #ffc0cb;
       border-radius: 15px;
       padding: 10px;
       background-color: #fff0f5;
-      box-shadow: 3px 3px 12px rgba(0,0,0,0.1);
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.08);
       transition: transform 0.2s ease;
       cursor: pointer;
-      position: relative;
     }
+
     .dog-card:hover {
-      transform: scale(1.05);
+      transform: scale(1.03);
     }
+
     .dog-card img {
       width: 100%;
+      height: auto;
       border-radius: 12px;
+      max-height: 160px;
+      object-fit: cover;
     }
+
     .dog-card h3 {
-      font-size: 1.2em;
+      font-size: 1em;
       margin: 0.5em 0 0.2em;
     }
+
     .dog-card p {
       margin: 0;
-      font-size: 0.9em;
+      font-size: 0.85em;
       color: #555;
     }
+
     .selected {
       border: 3px solid #ff69b4;
       background-color: #ffe4ec;
     }
+
     #submit-btn {
-      margin-top: 30px;
-      padding: 10px 20px;
+      margin-top: 20px;
+      padding: 12px 24px;
       background-color: #ff69b4;
       color: white;
-      font-size: 1.2em;
+      font-size: 1.1em;
       border: none;
       border-radius: 10px;
       cursor: pointer;
     }
+
     #submit-btn:disabled {
       background-color: #ccc;
       cursor: not-allowed;
@@ -72,7 +85,7 @@
 <body>
   <h1>📸 Chọn các bé iu để chụp ảnh, nhân viên sẽ hỗ trợ bạn ^^ 🐶</h1>
   <div id="dog-list"></div>
-  <button id="submit-btn" disabled>🐾 Chọn bé iu</button>
+  <button id="submit-btn" disabled>📩 Gửi yêu cầu chụp ảnh</button>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -85,8 +98,7 @@
       projectId: "dogs-be72b",
       storageBucket: "dogs-be72b.appspot.com",
       messagingSenderId: "1003873040746",
-      appId: "1:1003873040746:web:607f4ff587afc430d3cd13",
-      measurementId: "G-Y72BF1RQ2C"
+      appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -134,7 +146,7 @@
     });
 
     submitBtn.addEventListener("click", () => {
-      alert(`📸 Bạn đã chọn các bé: ${selectedDogs.join(", ")}`);
+      alert(`📸 Bạn đã chọn các bé: ${selectedDogs.join(", ")}.\n💌 Nhân viên sẽ hỗ trợ bạn sớm nhất nha ^^`);
     });
   </script>
 </body>
