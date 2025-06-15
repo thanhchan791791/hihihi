@@ -6,7 +6,7 @@
   <title>🐾 Chọn chó chụp ảnh</title>
   <style>
     body {
-      font-family: 'Comic Sans MS', 'Segoe UI', cursive, sans-serif;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
       background: linear-gradient(to bottom, #fffafc, #ffeef5);
       margin: 0;
       padding: 20px;
@@ -34,18 +34,12 @@
       background-color: #fff0f7;
       outline: none;
       transition: 0.3s;
-      box-shadow: inset 1px 1px 3px #fff, 2px 2px 4px rgba(0,0,0,0.05);
       color: #d94f85;
     }
 
     #search-input::placeholder {
       color: #d88fa9;
       font-style: italic;
-    }
-
-    #search-input:focus {
-      border-color: #ff91c1;
-      background-color: #ffffff;
     }
 
     #dog-list {
@@ -63,7 +57,6 @@
       box-shadow: 2px 4px 10px rgba(0,0,0,0.08);
       transition: transform 0.2s ease, border 0.3s ease;
       cursor: pointer;
-      position: relative;
     }
 
     .dog-card:hover {
@@ -135,7 +128,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
-    // Cấu hình Firebase (giữ nguyên của bạn)
     const firebaseConfig = {
       apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
       authDomain: "dogs-be72b.firebaseapp.com",
@@ -159,7 +151,6 @@
     function renderDogs(filter = "") {
       dogList.innerHTML = "";
       selectedDogs = [];
-      submitBtn.disabled = true;
 
       allDogs
         .filter(d => d.name.toLowerCase().includes(filter.toLowerCase()))
@@ -217,15 +208,21 @@
     });
 
     submitBtn.addEventListener("click", () => {
-      const timestamp = new Date().toISOString();
+      const now = new Date();
+      const hh = now.getHours().toString().padStart(2, '0');
+      const mm = now.getMinutes().toString().padStart(2, '0');
+      const timeStr = `${hh}h${mm}p`;
+
       const data = {
         selectedDogs,
-        time: timestamp
+        time: timeStr
       };
 
       db.ref("photoRequests").push(data)
         .then(() => {
-          alert(`🎉 Bạn đã chốt các bé iu: ${selectedDogs.join(", ")}.\n💌 Nhân viên sẽ hỗ trợ bạn ngay nha!`);
+          alert(`🎉 Bạn đã chọn: ${selectedDogs.join(", ")} lúc ${timeStr}.\n💌 Nhân viên sẽ hỗ trợ bạn ngay nha!`);
+          selectedDogs = [];
+          renderDogs(searchInput.value);
         })
         .catch(error => {
           alert("Có lỗi xảy ra khi gửi yêu cầu: " + error.message);
