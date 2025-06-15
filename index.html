@@ -211,21 +211,18 @@
     });
 
     submitBtn.addEventListener("click", () => {
-      const request = {
-        selectedDogs: selectedDogs,
-        timestamp: new Date().toISOString()
+      const timestamp = new Date().toISOString();
+      const data = {
+        selectedDogs,
+        time: timestamp
       };
 
-      db.ref("photoRequests").push(request)
+      db.ref("photoRequests").push(data)
         .then(() => {
           alert(`🎉 Bạn đã chốt các bé iu: ${selectedDogs.join(", ")}.\n💌 Nhân viên sẽ hỗ trợ bạn ngay nha!`);
-          selectedDogs = [];
-          submitBtn.disabled = true;
-          renderDogs(searchInput.value);
         })
-        .catch((error) => {
-          alert("🐶 Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.");
-          console.error("Firebase error:", error);
+        .catch(error => {
+          alert("Có lỗi xảy ra khi gửi yêu cầu: " + error.message);
         });
     });
   </script>
