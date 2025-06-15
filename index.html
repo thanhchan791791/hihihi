@@ -108,16 +108,16 @@
 
     let selectedDogs = [];
 
-    // Theo dõi dữ liệu realtime từ Firebase
+    // Lắng nghe dữ liệu thay đổi realtime từ Firebase
     db.ref("dogs").on("value", snapshot => {
       const dogs = snapshot.val();
-      dogList.innerHTML = ""; // xoá danh sách cũ
-      selectedDogs = [];      // reset lựa chọn cũ
+      dogList.innerHTML = "";
+      selectedDogs = [];
       submitBtn.disabled = true;
 
       for (const id in dogs) {
         const dog = dogs[id];
-        if (dog.status !== "play") continue; // chỉ hiện chó đang chơi
+        if (dog.status !== "play") continue; // Chỉ hiện chó đang chơi
 
         const div = document.createElement("div");
         div.className = "dog-card";
