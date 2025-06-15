@@ -112,6 +112,9 @@
       const dogs = snapshot.val();
       for (const id in dogs) {
         const dog = dogs[id];
+        // 👉 Chỉ hiển thị chó có trạng thái "active"
+        if (dog.status !== "active") continue;
+
         const div = document.createElement("div");
         div.className = "dog-card";
         div.dataset.name = dog.name;
