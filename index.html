@@ -87,7 +87,7 @@
   <div id="dog-list"></div>
   <button id="submit-btn" disabled>📩 Gửi yêu cầu chụp ảnh</button>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script>
@@ -108,13 +108,16 @@
 
     let selectedDogs = [];
 
-    db.ref("dogs").once("value").then(snapshot => {
+    // Theo dõi dữ liệu realtime từ Firebase
+    db.ref("dogs").on("value", snapshot => {
       const dogs = snapshot.val();
+      dogList.innerHTML = ""; // xoá danh sách cũ
+      selectedDogs = [];      // reset lựa chọn cũ
+      submitBtn.disabled = true;
+
       for (const id in dogs) {
         const dog = dogs[id];
-
-        // ✅ Sửa tại đây: chỉ hiển thị bé có status là "play"
-        if (dog.status !== "play") continue;
+        if (dog.status !== "play") continue; // chỉ hiện chó đang chơi
 
         const div = document.createElement("div");
         div.className = "dog-card";
