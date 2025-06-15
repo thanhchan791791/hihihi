@@ -29,20 +29,22 @@
       max-width: 400px;
       padding: 12px 20px;
       font-size: 1em;
-      border: 2px solid #ffa6c9;
+      border: 2px solid #ffd6e6;
       border-radius: 30px;
       background-color: #fff0f7;
       outline: none;
       transition: 0.3s;
       box-shadow: inset 1px 1px 3px #fff, 2px 2px 4px rgba(0,0,0,0.05);
+      color: #d94f85;
     }
 
     #search-input::placeholder {
-      color: #c96e90;
+      color: #d88fa9;
+      font-style: italic;
     }
 
     #search-input:focus {
-      border-color: #ff69b4;
+      border-color: #ff91c1;
       background-color: #ffffff;
     }
 
@@ -121,10 +123,10 @@
 <body>
   <h1>📸 Chọn các bé iu để chụp ảnh 💖</h1>
   <div id="search-box">
-    <input type="text" id="search-input" placeholder="🔍 Gõ tên bé cún bạn muốn tìm..." />
+    <input type="text" id="search-input" placeholder="Nhập tên bé cún yêu thương vào đây nha ~" />
   </div>
   <div id="dog-list"></div>
-  <button id="submit-btn" disabled>📩 Gửi yêu cầu chụp ảnh</button>
+  <button id="submit-btn" disabled>✨ Chốt bé iu</button>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -209,7 +211,7 @@
     });
 
     submitBtn.addEventListener("click", () => {
-      alert(`📸 Bạn đã chọn các bé: ${selectedDogs.join(", ")}.\n💌 Nhân viên sẽ hỗ trợ bạn sớm nhất nha ^^`);
+      alert(`🎉 Bạn đã chốt các bé: ${selectedDogs.join(", ")}.\n💌 Nhân viên sẽ hỗ trợ bạn liền tay nha!`);
     });
   </script>
 </body>
