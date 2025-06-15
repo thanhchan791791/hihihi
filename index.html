@@ -122,16 +122,20 @@
 </head>
 <body>
   <h1>📸 Chọn các bé iu để chụp ảnh 💖</h1>
+
   <div id="search-box">
     <input type="text" id="search-input" placeholder="Nhập tên bé cún yêu thương vào đây nha ~" />
   </div>
+
   <div id="dog-list"></div>
   <button id="submit-btn" disabled>✨ Chốt các bé iu</button>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <script>
+    // Cấu hình Firebase (giữ nguyên của bạn)
     const firebaseConfig = {
       apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
       authDomain: "dogs-be72b.firebaseapp.com",
@@ -144,6 +148,7 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+
     const dogList = document.getElementById("dog-list");
     const searchInput = document.getElementById("search-input");
     const submitBtn = document.getElementById("submit-btn");
@@ -192,6 +197,7 @@
         });
     }
 
+    // Load danh sách chó từ Firebase
     db.ref("dogs").on("value", snapshot => {
       const dogs = snapshot.val();
       allDogs = [];
