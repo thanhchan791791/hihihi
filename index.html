@@ -20,6 +20,27 @@
       padding: 0 10px;
     }
 
+    #search-box {
+      margin-bottom: 20px;
+    }
+
+    #search-input {
+      width: 80%;
+      max-width: 400px;
+      padding: 10px 15px;
+      font-size: 1em;
+      border: 2px dashed #ffa6c9;
+      border-radius: 25px;
+      background-color: #fff0f5;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    #search-input:focus {
+      border-color: #ff69b4;
+      background-color: #fff;
+    }
+
     #dog-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -84,6 +105,9 @@
 </head>
 <body>
   <h1>📸 Chọn các bé iu để chụp ảnh, nhân viên sẽ hỗ trợ bạn ^^ 🐶</h1>
+  <div id="search-box">
+    <input type="text" id="search-input" placeholder="🔍 Tìm tên bé chó..." />
+  </div>
   <div id="dog-list"></div>
   <button id="submit-btn" disabled>📩 Gửi yêu cầu chụp ảnh</button>
 
@@ -104,54 +128,75 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const dogList = document.getElementById("dog-list");
+    const searchInput = document.getElementById("search-input");
     const submitBtn = document.getElementById("submit-btn");
 
     let selectedDogs = [];
+    let allDogs = [];
 
-    // Lắng nghe dữ liệu thay đổi realtime từ Firebase
-    db.ref("dogs").on("value", snapshot => {
-      const dogs = snapshot.val();
+    // Hiển thị danh sách chó
+    function renderDogs(filter = "") {
       dogList.innerHTML = "";
       selectedDogs = [];
       submitBtn.disabled = true;
 
+      allDogs
+        .filter(d => d.name.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(dog => {
+          const div = document.createElement("div");
+          div.className = "dog-card";
+          div.dataset.name = dog.name;
+
+          div.innerHTML = `
+            <img src="${dog.image}" alt="${dog.name}" />
+            <h3>${dog.name}</h3>
+            <p>Giống: ${dog.breed}</p>
+          `;
+
+          div.addEventListener("click", () => {
+            const dogName = dog.name;
+            const isSelected = div.classList.contains("selected");
+
+            if (isSelected) {
+              div.classList.remove("selected");
+              selectedDogs = selectedDogs.filter(name => name !== dogName);
+            } else {
+              if (selectedDogs.length < 3) {
+                div.classList.add("selected");
+                selectedDogs.push(dogName);
+              } else {
+                alert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!");
+              }
+            }
+
+            submitBtn.disabled = selectedDogs.length === 0;
+          });
+
+          dogList.appendChild(div);
+        });
+    }
+
+    // Lắng nghe thay đổi dữ liệu realtime
+    db.ref("dogs").on("value", snapshot => {
+      const dogs = snapshot.val();
+      allDogs = [];
+
       for (const id in dogs) {
         const dog = dogs[id];
-        if (dog.status !== "play") continue; // Chỉ hiện chó đang chơi
-
-        const div = document.createElement("div");
-        div.className = "dog-card";
-        div.dataset.name = dog.name;
-
-        div.innerHTML = `
-          <img src="${dog.image}" alt="${dog.name}" />
-          <h3>${dog.name}</h3>
-          <p>Giống: ${dog.breed}</p>
-        `;
-
-        div.addEventListener("click", () => {
-          const dogName = dog.name;
-          const isSelected = div.classList.contains("selected");
-
-          if (isSelected) {
-            div.classList.remove("selected");
-            selectedDogs = selectedDogs.filter(name => name !== dogName);
-          } else {
-            if (selectedDogs.length < 3) {
-              div.classList.add("selected");
-              selectedDogs.push(dogName);
-            } else {
-              alert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!");
-            }
-          }
-
-          submitBtn.disabled = selectedDogs.length === 0;
-        });
-
-        dogList.appendChild(div);
+        if (dog.status === "play") {
+          allDogs.push(dog);
+        }
       }
+
+      renderDogs(searchInput.value);
     });
 
+    // Lọc khi nhập tìm kiếm
+    searchInput.addEventListener("input", () => {
+      renderDogs(searchInput.value);
+    });
+
+    // Gửi chọn
     submitBtn.addEventListener("click", () => {
       alert(`📸 Bạn đã chọn các bé: ${selectedDogs.join(", ")}.\n💌 Nhân viên sẽ hỗ trợ bạn sớm nhất nha ^^`);
     });
