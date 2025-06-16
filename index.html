@@ -283,26 +283,44 @@
     });
 
     submitBtn.addEventListener("click", () => {
-      const now = new Date();
-      const hh = now.getHours().toString().padStart(2, '0');
-      const mm = now.getMinutes().toString().padStart(2, '0');
-      const timeStr = `${hh}h${mm}p`;
+  const now = new Date();
+  const hh = now.getHours().toString().padStart(2, '0');
+  const mm = now.getMinutes().toString().padStart(2, '0');
+  const timeStr = `${hh}h${mm}p`;
 
-      const data = {
-        selectedDogs,
-        time: timeStr
-      };
+  const data = {
+    selectedDogs,
+    time: timeStr
+  };
 
-      db.ref("photoRequests").push(data)
-        .then(() => {
-          alert(`🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💌 Nhân viên sẽ hỗ trợ bạn sau vài phút nha ^^`);
-          selectedDogs = [];
-          renderDogs(searchInput.value);
+  db.ref("photoRequests").push(data)
+    .then(() => {
+      // Gửi thông báo về Telegram
+      const token = '7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI';
+      const chatId = '7407027307'; // 🔁 THAY BẰNG CHAT ID CỦA BẠN (ví dụ: 123456789)
+      const message = `🐾 Có khách vừa chọn: ${selectedDogs.join(", ")} lúc ${timeStr}`;
+
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message
         })
-        .catch(error => {
-          alert("Có lỗi xảy ra khi gửi yêu cầu: " + error.message);
-        });
+      });
+
+      // Thông báo lại người dùng
+      alert(`🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💌 Nhân viên sẽ hỗ trợ bạn sau vài phút nha ^^`);
+      selectedDogs = [];
+      renderDogs(searchInput.value);
+    })
+    .catch(error => {
+      alert("Có lỗi xảy ra khi gửi yêu cầu: " + error.message);
     });
+});
+
   </script>
 </body>
 </html>
