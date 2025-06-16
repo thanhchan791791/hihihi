@@ -6,6 +6,7 @@
   <title>🐶 Quản lý trạng thái chó</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    /* (Toàn bộ phần CSS giữ nguyên như bạn đã gửi — không thay đổi) */
     body {
       font-family: 'Quicksand', sans-serif;
       font-weight: 600;
@@ -365,6 +366,8 @@
     function loadNotifications() {
       db.ref("photoRequests").limitToLast(10).on("value", snapshot => {
         const data = snapshot.val();
+        console.log("photoRequests:", data); // ✅ Log dữ liệu ra console
+
         if (!data) {
           notificationBox.innerHTML = "📥 Chưa có thông báo nào.";
           return;
