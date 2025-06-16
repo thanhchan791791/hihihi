@@ -183,50 +183,56 @@
     let allDogs = [];
 
     function renderDogs(filter = "") {
-      dogList.innerHTML = "";
-      selectedDogs = [];
+  dogList.innerHTML = "";
 
-      allDogs
-        .filter(d => d.name.toLowerCase().includes(filter.toLowerCase()))
-        .forEach(dog => {
-          const div = document.createElement("div");
-          div.className = "dog-card";
-          div.dataset.name = dog.name;
+  allDogs
+    .filter(d => d.name.toLowerCase().includes(filter.toLowerCase()))
+    .forEach(dog => {
+      const div = document.createElement("div");
+      div.className = "dog-card";
+      div.dataset.name = dog.name;
 
-          if (dog.status !== "play") {
-            div.classList.add("sleeping");
+      if (selectedDogs.includes(dog.name)) {
+        div.classList.add("selected");
+      }
+
+      if (dog.status !== "play") {
+        div.classList.add("sleeping");
+      }
+
+      div.innerHTML = `
+        <img src="${dog.image}" alt="${dog.name}" />
+        <h3>${dog.name}</h3>
+        <p>Giống: ${dog.breed}</p>
+      `;
+
+      if (dog.status === "play") {
+        div.addEventListener("click", () => {
+          const dogName = dog.name;
+          const isSelected = div.classList.contains("selected");
+
+          if (isSelected) {
+            div.classList.remove("selected");
+            selectedDogs = selectedDogs.filter(name => name !== dogName);
+          } else {
+            if (selectedDogs.length < 3) {
+              div.classList.add("selected");
+              selectedDogs.push(dogName);
+            } else {
+              alert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!");
+            }
           }
 
-          div.innerHTML = `
-            <img src="${dog.image}" alt="${dog.name}" />
-            <h3>${dog.name}</h3>
-            <p>Giống: ${dog.breed}</p>
-          `;
-
-          if (dog.status === "play") {
-            div.addEventListener("click", () => {
-              const dogName = dog.name;
-              const isSelected = div.classList.contains("selected");
-
-              if (isSelected) {
-                div.classList.remove("selected");
-                selectedDogs = selectedDogs.filter(name => name !== dogName);
-              } else {
-                if (selectedDogs.length < 3) {
-                  div.classList.add("selected");
-                  selectedDogs.push(dogName);
-                } else {
-                  alert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!");
-                }
-              }
-
-              submitBtn.disabled = selectedDogs.length === 0;
-            });
-          }
-
-          dogList.appendChild(div);
+          submitBtn.disabled = selectedDogs.length === 0;
         });
-    }
+      }
+
+      dogList.appendChild(div);
+    });
+
+  submitBtn.disabled = selectedDogs.length === 0;
+}
+
 
     db.ref("dogs").on("value", snapshot => {
       const dogs = snapshot.val();
