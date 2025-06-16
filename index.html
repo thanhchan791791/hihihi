@@ -10,6 +10,7 @@
       background: linear-gradient(to bottom, #fffafc, #ffeef5);
       margin: 0;
       padding: 20px;
+      padding-bottom: 100px; /* Chừa khoảng cho nút cố định */
       text-align: center;
     }
 
@@ -89,7 +90,12 @@
     }
 
     #submit-btn {
-      margin-top: 25px;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+
       padding: 14px 28px;
       background: linear-gradient(to right, #ff69b4, #ffa6c9);
       color: white;
@@ -188,7 +194,6 @@
         });
     }
 
-    // Load danh sách chó từ Firebase
     db.ref("dogs").on("value", snapshot => {
       const dogs = snapshot.val();
       allDogs = [];
