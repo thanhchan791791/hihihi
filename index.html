@@ -5,147 +5,162 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🐾 Chọn chó chụp ảnh</title>
   <style>
-  body {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background: linear-gradient(to bottom, #fffafc, #ffeef5);
-    margin: 0;
-    padding: 20px;
-    padding-bottom: 100px;
-    text-align: center;
-  }
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to bottom, #fffafc, #ffeef5);
+      margin: 0;
+      padding: 20px;
+      padding-bottom: 100px;
+      text-align: center;
+    }
 
-  h1 {
-    font-size: 2em;
-    color: #ff69b4;
-    margin-bottom: 10px;
-    text-shadow: 1px 1px #fff;
-  }
+    h1 {
+      font-size: 2em;
+      color: #ff69b4;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px #fff;
+    }
 
-  #search-box {
-    margin: 10px auto 25px;
-  }
+    #search-box {
+      margin: 10px auto 25px;
+    }
 
-  #search-input {
-    width: 90%;
-    max-width: 400px;
-    padding: 12px 20px;
-    font-size: 1em;
-    border: 2px solid #ffd6e6;
-    border-radius: 30px;
-    background-color: #fff0f7;
-    outline: none;
-    transition: 0.3s;
-    color: #d94f85;
-  }
+    #search-input {
+      width: 90%;
+      max-width: 400px;
+      padding: 12px 20px;
+      font-size: 1em;
+      border: 2px solid #ffd6e6;
+      border-radius: 30px;
+      background-color: #fff0f7;
+      outline: none;
+      transition: 0.3s;
+      color: #d94f85;
+    }
 
-  #search-input::placeholder {
-    color: #d88fa9;
-    font-style: italic;
-  }
+    #search-input::placeholder {
+      color: #d88fa9;
+      font-style: italic;
+    }
 
-  #dog-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    padding: 0 10px;
-  }
+    #dog-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 0 10px;
+    }
 
-  .dog-card {
-    border: 3px solid transparent;
-    border-radius: 20px;
-    padding: 12px;
-    background: #fff0f5;
-    box-shadow: 2px 4px 10px rgba(0,0,0,0.08);
-    transition: transform 0.2s ease, border 0.3s ease;
-    cursor: pointer;
-    position: relative;
-  }
+    .dog-card {
+      border: 3px solid transparent;
+      border-radius: 20px;
+      padding: 12px;
+      background: #fff0f5;
+      box-shadow: 2px 4px 10px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease, border 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
 
-  .dog-card:hover {
-    transform: translateY(-5px);
-    border-image: linear-gradient(45deg, #ffa6c9, #ff69b4, #ffc0cb) 1;
-  }
+    .dog-card:hover {
+      transform: translateY(-5px);
+      border-image: linear-gradient(45deg, #ffa6c9, #ff69b4, #ffc0cb) 1;
+    }
 
-  .dog-card img {
-    width: 100%;
-    height: 350px;
-    object-fit: cover;
-    border-radius: 25px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
-  }
+    .dog-card img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      border-radius: 25px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
+    }
 
-  .dog-card:hover img {
-    transform: scale(1.05);
-    box-shadow: 0 6px 14px rgba(255, 105, 180, 0.4);
-  }
+    .dog-card:hover img {
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(255, 105, 180, 0.4);
+    }
 
-  .dog-card h3 {
-    font-size: 1em;
-    margin: 0.5em 0 0.2em;
-    color: #d94f85;
-  }
+    .dog-card h3 {
+      font-size: 1em;
+      margin: 0.5em 0 0.2em;
+      color: #d94f85;
+    }
 
-  .dog-card p {
-    margin: 0;
-    font-size: 0.85em;
-    color: #555;
-  }
+    .dog-card p {
+      margin: 0;
+      font-size: 0.85em;
+      color: #555;
+    }
 
-  .selected {
-    border: 3px solid #ff69b4;
-    background-color: #fff5fa;
-  }
+    .selected {
+      border: 3px solid #ff69b4;
+      background-color: #fff5fa;
+    }
 
-  .dog-card.sleeping {
-    opacity: 0.5;
-    cursor: default;
-  }
+    .dog-card.sleeping {
+      opacity: 0.5;
+      cursor: default;
+    }
 
-  .dog-card.sleeping::before {
-    content: "💤 Khò Khò";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-weight: bold;
-    font-size: 1.2em;
-    color: #d94f85;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 6px 14px;
-    border-radius: 10px;
-    pointer-events: none;
-  }
+    .dog-card.sleeping::before {
+      content: "💤 Khò Khò";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #d94f85;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 6px 14px;
+      border-radius: 10px;
+      pointer-events: none;
+    }
 
-  #submit-btn {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    padding: 14px 28px;
-    background: linear-gradient(to right, #ff69b4, #ffa6c9);
-    color: white;
-    font-size: 1.1em;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3);
-    transition: background 0.3s;
-  }
+    #submit-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      padding: 14px 28px;
+      background: linear-gradient(to right, #ff69b4, #ffa6c9);
+      color: white;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3);
+      transition: background 0.3s;
+    }
 
-  #submit-btn:hover {
-    background: linear-gradient(to right, #ff85c1, #ffb3d9);
-  }
+    #submit-btn:hover {
+      background: linear-gradient(to right, #ff85c1, #ffb3d9);
+    }
 
-  #submit-btn:disabled {
-    background-color: #e3e3e3;
-    color: #999;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-</style>
+    #submit-btn:disabled {
+      background-color: #e3e3e3;
+      color: #999;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
 
+    #selected-count {
+      position: fixed;
+      top: 20px;
+      right: 50%;
+      transform: translateX(50%);
+      background: #ffecf4;
+      color: #d94f85;
+      font-weight: bold;
+      font-size: 1em;
+      padding: 10px 18px;
+      border-radius: 30px;
+      box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+      display: none;
+      z-index: 1001;
+    }
+  </style>
 </head>
 <body>
   <h1>📸 Chọn các bé iu để chụp ảnh 💖</h1>
@@ -156,6 +171,7 @@
 
   <div id="dog-list"></div>
   <button id="submit-btn" disabled>✨ Chốt các bé iu</button>
+  <div id="selected-count">Đã chọn: 0 bé</div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -178,61 +194,71 @@
     const dogList = document.getElementById("dog-list");
     const searchInput = document.getElementById("search-input");
     const submitBtn = document.getElementById("submit-btn");
+    const selectedCount = document.getElementById("selected-count");
 
     let selectedDogs = [];
     let allDogs = [];
 
+    function updateSelectionStatus() {
+      submitBtn.disabled = selectedDogs.length === 0;
+      if (selectedDogs.length > 0) {
+        selectedCount.style.display = "block";
+        selectedCount.textContent = `Đã chọn: ${selectedDogs.length} bé`;
+      } else {
+        selectedCount.style.display = "none";
+      }
+    }
+
     function renderDogs(filter = "") {
-  dogList.innerHTML = "";
+      dogList.innerHTML = "";
 
-  allDogs
-    .filter(d => d.name.toLowerCase().includes(filter.toLowerCase()))
-    .forEach(dog => {
-      const div = document.createElement("div");
-      div.className = "dog-card";
-      div.dataset.name = dog.name;
+      allDogs
+        .filter(d => d.name.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(dog => {
+          const div = document.createElement("div");
+          div.className = "dog-card";
+          div.dataset.name = dog.name;
 
-      if (selectedDogs.includes(dog.name)) {
-        div.classList.add("selected");
-      }
-
-      if (dog.status !== "play") {
-        div.classList.add("sleeping");
-      }
-
-      div.innerHTML = `
-        <img src="${dog.image}" alt="${dog.name}" />
-        <h3>${dog.name}</h3>
-        <p>Giống: ${dog.breed}</p>
-      `;
-
-      if (dog.status === "play") {
-        div.addEventListener("click", () => {
-          const dogName = dog.name;
-          const isSelected = div.classList.contains("selected");
-
-          if (isSelected) {
-            div.classList.remove("selected");
-            selectedDogs = selectedDogs.filter(name => name !== dogName);
-          } else {
-            if (selectedDogs.length < 3) {
-              div.classList.add("selected");
-              selectedDogs.push(dogName);
-            } else {
-              alert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!");
-            }
+          if (selectedDogs.includes(dog.name)) {
+            div.classList.add("selected");
           }
 
-          submitBtn.disabled = selectedDogs.length === 0;
+          if (dog.status !== "play") {
+            div.classList.add("sleeping");
+          }
+
+          div.innerHTML = `
+            <img src="${dog.image}" alt="${dog.name}" />
+            <h3>${dog.name}</h3>
+            <p>Giống: ${dog.breed}</p>
+          `;
+
+          if (dog.status === "play") {
+            div.addEventListener("click", () => {
+              const dogName = dog.name;
+              const isSelected = div.classList.contains("selected");
+
+              if (isSelected) {
+                div.classList.remove("selected");
+                selectedDogs = selectedDogs.filter(name => name !== dogName);
+              } else {
+                if (selectedDogs.length < 3) {
+                  div.classList.add("selected");
+                  selectedDogs.push(dogName);
+                } else {
+                  alert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!");
+                }
+              }
+
+              updateSelectionStatus();
+            });
+          }
+
+          dogList.appendChild(div);
         });
-      }
 
-      dogList.appendChild(div);
-    });
-
-  submitBtn.disabled = selectedDogs.length === 0;
-}
-
+      updateSelectionStatus();
+    }
 
     db.ref("dogs").on("value", snapshot => {
       const dogs = snapshot.val();
@@ -269,7 +295,7 @@
 
       db.ref("photoRequests").push(data)
         .then(() => {
-          alert(`🎉 Bạn đã chọn: ${selectedDogs.join(", ")} lúc ${timeStr}.\n💌 Nhân viên sẽ hỗ trợ bạn ngay nha!`);
+          alert(`🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💌 Nhân viên sẽ hỗ trợ bạn sau vài phút nha ^^`);
           selectedDogs = [];
           renderDogs(searchInput.value);
         })
