@@ -2,14 +2,12 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>🐶 Quản lý trạng thái chó</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* (Toàn bộ phần CSS giữ nguyên như bạn đã gửi — không thay đổi) */
     body {
       font-family: 'Quicksand', sans-serif;
-      font-weight: 600;
       background: #ffe6f0;
       padding: 20px;
       max-width: 1000px;
@@ -47,9 +45,7 @@
       margin: 10px 5px;
       font-weight: 700;
     }
-    .action-buttons {
-      text-align: center;
-    }
+    .action-buttons { text-align: center; }
     .search-box {
       display: flex;
       justify-content: center;
@@ -103,9 +99,7 @@
       background-color: #ffd6e6;
       color: #c63565;
     }
-    tr:hover {
-      background-color: #fff6fa;
-    }
+    tr:hover { background-color: #fff6fa; }
     img {
       width: 80px;
       height: 60px;
@@ -128,19 +122,13 @@
     .inactive-btn {
       background: linear-gradient(to right, #f85032, #e73827);
     }
-    .edit-btn {
-      background-color: #f9a825;
-      margin-right: 5px;
-    }
-    .delete-btn {
-      background-color: #d32f2f;
-    }
+    .edit-btn { background-color: #f9a825; margin-right: 5px; }
+    .delete-btn { background-color: #d32f2f; }
 
     #dog-form {
       display: none;
       position: fixed;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       background: #ffffff;
       padding: 30px 25px;
@@ -149,8 +137,6 @@
       z-index: 1000;
       box-shadow: 0 8px 20px rgba(0,0,0,0.15);
       width: 300px;
-      font-family: 'Quicksand', sans-serif;
-      color: #444;
     }
     #dog-form input {
       display: block;
@@ -244,6 +230,7 @@
     <button onclick="closeForm()">Huỷ</button>
   </div>
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script>
@@ -258,6 +245,7 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+
     const tableBody = document.getElementById("dog-table-body");
     const searchInput = document.getElementById("searchInput");
     const notificationBox = document.getElementById("notification");
@@ -333,10 +321,8 @@
       const breed = document.getElementById("dog-breed").value;
       const image = document.getElementById("dog-image").value;
       const data = { name, breed, image, status: "rest" };
-
       if (id) db.ref("dogs/" + id).update(data);
       else db.ref("dogs").push(data);
-
       closeForm();
     }
 
@@ -364,34 +350,38 @@
     }
 
     function loadNotifications() {
-      db.ref("photoRequests").limitToLast(10).on("value", snapshot => {
-        const data = snapshot.val();
-        console.log("photoRequests:", data); // ✅ Log dữ liệu ra console
+    db.ref("photoRequests").limitToLast(10).on("value", snapshot => {
+      const data = snapshot.val();
+      if (!data) {
+        notificationBox.innerHTML = "📥 Chưa có thông báo nào.";
+        return;
+      }
 
-        if (!data) {
-          notificationBox.innerHTML = "📥 Chưa có thông báo nào.";
-          return;
+      const list = Object.values(data);
+      const messages = list.map(item => {
+        let names = [];
+        if (Array.isArray(item.selectedDogs)) {
+          names = item.selectedDogs.filter(n => !!n);
+        } else if (item.dog) {
+          names.push(item.dog);
         }
 
-        const list = Object.values(data);
-        const messages = list.map(item => {
-          let names = [];
-          if (Array.isArray(item.selectedDogs)) {
-            names = item.selectedDogs.filter(n => !!n);
-          } else if (item.dog) {
-            names.push(item.dog);
-          }
-          const timeText = formatTime(item.time || item.timestamp);
-          return names.length > 0
-            ? `📸 Khách vừa chọn <strong>${names.join(", ")}</strong> lúc <strong>${timeText}</strong>`
-            : null;
-        }).filter(Boolean);
+        const timeText = formatTime(item.time || item.timestamp);
+        const side = item.seat?.side || "";
+const table = item.seat?.table || "";
+       const location = `${side ? `Bên ${side}` : ""}${table ? ` - Bàn ${table}` : ""}`;
 
-        notificationBox.innerHTML = messages.length > 0
-          ? "🔔 <strong>THÔNG BÁO:</strong><br>" + messages.reverse().join("<br>—<br>")
-          : "📥 Không có thông tin hợp lệ để hiển thị.";
-      });
-    }
+return names.length > 0
+  ? `📸 Khách ngồi <strong>${location}</strong> vừa chọn <strong>${names.join(", ")}</strong> lúc <strong>${timeText}</strong>`
+  : null;
+
+      }).filter(Boolean);
+
+      notificationBox.innerHTML = messages.length > 0
+        ? "🔔 <strong>THÔNG BÁO:</strong><br>" + messages.reverse().join("<br>—<br>")
+        : "📥 Không có thông tin hợp lệ để hiển thị.";
+    });
+  }
 
     function clearNotifications() {
       if (confirm("❗️Bạn có chắc muốn xóa tất cả thông báo không?")) {
