@@ -2,11 +2,11 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🐾 Chọn chó chụp ảnh</title>
   <style>
     body {
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-family: 'Comic Sans MS', cursive;
       background: linear-gradient(to bottom, #fffafc, #ffeef5);
       margin: 0;
       padding: 20px;
@@ -18,7 +18,6 @@
       font-size: 2em;
       color: #ff69b4;
       margin-bottom: 10px;
-      text-shadow: 1px 1px #fff;
     }
 
     #search-box {
@@ -30,59 +29,79 @@
       max-width: 400px;
       padding: 12px 20px;
       font-size: 1em;
-      border: 2px solid #ffd6e6;
       border-radius: 30px;
+      border: 2px solid #ffd6e6;
       background-color: #fff0f7;
-      outline: none;
-      transition: 0.3s;
       color: #d94f85;
     }
 
-    #search-input::placeholder {
-      color: #d88fa9;
-      font-style: italic;
+    .seat-title {
+      font-size: 1.3em;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      color: #d94f85;
+    }
+
+    .seat-container {
+      display: flex;
+      justify-content: space-between;
+      max-width: 600px;
+      margin: 0 auto 30px;
+      gap: 30px;
+    }
+
+    .side {
+      flex: 1;
+    }
+
+    .side h3 {
+      color: #d94f85;
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .seat {
+      display: inline-block;
+      margin: 5px;
+      padding: 10px 20px;
+      background: #fff0f7;
+      border: 2px solid #ffc0cb;
+      color: #d94f85;
+      font-weight: bold;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .seat.selected {
+      background: #ff69b4;
+      color: white;
+      border-color: #ff69b4;
     }
 
     #dog-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
-      padding: 0 10px;
     }
 
     .dog-card {
-      border: 3px solid transparent;
-      border-radius: 20px;
-      padding: 12px;
       background: #fff0f5;
-      box-shadow: 2px 4px 10px rgba(0,0,0,0.08);
-      transition: transform 0.2s ease, border 0.3s ease;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .dog-card:hover {
-      transform: translateY(-5px);
-      border-image: linear-gradient(45deg, #ffa6c9, #ff69b4, #ffc0cb) 1;
+      padding: 10px;
+      border-radius: 20px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
     }
 
     .dog-card img {
       width: 100%;
       height: 350px;
       object-fit: cover;
-      border-radius: 25px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
-    }
-
-    .dog-card:hover img {
-      transform: scale(1.05);
-      box-shadow: 0 6px 14px rgba(255, 105, 180, 0.4);
+      border-radius: 15px;
     }
 
     .dog-card h3 {
-      font-size: 1em;
-      margin: 0.5em 0 0.2em;
+      margin: 5px 0;
       color: #d94f85;
     }
 
@@ -92,29 +111,27 @@
       color: #555;
     }
 
-    .selected {
+    .dog-card.selected {
       border: 3px solid #ff69b4;
-      background-color: #fff5fa;
     }
 
     .dog-card.sleeping {
       opacity: 0.5;
-      cursor: default;
+      pointer-events: none;
+      position: relative;
     }
 
     .dog-card.sleeping::before {
-      content: "💤 Khò Khò";
+      content: "💤 Khò khò";
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-weight: bold;
-      font-size: 1.2em;
-      color: #d94f85;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 6px 14px;
+      background: white;
+      padding: 5px 15px;
       border-radius: 10px;
-      pointer-events: none;
+      color: #d94f85;
+      font-weight: bold;
     }
 
     #submit-btn {
@@ -122,27 +139,13 @@
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 1000;
-      padding: 14px 28px;
-      background: linear-gradient(to right, #ff69b4, #ffa6c9);
+      background: #ff69b4;
       color: white;
-      font-size: 1.1em;
+      padding: 12px 30px;
       border: none;
       border-radius: 30px;
+      font-size: 1em;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3);
-      transition: background 0.3s;
-    }
-
-    #submit-btn:hover {
-      background: linear-gradient(to right, #ff85c1, #ffb3d9);
-    }
-
-    #submit-btn:disabled {
-      background-color: #e3e3e3;
-      color: #999;
-      cursor: not-allowed;
-      box-shadow: none;
     }
 
     #selected-count {
@@ -152,25 +155,42 @@
       transform: translateX(50%);
       background: #ffecf4;
       color: #d94f85;
-      font-weight: bold;
-      font-size: 1em;
-      padding: 10px 18px;
+      padding: 10px 20px;
       border-radius: 30px;
-      box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+      font-weight: bold;
       display: none;
-      z-index: 1001;
     }
   </style>
 </head>
 <body>
-  <h1>📸 Chọn các bé iu để chụp ảnh 💖</h1>
 
+  <h1>📸 Chọn các bé iu để chụp ảnh</h1>
   <div id="search-box">
-    <input type="text" id="search-input" placeholder="Nhập tên bé cún yêu thương vào đây nha ~" />
+    <input type="text" id="search-input" placeholder="Nhập tên bé cún..." />
+  </div>
+
+  <div class="seat-title">🪑 Vị trí của bạn từ cửa vào</div>
+  <div class="seat-container">
+    <div class="side">
+      <h3>Bên trái</h3>
+      <div class="seat" data-side="Bên trái">Bàn 1</div>
+      <div class="seat" data-side="Bên trái">Bàn 2</div>
+      <div class="seat" data-side="Bên trái">Bàn 3</div>
+      <div class="seat" data-side="Bên trái">Bàn 4</div>
+      <div class="seat" data-side="Bên trái">Bàn 5</div>
+      <div class="seat" data-side="Bên trái">Bàn 6</div>
+    </div>
+    <div class="side">
+      <h3>Bên phải</h3>
+      <div class="seat" data-side="Bên phải">Bàn 1</div>
+      <div class="seat" data-side="Bên phải">Bàn 2</div>
+      <div class="seat" data-side="Bên phải">Bàn 3</div>
+      <div class="seat" data-side="Bên phải">Bàn 4</div>
+    </div>
   </div>
 
   <div id="dog-list"></div>
-  <button id="submit-btn" disabled>✨ Chốt các bé iu</button>
+  <button id="submit-btn">📤 Chốt bé & vị trí</button>
   <div id="selected-count">Đã chọn: 0 bé</div>
 
   <!-- Firebase SDK -->
@@ -195,23 +215,31 @@
     const searchInput = document.getElementById("search-input");
     const submitBtn = document.getElementById("submit-btn");
     const selectedCount = document.getElementById("selected-count");
+    const seatButtons = document.querySelectorAll(".seat");
 
     let selectedDogs = [];
+    let selectedSeat = null;
     let allDogs = [];
 
-    function updateSelectionStatus() {
-      submitBtn.disabled = selectedDogs.length === 0;
-      if (selectedDogs.length > 0) {
-        selectedCount.style.display = "block";
-        selectedCount.textContent = `Đã chọn: ${selectedDogs.length} bé`;
-      } else {
-        selectedCount.style.display = "none";
-      }
+    seatButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        seatButtons.forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedSeat = {
+          side: btn.dataset.side,
+          table: btn.textContent
+        };
+        updateSelectedCount();
+      });
+    });
+
+    function updateSelectedCount() {
+      selectedCount.style.display = selectedDogs.length > 0 ? "block" : "none";
+      selectedCount.textContent = `Đã chọn: ${selectedDogs.length} bé`;
     }
 
     function renderDogs(filter = "") {
       dogList.innerHTML = "";
-
       allDogs
         .filter(d => d.name.toLowerCase().includes(filter.toLowerCase()))
         .forEach(dog => {
@@ -219,13 +247,8 @@
           div.className = "dog-card";
           div.dataset.name = dog.name;
 
-          if (selectedDogs.includes(dog.name)) {
-            div.classList.add("selected");
-          }
-
-          if (dog.status !== "play") {
-            div.classList.add("sleeping");
-          }
+          if (selectedDogs.includes(dog.name)) div.classList.add("selected");
+          if (dog.status !== "play") div.classList.add("sleeping");
 
           div.innerHTML = `
             <img src="${dog.image}" alt="${dog.name}" />
@@ -236,45 +259,26 @@
           if (dog.status === "play") {
             div.addEventListener("click", () => {
               const dogName = dog.name;
-              const isSelected = div.classList.contains("selected");
-
-              if (isSelected) {
+              if (selectedDogs.includes(dogName)) {
+                selectedDogs = selectedDogs.filter(n => n !== dogName);
                 div.classList.remove("selected");
-                selectedDogs = selectedDogs.filter(name => name !== dogName);
+              } else if (selectedDogs.length < 3) {
+                selectedDogs.push(dogName);
+                div.classList.add("selected");
               } else {
-                if (selectedDogs.length < 3) {
-                  div.classList.add("selected");
-                  selectedDogs.push(dogName);
-                } else {
-                  alert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!");
-                }
+                alert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!");
               }
-
-              updateSelectionStatus();
+              updateSelectedCount();
             });
           }
 
           dogList.appendChild(div);
         });
-
-      updateSelectionStatus();
     }
 
     db.ref("dogs").on("value", snapshot => {
-      const dogs = snapshot.val();
-      const activeDogs = [];
-      const inactiveDogs = [];
-
-      for (const id in dogs) {
-        const dog = dogs[id];
-        if (dog.status === "play") {
-          activeDogs.push(dog);
-        } else {
-          inactiveDogs.push(dog);
-        }
-      }
-
-      allDogs = [...activeDogs, ...inactiveDogs];
+      const data = snapshot.val();
+      allDogs = Object.values(data || {}).sort((a, b) => b.status === "play" ? -1 : 1);
       renderDogs(searchInput.value);
     });
 
@@ -283,44 +287,39 @@
     });
 
     submitBtn.addEventListener("click", () => {
-  const now = new Date();
-  const hh = now.getHours().toString().padStart(2, '0');
-  const mm = now.getMinutes().toString().padStart(2, '0');
-  const timeStr = `${hh}h${mm}p`;
+      if (!selectedSeat) {
+        alert("❗ Vui lòng chọn vị trí của bạn trước khi chốt bé iu nha!");
+        return;
+      }
 
-  const data = {
-    selectedDogs,
-    time: timeStr
-  };
+      if (selectedDogs.length === 0) {
+        alert("❗ Bạn chưa chọn bé cún nào cả!");
+        return;
+      }
 
-  db.ref("photoRequests").push(data)
-    .then(() => {
-      // Gửi thông báo về Telegram
-      const token = '7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI';
-      const chatId = '7407027307'; // 🔁 THAY BẰNG CHAT ID CỦA BẠN (ví dụ: 123456789)
-      const message = `🐾 Có khách vừa chọn: ${selectedDogs.join(", ")} lúc ${timeStr}`;
+      const now = new Date();
+      const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
 
-      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message
-        })
+      const data = {
+        selectedDogs,
+        time: timeStr,
+        seat: {
+          side: selectedSeat.side,
+          table: selectedSeat.table
+        }
+      };
+
+      db.ref("photoRequests").push(data).then(() => {
+        alert(
+          `🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${selectedSeat.side} - ${selectedSeat.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`
+        );
+        selectedDogs = [];
+        selectedSeat = null;
+        seatButtons.forEach(b => b.classList.remove("selected"));
+        renderDogs(searchInput.value);
+        updateSelectedCount();
       });
-
-      // Thông báo lại người dùng
-      alert(`🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💌 Nhân viên sẽ hỗ trợ bạn sau vài phút nha ^^`);
-      selectedDogs = [];
-      renderDogs(searchInput.value);
-    })
-    .catch(error => {
-      alert("Có lỗi xảy ra khi gửi yêu cầu: " + error.message);
     });
-});
-
   </script>
 </body>
 </html>
