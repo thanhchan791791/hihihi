@@ -101,11 +101,17 @@
     }
     tr:hover { background-color: #fff6fa; }
     img {
-      width: 80px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+img:hover {
+  transform: scale(1.05);
+}
+
     button {
       padding: 8px 14px;
       border: none;
