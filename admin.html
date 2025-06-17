@@ -369,7 +369,7 @@
         const timeText = formatTime(item.time || item.timestamp);
         const side = item.seat?.side || "";
 const table = item.seat?.table || "";
-       const location = `${side ? `Bên ${side}` : ""}${table ? ` - Bàn ${table}` : ""}`;
+       const location = `${side ? `${side}` : ""}${table ? ` - ${table}` : ""}`;
 
 return names.length > 0
   ? `📸 Khách ngồi <strong>${location}</strong> vừa chọn <strong>${names.join(", ")}</strong> lúc <strong>${timeText}</strong>`
