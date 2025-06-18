@@ -324,14 +324,10 @@ submitBtn.addEventListener("click", () => {
   const now = new Date();
   const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
 
-  const message = `🐾 Có khách vừa chọn chụp ảnh!
-👶 Bé: ${selectedDogs.join(", ")}
-💺 Vị trí: ${selectedSeat.side} - Bàn ${selectedSeat.table}
-⏰ Thời gian: ${timeStr}`;
+  const message = `🐾 Có khách vừa chọn chụp ảnh!\n👶 Bé: ${selectedDogs.join(", ")}\n💺 Vị trí: ${selectedSeat.side} - Bàn ${selectedSeat.table}\n⏰ Thời gian: ${timeStr}`;
+  const encodedMsg = encodeURIComponent(message);
 
-  const relayURL = `https://your-project-name.vercel.app/api/send?message=${encodeURIComponent(message)}`;
-
-  // 👉 Lưu Firebase
+  // 👉 Gửi Firebase
   const data = {
     selectedDogs,
     time: timeStr,
@@ -354,10 +350,10 @@ submitBtn.addEventListener("click", () => {
       renderDogs(searchInput.value);
       updateSelectedCount();
 
-      // 👉 Gửi Telegram bằng fetch
-      fetch(relayURL)
-        .then(r => r.json())
-        .then(data => console.log("✅ Đã gửi Telegram:", data))
+      // 👉 Gửi Telegram qua API mới
+      fetch(`https://hihihi-cyan.vercel.app/api/send?message=${encodedMsg}`)
+        .then(res => res.json())
+        .then(json => console.log("✅ Đã gửi Telegram:", json))
         .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
     })
     .catch(err => {
