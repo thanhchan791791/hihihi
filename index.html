@@ -311,6 +311,23 @@
     });
 
 submitBtn.addEventListener("click", () => {
+  const now = new Date();
+  const lastSelectTime = localStorage.getItem("lastSelectTime");
+
+  if (lastSelectTime) {
+    const diffMs = now - new Date(lastSelectTime);
+    const diffMinutes = Math.floor(diffMs / 60000);
+
+    if (diffMinutes < 10) {
+      const waitMinutes = 10 - diffMinutes;
+      alert(`⏳ Vui lòng quay lại sau ${waitMinutes} phút nữa để chọn bé tiếp nha!`);
+      return;
+    }
+  }
+
+  // ✅ Lưu lại thời gian chọn hiện tại
+  localStorage.setItem("lastSelectTime", now.toISOString());
+
   if (!selectedSeat) {
     alert("❗ Vui lòng chọn vị trí của bạn trước khi chốt bé iu nha!");
     return;
@@ -321,13 +338,9 @@ submitBtn.addEventListener("click", () => {
     return;
   }
 
-  const now = new Date();
   const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
 
-  // 👉 Tin nhắn gửi Telegram
   const message = `Thời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${selectedSeat.side} - Bàn ${selectedSeat.table}`;
-
-
   const encodedMsg = encodeURIComponent(message);
 
   const data = {
@@ -345,14 +358,14 @@ submitBtn.addEventListener("click", () => {
         `🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${selectedSeat.side} - ${selectedSeat.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`
       );
 
-      // Reset
+      // Reset chọn
       selectedDogs = [];
       selectedSeat = null;
       seatButtons.forEach(b => b.classList.remove("selected"));
       renderDogs(searchInput.value);
       updateSelectedCount();
 
-      // 👉 Gửi Telegram qua API Vercel (dùng `text=`)
+      // Gửi thông báo Telegram
       fetch(`https://hihihi-cyan.vercel.app/api/send?text=${encodedMsg}`)
         .then(res => res.json())
         .then(json => console.log("✅ Đã gửi Telegram:", json))
