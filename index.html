@@ -233,24 +233,25 @@
     const dogList = document.getElementById("dog-list");
     const searchInput = document.getElementById("search-input");
     const submitBtn = document.getElementById("submit-btn");
-    const selectedCount = document.getElementById("selected-count");
-    const seatButtons = document.querySelectorAll(".seat");
+   const selectedCount = document.getElementById("selected-count");
 
-    let selectedDogs = [];
-    let selectedSeat = null;
-    let allDogs = [];
+let selectedDogs = [];
+let selectedSeat = null;
+let allDogs = [];
 
-    seatButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        seatButtons.forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedSeat = {
-          side: btn.dataset.side,
-          table: btn.textContent
-        };
-        updateSelectedCount();
-      });
-    });
+// ✅ Lấy vị trí từ đường dẫn URL
+const path = window.location.pathname.toLowerCase();
+let match = path.match(/^\/([lr])(\d)$/);
+
+// ✅ Nếu không có /l1, /r2,... thì mặc định là /l1
+if (!match) {
+  match = ['l1', 'l', '1']; // default to bên trái bàn 1
+}
+
+const side = match[1] === "l" ? "Bên trái" : "Bên phải";
+const table = `Bàn ${match[2]}`;
+selectedSeat = { side, table };
+
 
     function updateSelectedCount() {
       selectedCount.style.display = selectedDogs.length > 0 ? "block" : "none";
