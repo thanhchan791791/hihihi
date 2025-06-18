@@ -45,7 +45,7 @@
       margin: 10px 5px;
       font-weight: 700;
     }
-    .action-buttons { text-align: center; }
+    .action-buttons { text-align: center; flex-wrap: wrap; }
     .search-box {
       display: flex;
       justify-content: center;
@@ -101,17 +101,16 @@
     }
     tr:hover { background-color: #fff6fa; }
     img {
-  width: 120px;
-  height: 90px;
-  object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
-}
-img:hover {
-  transform: scale(1.05);
-}
-
+      width: 120px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    img:hover {
+      transform: scale(1.05);
+    }
     button {
       padding: 8px 14px;
       border: none;
@@ -204,6 +203,7 @@ img:hover {
   <div class="action-buttons">
     <button class="clear-btn" onclick="clearNotifications()">🗑️ Xóa tất cả thông báo</button>
     <button class="add-btn" onclick="openForm()">➕ Thêm chó mới</button>
+    <button class="add-btn" onclick="setAllToRest()">🌙 Cho tất cả nghỉ</button>
   </div>
 
   <div class="search-box">
@@ -356,43 +356,58 @@ img:hover {
     }
 
     function loadNotifications() {
-    db.ref("photoRequests").limitToLast(10).on("value", snapshot => {
-      const data = snapshot.val();
-      if (!data) {
-        notificationBox.innerHTML = "📥 Chưa có thông báo nào.";
-        return;
-      }
-
-      const list = Object.values(data);
-      const messages = list.map(item => {
-        let names = [];
-        if (Array.isArray(item.selectedDogs)) {
-          names = item.selectedDogs.filter(n => !!n);
-        } else if (item.dog) {
-          names.push(item.dog);
+      db.ref("photoRequests").limitToLast(10).on("value", snapshot => {
+        const data = snapshot.val();
+        if (!data) {
+          notificationBox.innerHTML = "📥 Chưa có thông báo nào.";
+          return;
         }
 
-        const timeText = formatTime(item.time || item.timestamp);
-        const side = item.seat?.side || "";
-const table = item.seat?.table || "";
-       const location = `${side ? `${side}` : ""}${table ? ` - ${table}` : ""}`;
+        const list = Object.values(data);
+        const messages = list.map(item => {
+          let names = [];
+          if (Array.isArray(item.selectedDogs)) {
+            names = item.selectedDogs.filter(n => !!n);
+          } else if (item.dog) {
+            names.push(item.dog);
+          }
 
-return names.length > 0
-  ? `📸 Khách ngồi <strong>${location}</strong> vừa chọn <strong>${names.join(", ")}</strong> lúc <strong>${timeText}</strong>`
-  : null;
+          const timeText = formatTime(item.time || item.timestamp);
+          const side = item.seat?.side || "";
+          const table = item.seat?.table || "";
+          const location = `${side ? `${side}` : ""}${table ? ` - ${table}` : ""}`;
 
-      }).filter(Boolean);
+          return names.length > 0
+            ? `📸 Khách ngồi <strong>${location}</strong> vừa chọn <strong>${names.join(", ")}</strong> lúc <strong>${timeText}</strong>`
+            : null;
 
-      notificationBox.innerHTML = messages.length > 0
-        ? "🔔 <strong>THÔNG BÁO:</strong><br>" + messages.reverse().join("<br>—<br>")
-        : "📥 Không có thông tin hợp lệ để hiển thị.";
-    });
-  }
+        }).filter(Boolean);
+
+        notificationBox.innerHTML = messages.length > 0
+          ? "🔔 <strong>THÔNG BÁO:</strong><br>" + messages.reverse().join("<br>—<br>")
+          : "📥 Không có thông tin hợp lệ để hiển thị.";
+      });
+    }
 
     function clearNotifications() {
       if (confirm("❗️Bạn có chắc muốn xóa tất cả thông báo không?")) {
         db.ref("photoRequests").remove();
       }
+    }
+
+    function setAllToRest() {
+      if (!confirm("Bạn có chắc muốn cho tất cả chó nghỉ không?")) return;
+
+      const updates = {};
+      for (const id in allDogs) {
+        if (allDogs[id].status === "play") {
+          updates[`dogs/${id}/status`] = "rest";
+        }
+      }
+
+      db.ref().update(updates)
+        .then(() => alert("✅ Đã cho tất cả các bé nghỉ ngơi!"))
+        .catch(error => alert("❌ Lỗi: " + error.message));
     }
 
     loadDogs();
