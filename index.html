@@ -324,10 +324,14 @@ submitBtn.addEventListener("click", () => {
   const now = new Date();
   const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
 
-  const message = `🐾 Có khách vừa chọn chụp ảnh!\n👶 Bé: ${selectedDogs.join(", ")}\n💺 Vị trí: ${selectedSeat.side} - Bàn ${selectedSeat.table}\n⏰ Thời gian: ${timeStr}`;
+  // 👉 Tin nhắn gửi Telegram
+  const message = `🐾 Có khách vừa chọn chụp ảnh!
+👶 Bé: ${selectedDogs.join(", ")}
+💺 Vị trí: ${selectedSeat.side} - Bàn ${selectedSeat.table}
+⏰ Thời gian: ${timeStr}`;
+
   const encodedMsg = encodeURIComponent(message);
 
-  // 👉 Gửi Firebase
   const data = {
     selectedDogs,
     time: timeStr,
@@ -350,7 +354,7 @@ submitBtn.addEventListener("click", () => {
       renderDogs(searchInput.value);
       updateSelectedCount();
 
-      // 👉 Gửi Telegram qua API mới
+      // 👉 Gửi Telegram qua API Vercel
       fetch(`https://hihihi-cyan.vercel.app/api/send?message=${encodedMsg}`)
         .then(res => res.json())
         .then(json => console.log("✅ Đã gửi Telegram:", json))
