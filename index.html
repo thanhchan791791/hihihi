@@ -310,7 +310,7 @@
       renderDogs(searchInput.value);
     });
 
-  submitBtn.addEventListener("click", () => {
+ submitBtn.addEventListener("click", () => {
   if (!selectedSeat) {
     alert("❗ Vui lòng chọn vị trí của bạn trước khi chốt bé iu nha!");
     return;
@@ -334,12 +334,14 @@
   };
 
   db.ref("photoRequests").push(data).then(() => {
-    // ✅ Gửi thông báo về Telegram
-    const telegramToken = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI"; // Thay token nếu cần
-    const chatId = "7407027307"; // Thay chat ID nếu cần
+    // ✅ Gửi thông báo về Telegram qua proxy
+    const telegramToken = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI"; // Thay bằng token thật nếu cần
+    const chatId = "7407027307"; // Thay bằng chat ID của bạn
     const message = `🐾 Có khách vừa chọn chụp ảnh!\n👶 Bé: ${selectedDogs.join(", ")}\n💺 Vị trí: ${selectedSeat.side} - ${selectedSeat.table}\n⏰ Thời gian: ${timeStr}`;
 
-    fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+    const proxyUrl = `https://corsproxy.io/?https://api.telegram.org/bot${telegramToken}/sendMessage`;
+
+    fetch(proxyUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -362,6 +364,7 @@
     updateSelectedCount();
   });
 });
+
 
   </script>
 </body>
