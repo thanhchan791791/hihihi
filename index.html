@@ -318,11 +318,11 @@ submitBtn.addEventListener("click", () => {
     const diffMs = now - new Date(lastSelectTime);
     const diffMinutes = Math.floor(diffMs / 60000);
 
-    if (diffMinutes < 10) {
-      const waitMinutes = 10 - diffMinutes;
-      alert(`⏳ Vui lòng quay lại sau ${waitMinutes} phút nữa để chọn bé tiếp nha!`);
-      return;
-    }
+    // if (diffMinutes < 10) {
+    //   const waitMinutes = 10 - diffMinutes;
+    //   alert(`⏳ Vui lòng quay lại sau ${waitMinutes} phút nữa để chọn bé tiếp nha!`);
+    //   return;
+    // }
   }
 
   // ✅ Lưu lại thời gian chọn hiện tại
