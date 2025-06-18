@@ -295,11 +295,16 @@
         });
     }
 
-    db.ref("dogs").on("value", snapshot => {
-      const data = snapshot.val();
-      allDogs = Object.values(data || {}).sort((a, b) => b.status === "play" ? -1 : 1);
-      renderDogs(searchInput.value);
-    });
+   db.ref("dogs").on("value", snapshot => {
+  const data = snapshot.val();
+  allDogs = Object.values(data || {}).sort((a, b) => {
+    if (a.status === "play" && b.status !== "play") return -1;
+    if (a.status !== "play" && b.status === "play") return 1;
+    return a.name.localeCompare(b.name); // sắp theo tên nếu cùng trạng thái
+  });
+  renderDogs(searchInput.value);
+});
+
 
     searchInput.addEventListener("input", () => {
       renderDogs(searchInput.value);
