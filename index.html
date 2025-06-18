@@ -354,8 +354,8 @@ submitBtn.addEventListener("click", () => {
       renderDogs(searchInput.value);
       updateSelectedCount();
 
-      // 👉 Gửi Telegram qua API Vercel
-      fetch(`https://hihihi-cyan.vercel.app/api/send?message=${encodedMsg}`)
+      // 👉 Gửi Telegram qua API Vercel (dùng `text=`)
+      fetch(`https://hihihi-cyan.vercel.app/api/send?text=${encodedMsg}`)
         .then(res => res.json())
         .then(json => console.log("✅ Đã gửi Telegram:", json))
         .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
@@ -365,7 +365,6 @@ submitBtn.addEventListener("click", () => {
       alert("⚠️ Lỗi khi gửi thông tin chốt ảnh.");
     });
 });
-
 
   </script>
 </body>
