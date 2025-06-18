@@ -356,16 +356,17 @@ if (match) {
 
   const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
 
-  const message = `Thời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${selectedSeat.side} - Bàn ${selectedSeat.table}`;
+const message = `Thời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${seatFromHash.side} - ${seatFromHash.table}`;
   const encodedMsg = encodeURIComponent(message);
 
   const data = {
     selectedDogs,
     time: timeStr,
     seat: {
-      side: selectedSeat.side,
-      table: selectedSeat.table
-    }
+  side: seatFromHash.side,
+  table: seatFromHash.table
+}
+
   };
 
   db.ref("photoRequests").push(data)
