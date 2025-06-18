@@ -35,53 +35,11 @@
       color: #d94f85;
     }
 
-    .seat-title {
-      font-size: 1.3em;
-      margin-top: 30px;
-      margin-bottom: 15px;
+    #seat-info {
+      margin-top: 10px;
       font-weight: bold;
       color: #d94f85;
-    }
-
-    .seat-container {
-      display: flex;
-      justify-content: space-between;
-      max-width: 600px;
-      margin: 0 auto 30px;
-      gap: 30px;
-    }
-
-    .side {
-      flex: 1;
-    }
-
-    .side h3 {
-      color: #d94f85;
-      font-size: 1.6em;
-      margin-bottom: 15px;
-      font-weight: bold;
-      background: #ffe4ec;
-      padding: 10px 0;
-      border-radius: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .seat {
-      display: inline-block;
-      margin: 5px;
-      padding: 10px 20px;
-      background: #fff0f7;
-      border: 2px solid #ffc0cb;
-      color: #d94f85;
-      font-weight: bold;
-      border-radius: 20px;
-      cursor: pointer;
-    }
-
-    .seat.selected {
-      background: #ff69b4;
-      color: white;
-      border-color: #ff69b4;
+      font-size: 1.1em;
     }
 
     #dog-list {
@@ -172,26 +130,7 @@
   <div id="search-box">
     <input type="text" id="search-input" placeholder="Nhập tên bé cún..." />
   </div>
-
-<!--   <div class="seat-title">🪑 Vị trí của bạn từ cửa vào</div>
-  <div class="seat-container">
-    <div class="side">
-      <h3>Bên trái</h3>
-      <div class="seat" data-side="Bên trái">Bàn 1</div>
-      <div class="seat" data-side="Bên trái">Bàn 2</div>
-      <div class="seat" data-side="Bên trái">Bàn 3</div>
-      <div class="seat" data-side="Bên trái">Bàn 4</div>
-      <div class="seat" data-side="Bên trái">Bàn 5</div>
-      <div class="seat" data-side="Bên trái">Bàn 6</div>
-    </div>
-    <div class="side">
-      <h3>Bên phải</h3>
-      <div class="seat" data-side="Bên phải">Bàn 1</div>
-      <div class="seat" data-side="Bên phải">Bàn 2</div>
-      <div class="seat" data-side="Bên phải">Bàn 3</div>
-      <div class="seat" data-side="Bên phải">Bàn 4</div>
-    </div>
-  </div> -->
+  <div id="seat-info">💺 Vị trí đang tải...</div>
 
   <div style="margin: 30px auto 20px; font-size: 1.1em; color: #d94f85; font-weight: bold; text-align: center; padding: 0 15px;">
     🐶 Dưới đây là danh sách các bé cún đang chờ được chọn nè!
@@ -223,17 +162,10 @@
     const searchInput = document.getElementById("search-input");
     const submitBtn = document.getElementById("submit-btn");
     const selectedCount = document.getElementById("selected-count");
-    const seatButtons = document.querySelectorAll(".seat");
+    const seatInfo = document.getElementById("seat-info");
 
     let selectedDogs = [];
     let allDogs = [];
-
-    seatButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        seatButtons.forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-      });
-    });
 
     function updateSelectedCount() {
       selectedCount.style.display = selectedDogs.length > 0 ? "block" : "none";
@@ -278,6 +210,26 @@
         });
     }
 
+    function getSeatFromHash() {
+      const hash = window.location.hash.toLowerCase();
+      const match = hash.match(/^#\/?([lr])(\d)$/);
+      if (match) {
+        const side = match[1] === "r" ? "Bên phải" : "Bên trái";
+        const table = "Bàn " + match[2];
+        return { side, table };
+      }
+      return null;
+    }
+
+    function updateSeatDisplay() {
+      const seat = getSeatFromHash();
+      if (seat) {
+        seatInfo.textContent = `💺 Vị trí của bạn: ${seat.side} - ${seat.table}`;
+      } else {
+        seatInfo.textContent = "💺 Vị trí chưa xác định từ đường link!";
+      }
+    }
+
     db.ref("dogs").on("value", snapshot => {
       const data = snapshot.val();
       allDogs = Object.values(data || {}).sort((a, b) => {
@@ -292,23 +244,14 @@
       renderDogs(searchInput.value);
     });
 
+    window.addEventListener("hashchange", updateSeatDisplay);
+    window.addEventListener("DOMContentLoaded", updateSeatDisplay);
+
     submitBtn.addEventListener("click", () => {
       const now = new Date();
-      const lastSelectTime = localStorage.getItem("lastSelectTime");
-
-      // Bỏ giới hạn thời gian (bạn có thể bật lại nếu muốn)
-
       localStorage.setItem("lastSelectTime", now.toISOString());
 
-      const hash = window.location.hash.toLowerCase();
-      let match = hash.match(/^#\/?([lr])(\d)$/);
-      let seatFromHash = { side: "Bên trái", table: "Bàn 1" };
-
-      if (match) {
-        const side = match[1] === "r" ? "Bên phải" : "Bên trái";
-        const table = "Bàn " + match[2];
-        seatFromHash = { side, table };
-      }
+      const seatFromHash = getSeatFromHash() || { side: "Không rõ", table: "Không rõ" };
 
       if (selectedDogs.length === 0) {
         alert("❗ Bạn chưa chọn bé cún nào cả!");
@@ -327,12 +270,9 @@
 
       db.ref("photoRequests").push(data)
         .then(() => {
-          alert(
-            `🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${seatFromHash.side} - ${seatFromHash.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`
-          );
+          alert(`🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${seatFromHash.side} - ${seatFromHash.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`);
 
           selectedDogs = [];
-          seatButtons.forEach(b => b.classList.remove("selected"));
           renderDogs(searchInput.value);
           updateSelectedCount();
 
