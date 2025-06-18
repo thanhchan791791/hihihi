@@ -310,7 +310,7 @@
       renderDogs(searchInput.value);
     });
 
- submitBtn.addEventListener("click", () => {
+submitBtn.addEventListener("click", () => {
   if (!selectedSeat) {
     alert("❗ Vui lòng chọn vị trí của bạn trước khi chốt bé iu nha!");
     return;
@@ -324,17 +324,17 @@
   const now = new Date();
   const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
 
-  const telegramToken = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
-  const chatId = "7407027307";
-  const message = `🐾 Có khách vừa chọn chụp ảnh!\n👶 Bé: ${selectedDogs.join(", ")}\n💺 Vị trí: ${selectedSeat.side} - ${selectedSeat.table}\n⏰ Thời gian: ${timeStr}`;
-  const text = encodeURIComponent(message);
-  const telegramURL = `https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${text}`;
+  // 👉 Nội dung gửi Telegram
+  const message = `🐾 Có khách vừa chọn chụp ảnh!\n👶 Bé: ${selectedDogs.join(", ")}\n💺 Vị trí: ${selectedSeat.side} - Bàn ${selectedSeat.table}\n⏰ Thời gian: ${timeStr}`;
+  const encodedText = encodeURIComponent(message);
+
+  // 👉 Đường dẫn Telegram gốc
+  const telegramURL = `https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=7407027307&text=${encodedText}`;
+
+  // 👉 Gửi qua proxy để tránh bị Telegram chặn
   const proxyURL = `https://nl.hideproxy.me/go.php?u=${encodeURIComponent(telegramURL)}&b=5&f=norefer`;
 
-  // 👉 Gửi Telegram qua proxy bằng cách mở tab
-  window.open(proxyURL, "_blank");
-
-  // 👉 Lưu thông tin vào Firebase
+  // 👉 Lưu Firebase
   const data = {
     selectedDogs,
     time: timeStr,
@@ -350,18 +350,21 @@
         `🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${selectedSeat.side} - ${selectedSeat.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`
       );
 
+      // Reset sau khi chốt
       selectedDogs = [];
       selectedSeat = null;
       seatButtons.forEach(b => b.classList.remove("selected"));
       renderDogs(searchInput.value);
       updateSelectedCount();
+
+      // 👉 Gửi Telegram bằng mở tab
+      window.open(proxyURL, "_blank");
     })
     .catch(err => {
       console.error("❌ Lỗi khi lưu Firebase:", err);
       alert("⚠️ Lỗi khi gửi thông tin chốt ảnh.");
     });
 });
-
 
 
   </script>
