@@ -325,10 +325,8 @@ submitBtn.addEventListener("click", () => {
   const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
 
   // 👉 Tin nhắn gửi Telegram
-  const message = `🐾 Có khách vừa chọn chụp ảnh!
-👶 Bé: ${selectedDogs.join(", ")}
-💺 Vị trí: ${selectedSeat.side} - Bàn ${selectedSeat.table}
-⏰ Thời gian: ${timeStr}`;
+  const message = `Khách vừa chọn chụp ảnh\nThời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${selectedSeat.side} - Bàn ${selectedSeat.table}`;
+
 
   const encodedMsg = encodeURIComponent(message);
 
