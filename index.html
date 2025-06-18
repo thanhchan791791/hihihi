@@ -311,59 +311,77 @@
     });
 
 submitBtn.addEventListener("click", () => {
-  if (!selectedSeat) {
-    alert("❗ Vui lòng chọn vị trí của bạn trước khi chốt bé iu nha!");
+  if (!userIp) {
+    alert("⏳ Đang lấy IP, vui lòng chờ 1-2 giây rồi thử lại...");
     return;
   }
 
-  if (selectedDogs.length === 0) {
-    alert("❗ Bạn chưa chọn bé cún nào cả!");
-    return;
-  }
+  db.ref("lastRequests/" + userIp).once("value").then(snapshot => {
+    const lastTimeStr = snapshot.val();
+    const now = new Date();
 
-  const now = new Date();
-  const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
+    if (lastTimeStr) {
+      const lastTime = new Date(lastTimeStr);
+      const diffMs = now - lastTime;
+      const diffMinutes = Math.floor(diffMs / 60000);
 
-  // 👉 Tin nhắn gửi Telegram
-  const message = `Thời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${selectedSeat.side} - Bàn ${selectedSeat.table}`;
-
-
-  const encodedMsg = encodeURIComponent(message);
-
-  const data = {
-    selectedDogs,
-    time: timeStr,
-    seat: {
-      side: selectedSeat.side,
-      table: selectedSeat.table
+      if (diffMinutes < 10) {
+        const waitMinutes = 10 - diffMinutes;
+        alert(`⏳ Vui lòng quay lại sau ${waitMinutes} phút nữa để chọn bé tiếp nha!`);
+        return;
+      }
     }
-  };
 
-  db.ref("photoRequests").push(data)
-    .then(() => {
-      alert(
-        `🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${selectedSeat.side} - ${selectedSeat.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`
-      );
+    // Lưu thời gian hiện tại vào Firebase
+    db.ref("lastRequests/" + userIp).set(now.toISOString());
 
-      // Reset
-      selectedDogs = [];
-      selectedSeat = null;
-      seatButtons.forEach(b => b.classList.remove("selected"));
-      renderDogs(searchInput.value);
-      updateSelectedCount();
+    // Kiểm tra chọn vị trí & chó
+    if (!selectedSeat) {
+      alert("❗ Vui lòng chọn vị trí của bạn trước khi chốt bé iu nha!");
+      return;
+    }
 
-      // 👉 Gửi Telegram qua API Vercel (dùng `text=`)
-      fetch(`https://hihihi-cyan.vercel.app/api/send?text=${encodedMsg}`)
-        .then(res => res.json())
-        .then(json => console.log("✅ Đã gửi Telegram:", json))
-        .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
-    })
-    .catch(err => {
-      console.error("❌ Lỗi khi lưu Firebase:", err);
-      alert("⚠️ Lỗi khi gửi thông tin chốt ảnh.");
-    });
+    if (selectedDogs.length === 0) {
+      alert("❗ Bạn chưa chọn bé cún nào cả!");
+      return;
+    }
+
+    const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
+    const message = `Thời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${selectedSeat.side} - Bàn ${selectedSeat.table}`;
+    const encodedMsg = encodeURIComponent(message);
+
+    const data = {
+      selectedDogs,
+      time: timeStr,
+      seat: {
+        side: selectedSeat.side,
+        table: selectedSeat.table
+      }
+    };
+
+    db.ref("photoRequests").push(data)
+      .then(() => {
+        alert(
+          `🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${selectedSeat.side} - ${selectedSeat.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`
+        );
+
+        selectedDogs = [];
+        selectedSeat = null;
+        seatButtons.forEach(b => b.classList.remove("selected"));
+        renderDogs(searchInput.value);
+        updateSelectedCount();
+
+        fetch(`https://hihihi-cyan.vercel.app/api/send?text=${encodedMsg}`)
+          .then(res => res.json())
+          .then(json => console.log("✅ Đã gửi Telegram:", json))
+          .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
+      })
+      .catch(err => {
+        console.error("❌ Lỗi khi lưu Firebase:", err);
+        alert("⚠️ Lỗi khi gửi thông tin chốt ảnh.");
+      });
+  });
 });
-
   </script>
 </body>
 </html>
