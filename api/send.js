@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   const botToken = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
-  const chatId = "4871700506";
+  const chatId = "-4871700506";
 
   try {
     const telegramRes = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
