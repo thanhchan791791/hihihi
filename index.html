@@ -328,10 +328,26 @@ submitBtn.addEventListener("click", () => {
   // ✅ Lưu lại thời gian chọn hiện tại
   localStorage.setItem("lastSelectTime", now.toISOString());
 
-  if (!selectedSeat) {
-    alert("❗ Vui lòng chọn vị trí của bạn trước khi chốt bé iu nha!");
-    return;
-  }
+ // 🆕 Lấy thông tin ghế từ hash URL
+const hash = window.location.hash.toLowerCase();
+let match = hash.match(/^#\/?([lr])(\d)$/);
+let seatFromHash = {
+  side: "Bên trái",
+  table: "Bàn 1"
+}; // mặc định
+
+if (match) {
+  const side = match[1] === "r" ? "Bên phải" : "Bên trái";
+  const table = "Bàn " + match[2];
+  seatFromHash = { side, table };
+}
+
+// ❗ KHÔNG cần chọn ghế nữa → Xóa đoạn kiểm tra selectedSeat
+// if (!selectedSeat) {
+//   alert("❗ Vui lòng chọn vị trí của bạn trước khi chốt bé iu nha!");
+//   return;
+// }
+
 
   if (selectedDogs.length === 0) {
     alert("❗ Bạn chưa chọn bé cún nào cả!");
