@@ -55,18 +55,16 @@
       flex: 1;
     }
 
-   .side h3 {
-  color: #d94f85;
-  font-size: 1.6em;
-  margin-bottom: 15px;
-  font-weight: bold;
-  text-transform: none;
-  background: #ffe4ec;
-  padding: 10px 0;
-  border-radius: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
+    .side h3 {
+      color: #d94f85;
+      font-size: 1.6em;
+      margin-bottom: 15px;
+      font-weight: bold;
+      background: #ffe4ec;
+      padding: 10px 0;
+      border-radius: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
 
     .seat {
       display: inline-block;
@@ -195,18 +193,9 @@
     </div>
   </div>
 
-<div style="
-  margin: 30px auto 20px;
-  font-size: 1.1em;
-  color: #d94f85;
-  font-weight: bold;
-  text-align: center;
-  padding: 0 15px;
-">
-  🐶 Dưới đây là danh sách các bé cún đang chờ được chọn nè!
-</div>
-
-<div id="dog-list"></div>
+  <div style="margin: 30px auto 20px; font-size: 1.1em; color: #d94f85; font-weight: bold; text-align: center; padding: 0 15px;">
+    🐶 Dưới đây là danh sách các bé cún đang chờ được chọn nè!
+  </div>
 
   <div id="dog-list"></div>
   <button id="submit-btn">📤 Chốt bé & vị trí</button>
@@ -237,18 +226,12 @@
     const seatButtons = document.querySelectorAll(".seat");
 
     let selectedDogs = [];
-    let selectedSeat = null;
     let allDogs = [];
 
     seatButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         seatButtons.forEach(b => b.classList.remove("selected"));
         btn.classList.add("selected");
-        selectedSeat = {
-          side: btn.dataset.side,
-          table: btn.textContent
-        };
-        updateSelectedCount();
       });
     });
 
@@ -295,105 +278,74 @@
         });
     }
 
-   db.ref("dogs").on("value", snapshot => {
-  const data = snapshot.val();
-  allDogs = Object.values(data || {}).sort((a, b) => {
-    if (a.status === "play" && b.status !== "play") return -1;
-    if (a.status !== "play" && b.status === "play") return 1;
-    return a.name.localeCompare(b.name); // sắp theo tên nếu cùng trạng thái
-  });
-  renderDogs(searchInput.value);
-});
-
+    db.ref("dogs").on("value", snapshot => {
+      const data = snapshot.val();
+      allDogs = Object.values(data || {}).sort((a, b) => {
+        if (a.status === "play" && b.status !== "play") return -1;
+        if (a.status !== "play" && b.status === "play") return 1;
+        return a.name.localeCompare(b.name);
+      });
+      renderDogs(searchInput.value);
+    });
 
     searchInput.addEventListener("input", () => {
       renderDogs(searchInput.value);
     });
 
-submitBtn.addEventListener("click", () => {
-  const now = new Date();
-  const lastSelectTime = localStorage.getItem("lastSelectTime");
+    submitBtn.addEventListener("click", () => {
+      const now = new Date();
+      const lastSelectTime = localStorage.getItem("lastSelectTime");
 
-  if (lastSelectTime) {
-    const diffMs = now - new Date(lastSelectTime);
-    const diffMinutes = Math.floor(diffMs / 60000);
+      // Bỏ giới hạn thời gian (bạn có thể bật lại nếu muốn)
 
-    // if (diffMinutes < 10) {
-    //   const waitMinutes = 10 - diffMinutes;
-    //   alert(`⏳ Vui lòng quay lại sau ${waitMinutes} phút nữa để chọn bé tiếp nha!`);
-    //   return;
-    // }
-  }
+      localStorage.setItem("lastSelectTime", now.toISOString());
 
-  // ✅ Lưu lại thời gian chọn hiện tại
-  localStorage.setItem("lastSelectTime", now.toISOString());
+      const hash = window.location.hash.toLowerCase();
+      let match = hash.match(/^#\/?([lr])(\d)$/);
+      let seatFromHash = { side: "Bên trái", table: "Bàn 1" };
 
- // 🆕 Lấy thông tin ghế từ hash URL
-const hash = window.location.hash.toLowerCase();
-let match = hash.match(/^#\/?([lr])(\d)$/);
-let seatFromHash = {
-  side: "Bên trái",
-  table: "Bàn 1"
-}; // mặc định
+      if (match) {
+        const side = match[1] === "r" ? "Bên phải" : "Bên trái";
+        const table = "Bàn " + match[2];
+        seatFromHash = { side, table };
+      }
 
-if (match) {
-  const side = match[1] === "r" ? "Bên phải" : "Bên trái";
-  const table = "Bàn " + match[2];
-  seatFromHash = { side, table };
-}
+      if (selectedDogs.length === 0) {
+        alert("❗ Bạn chưa chọn bé cún nào cả!");
+        return;
+      }
 
-// ❗ KHÔNG cần chọn ghế nữa → Xóa đoạn kiểm tra selectedSeat
-// if (!selectedSeat) {
-//   alert("❗ Vui lòng chọn vị trí của bạn trước khi chốt bé iu nha!");
-//   return;
-// }
+      const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
+      const message = `Thời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${seatFromHash.side} - ${seatFromHash.table}`;
+      const encodedMsg = encodeURIComponent(message);
 
+      const data = {
+        selectedDogs,
+        time: timeStr,
+        seat: seatFromHash
+      };
 
-  if (selectedDogs.length === 0) {
-    alert("❗ Bạn chưa chọn bé cún nào cả!");
-    return;
-  }
+      db.ref("photoRequests").push(data)
+        .then(() => {
+          alert(
+            `🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${seatFromHash.side} - ${seatFromHash.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`
+          );
 
-  const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
+          selectedDogs = [];
+          seatButtons.forEach(b => b.classList.remove("selected"));
+          renderDogs(searchInput.value);
+          updateSelectedCount();
 
-const message = `Thời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${seatFromHash.side} - ${seatFromHash.table}`;
-  const encodedMsg = encodeURIComponent(message);
-
-  const data = {
-    selectedDogs,
-    time: timeStr,
-    seat: {
-  side: seatFromHash.side,
-  table: seatFromHash.table
-}
-
-  };
-
-  db.ref("photoRequests").push(data)
-    .then(() => {
-      alert(
-        `🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${selectedSeat.side} - ${selectedSeat.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`
-      );
-
-      // Reset chọn
-      selectedDogs = [];
-      selectedSeat = null;
-      seatButtons.forEach(b => b.classList.remove("selected"));
-      renderDogs(searchInput.value);
-      updateSelectedCount();
-
-      // Gửi thông báo Telegram
-      fetch(`https://hihihi-cyan.vercel.app/api/send?text=${encodedMsg}`)
-        .then(res => res.json())
-        .then(json => console.log("✅ Đã gửi Telegram:", json))
-        .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
-    })
-    .catch(err => {
-      console.error("❌ Lỗi khi lưu Firebase:", err);
-      alert("⚠️ Lỗi khi gửi thông tin chốt ảnh.");
+          fetch(`https://hihihi-cyan.vercel.app/api/send?text=${encodedMsg}`)
+            .then(res => res.json())
+            .then(json => console.log("✅ Đã gửi Telegram:", json))
+            .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
+        })
+        .catch(err => {
+          console.error("❌ Lỗi khi lưu Firebase:", err);
+          alert("⚠️ Lỗi khi gửi thông tin chốt ảnh.");
+        });
     });
-});
-
   </script>
 </body>
 </html>
