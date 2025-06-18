@@ -310,40 +310,59 @@
       renderDogs(searchInput.value);
     });
 
-    submitBtn.addEventListener("click", () => {
-      if (!selectedSeat) {
-        alert("❗ Vui lòng chọn vị trí của bạn trước khi chốt bé iu nha!");
-        return;
-      }
+  submitBtn.addEventListener("click", () => {
+  if (!selectedSeat) {
+    alert("❗ Vui lòng chọn vị trí của bạn trước khi chốt bé iu nha!");
+    return;
+  }
 
-      if (selectedDogs.length === 0) {
-        alert("❗ Bạn chưa chọn bé cún nào cả!");
-        return;
-      }
+  if (selectedDogs.length === 0) {
+    alert("❗ Bạn chưa chọn bé cún nào cả!");
+    return;
+  }
 
-      const now = new Date();
-      const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
+  const now = new Date();
+  const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
 
-      const data = {
-        selectedDogs,
-        time: timeStr,
-        seat: {
-          side: selectedSeat.side,
-          table: selectedSeat.table
-        }
-      };
+  const data = {
+    selectedDogs,
+    time: timeStr,
+    seat: {
+      side: selectedSeat.side,
+      table: selectedSeat.table
+    }
+  };
 
-      db.ref("photoRequests").push(data).then(() => {
-        alert(
-          `🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${selectedSeat.side} - ${selectedSeat.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`
-        );
-        selectedDogs = [];
-        selectedSeat = null;
-        seatButtons.forEach(b => b.classList.remove("selected"));
-        renderDogs(searchInput.value);
-        updateSelectedCount();
-      });
+  db.ref("photoRequests").push(data).then(() => {
+    // ✅ Gửi thông báo về Telegram
+    const telegramToken = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI"; // Thay token nếu cần
+    const chatId = "7407027307"; // Thay chat ID nếu cần
+    const message = `🐾 Có khách vừa chọn chụp ảnh!\n👶 Bé: ${selectedDogs.join(", ")}\n💺 Vị trí: ${selectedSeat.side} - ${selectedSeat.table}\n⏰ Thời gian: ${timeStr}`;
+
+    fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message
+      })
     });
+
+    // ✅ Thông báo cho khách
+    alert(
+      `🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${selectedSeat.side} - ${selectedSeat.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`
+    );
+
+    selectedDogs = [];
+    selectedSeat = null;
+    seatButtons.forEach(b => b.classList.remove("selected"));
+    renderDogs(searchInput.value);
+    updateSelectedCount();
+  });
+});
+
   </script>
 </body>
 </html>
