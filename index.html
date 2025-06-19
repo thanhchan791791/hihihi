@@ -130,14 +130,27 @@
   <div id="search-box">
     <input type="text" id="search-input" placeholder="Nhập tên bé cún..." />
   </div>
-  <div id="seat-info">💺 Vị trí đang tải...</div>
+  <div id="seat-info"> Vị trí đang tải...</div>
 
   <div style="margin: 30px auto 20px; font-size: 1.1em; color: #d94f85; font-weight: bold; text-align: center; padding: 0 15px;">
-    🐶 Dưới đây là danh sách các bé cún đang chờ được chọn nè!
+     Dưới đây là danh sách các bé cún đang chờ được chọn nè!
   </div>
 
   <div id="dog-list"></div>
-  <button id="submit-btn">📤 Chốt bé & vị trí</button>
+<button id="submit-btn" style="
+  background-color: #ff69b4;
+  color: white;
+  padding: 12px 24px;
+  font-size: 1.2em;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  font-family: 'Comic Sans MS', cursive;
+">
+   Chốt các bé iu 💖
+</button>
+
   <div id="selected-count">Đã chọn: 0 bé</div>
 
   <!-- Firebase SDK -->
@@ -224,9 +237,9 @@
     function updateSeatDisplay() {
       const seat = getSeatFromHash();
       if (seat) {
-        seatInfo.textContent = `💺 Vị trí của bạn: ${seat.side} - ${seat.table}`;
+        seatInfo.textContent = ` Vị trí của bạn: ${seat.side} - ${seat.table}`;
       } else {
-        seatInfo.textContent = "💺 Vị trí chưa xác định từ đường link!";
+        seatInfo.textContent = " Vị trí chưa xác định từ đường link!";
       }
     }
 
@@ -270,7 +283,7 @@
 
       db.ref("photoRequests").push(data)
         .then(() => {
-          alert(`🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n💺 Vị trí: ${seatFromHash.side} - ${seatFromHash.table}.\n🐶 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`);
+          alert(`🎉 Bạn đã chọn: ${selectedDogs.join(", ")}.\n Vị trí: ${seatFromHash.side} - ${seatFromHash.table}.\n Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé ^^`);
 
           selectedDogs = [];
           renderDogs(searchInput.value);
