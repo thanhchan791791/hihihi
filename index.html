@@ -19,6 +19,26 @@
       padding-bottom: 100px;
       text-align: center;
     }
+#alert-box-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+  transition: opacity 0.6s ease;
+}
+
+#alert-box.show {
+  opacity: 1;
+}
+
+#alert-box {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
 
     h1 {
       font-size: 2em;
@@ -139,7 +159,6 @@
       opacity: 1;
     }
 
-    /* Slider ảnh mở đầu */
     #photoOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -168,19 +187,14 @@
 
 <!-- Overlay slider ảnh chụp thật -->
 <div id="photoOverlay">
-<div id="carouselPhotos" class="carousel slide w-100" style="max-width: 900px;" data-bs-ride="carousel" data-bs-interval="800">
-    <div class="carousel-inner">
-      <!-- ảnh sẽ được thêm tự động -->
-    </div>
+  <div id="carouselPhotos" class="carousel slide w-100" style="max-width: 900px;" data-bs-ride="carousel" data-bs-interval="800">
+    <div class="carousel-inner"></div>
   </div>
 </div>
 
 <h1>📸 Chọn các bé iu để chụp ảnh</h1>
 
-<div>
-  <input type="text" id="search-input" placeholder="Nhập tên bé cún..." />
-</div>
-
+<div><input type="text" id="search-input" placeholder="Nhập tên bé cún..." /></div>
 <div id="seat-info">Vị trí đang tải...</div>
 
 <div style="margin: 30px auto 20px; font-size: 1.1em; color: #d94f85; font-weight: bold;">
@@ -190,12 +204,13 @@
 <div id="dog-list"></div>
 
 <!-- Alert -->
-<div class="container position-fixed bottom-0 start-50 translate-middle-x mb-5" style="z-index: 9999;">
-  <div id="alert-box" class="alert alert-success fade d-none" role="alert">
+<div id="alert-box-container">
+  <div id="alert-box" class="alert alert-success d-none" role="alert">
     <i class="fa-solid fa-circle-check me-2"></i>
     <span id="alert-message">Đã gửi yêu cầu!</span>
   </div>
 </div>
+
 
 <!-- Nút chốt -->
 <button id="submit-btn">
@@ -246,7 +261,6 @@
         const div = document.createElement("div");
         div.className = "dog-card";
         div.dataset.name = dog.name;
-
         if (selectedDogs.includes(dog.name)) div.classList.add("selected");
         if (dog.status !== "play") div.classList.add("sleeping");
 
@@ -300,11 +314,7 @@
     alertBox.classList.remove("d-none", "alert-success", "alert-warning", "alert-danger", "show");
     alertBox.classList.add(`alert-${type}`);
     alertMessage.textContent = message;
-
-    requestAnimationFrame(() => {
-      alertBox.classList.add("show");
-    });
-
+    requestAnimationFrame(() => alertBox.classList.add("show"));
     setTimeout(() => {
       alertBox.classList.remove("show");
       setTimeout(() => alertBox.classList.add("d-none"), 600);
@@ -321,17 +331,27 @@
     renderDogs(searchInput.value);
   });
 
-  searchInput.addEventListener("input", () => {
-    renderDogs(searchInput.value);
-  });
-
+  searchInput.addEventListener("input", () => renderDogs(searchInput.value));
   window.addEventListener("hashchange", updateSeatDisplay);
   window.addEventListener("DOMContentLoaded", updateSeatDisplay);
 
   submitBtn.addEventListener("click", () => {
     const now = new Date();
-    localStorage.setItem("lastSelectTime", now.toISOString());
+    const lastTimeStr = localStorage.getItem("lastSelectTime");
 
+    if (lastTimeStr) {
+      const lastTime = new Date(lastTimeStr);
+      const diff = Math.floor((now - lastTime) / 1000);
+      const wait = 600 - diff;
+      if (wait > 0) {
+        const min = Math.floor(wait / 60);
+        const sec = wait % 60;
+        showBootstrapAlert(`⏳ Vui lòng quay lại sau ${min} phút ${sec} giây nha!`, "warning");
+        return;
+      }
+    }
+
+    localStorage.setItem("lastSelectTime", now.toISOString());
     const seatFromHash = getSeatFromHash() || { side: "Không rõ", table: "Không rõ" };
 
     if (selectedDogs.length === 0) {
@@ -343,11 +363,7 @@
     const message = `Thời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${seatFromHash.side} - ${seatFromHash.table}`;
     const encodedMsg = encodeURIComponent(message);
 
-    const data = {
-      selectedDogs,
-      time: timeStr,
-      seat: seatFromHash
-    };
+    const data = { selectedDogs, time: timeStr, seat: seatFromHash };
 
     db.ref("photoRequests").push(data)
       .then(() => {
@@ -367,14 +383,13 @@
       });
   });
 
-  // === Overlay logic ===
   const photoUrls = [
-  "image/slide1.jpg",
-  "image/slide2.jpg",
-  "image/slide3.jpg",
-  "image/slide4.jpg",
-  "image/slide5.jpg"
-];
+    "image/slide1.jpg",
+    "image/slide2.jpg",
+    "image/slide3.jpg",
+    "image/slide4.jpg",
+    "image/slide5.jpg"
+  ];
 
   const carouselInner = document.querySelector("#carouselPhotos .carousel-inner");
   const overlay = document.getElementById("photoOverlay");
