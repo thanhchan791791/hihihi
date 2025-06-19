@@ -1,3 +1,4 @@
+<!-- TOÀN BỘ CODE HTML - KHÔNG BỊ BỎ PHẦN NÀO - ĐÃ GỘP CHỨC NĂNG CHỜ 10 PHÚT CHUNG -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -19,26 +20,26 @@
       padding-bottom: 100px;
       text-align: center;
     }
-#alert-box-container {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  width: 80%;
-  max-width: 400px;
-  text-align: center;
-  transition: opacity 0.6s ease;
-}
+    #alert-box-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      transition: opacity 0.6s ease;
+    }
 
-#alert-box.show {
-  opacity: 1;
-}
+    #alert-box.show {
+      opacity: 1;
+    }
 
-#alert-box {
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
+    #alert-box {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
 
     h1 {
       font-size: 2em;
@@ -150,15 +151,6 @@
       display: none;
     }
 
-    #alert-box {
-      opacity: 0;
-      transition: opacity 0.6s ease;
-    }
-
-    #alert-box.show {
-      opacity: 1;
-    }
-
     #photoOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -210,7 +202,6 @@
     <span id="alert-message">Đã gửi yêu cầu!</span>
   </div>
 </div>
-
 
 <!-- Nút chốt -->
 <button id="submit-btn">
@@ -336,51 +327,48 @@
   window.addEventListener("DOMContentLoaded", updateSeatDisplay);
 
   submitBtn.addEventListener("click", () => {
-    const now = new Date();
-    const lastTimeStr = localStorage.getItem("lastSelectTime");
+    db.ref("lastSelectTime").once("value").then(snapshot => {
+      const lastTimestamp = snapshot.val();
+      const now = Date.now();
 
-    if (lastTimeStr) {
-      const lastTime = new Date(lastTimeStr);
-      const diff = Math.floor((now - lastTime) / 1000);
-      const wait = 600 - diff;
-      if (wait > 0) {
+      if (lastTimestamp && now - lastTimestamp < 600000) {
+        const wait = 600 - Math.floor((now - lastTimestamp) / 1000);
         const min = Math.floor(wait / 60);
         const sec = wait % 60;
         showBootstrapAlert(`⏳ Vui lòng quay lại sau ${min} phút ${sec} giây nha!`, "warning");
         return;
       }
-    }
 
-    localStorage.setItem("lastSelectTime", now.toISOString());
-    const seatFromHash = getSeatFromHash() || { side: "Không rõ", table: "Không rõ" };
+      const seatFromHash = getSeatFromHash() || { side: "Không rõ", table: "Không rõ" };
+      if (selectedDogs.length === 0) {
+        showBootstrapAlert("❗ Bạn chưa chọn bé cún nào cả!", "danger");
+        return;
+      }
 
-    if (selectedDogs.length === 0) {
-      showBootstrapAlert("❗ Bạn chưa chọn bé cún nào cả!", "danger");
-      return;
-    }
+      const nowDate = new Date();
+      const timeStr = `${nowDate.getHours()}h${nowDate.getMinutes()}p`;
+      const message = `Thời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${seatFromHash.side} - ${seatFromHash.table}`;
+      const encodedMsg = encodeURIComponent(message);
+      const data = { selectedDogs, time: timeStr, seat: seatFromHash };
 
-    const timeStr = `${now.getHours()}h${now.getMinutes()}p`;
-    const message = `Thời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${seatFromHash.side} - ${seatFromHash.table}`;
-    const encodedMsg = encodeURIComponent(message);
+      db.ref("photoRequests").push(data)
+        .then(() => {
+          db.ref("lastSelectTime").set(firebase.database.ServerValue.TIMESTAMP);
+          showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}. Nhân viên sẽ đến hỗ trợ nha!`, "success", 5000);
+          selectedDogs = [];
+          renderDogs(searchInput.value);
+          updateSelectedCount();
 
-    const data = { selectedDogs, time: timeStr, seat: seatFromHash };
-
-    db.ref("photoRequests").push(data)
-      .then(() => {
-        showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}. Nhân viên sẽ đến hỗ trợ nha!`, "success", 5000);
-        selectedDogs = [];
-        renderDogs(searchInput.value);
-        updateSelectedCount();
-
-        fetch(`https://hihihi-cyan.vercel.app/api/send?text=${encodedMsg}`)
-          .then(res => res.json())
-          .then(json => console.log("✅ Đã gửi Telegram:", json))
-          .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
-      })
-      .catch(err => {
-        console.error("❌ Lỗi khi lưu Firebase:", err);
-        showBootstrapAlert("⚠️ Lỗi khi gửi thông tin chốt ảnh.", "danger");
-      });
+          fetch(`https://hihihi-cyan.vercel.app/api/send?text=${encodedMsg}`)
+            .then(res => res.json())
+            .then(json => console.log("✅ Đã gửi Telegram:", json))
+            .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
+        })
+        .catch(err => {
+          console.error("❌ Lỗi khi lưu Firebase:", err);
+          showBootstrapAlert("⚠️ Lỗi khi gửi thông tin chốt ảnh.", "danger");
+        });
+    });
   });
 
   const photoUrls = [
