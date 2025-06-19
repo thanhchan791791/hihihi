@@ -156,7 +156,7 @@
 
   <div id="dog-list"></div>
 
-  <!-- Alert thông báo -->
+  <!-- Alert -->
   <div class="container position-fixed bottom-0 start-50 translate-middle-x mb-5" style="z-index: 9999;">
     <div id="alert-box" class="alert alert-success fade d-none" role="alert">
       <i class="fa-solid fa-circle-check me-2"></i>
@@ -263,7 +263,7 @@
       }
     }
 
-    function showBootstrapAlert(message, type = "success") {
+    function showBootstrapAlert(message, type = "success", duration = 3000) {
       alertBox.classList.remove("d-none", "alert-success", "alert-warning", "alert-danger", "show");
       alertBox.classList.add(`alert-${type}`);
       alertMessage.textContent = message;
@@ -275,7 +275,7 @@
       setTimeout(() => {
         alertBox.classList.remove("show");
         setTimeout(() => alertBox.classList.add("d-none"), 600);
-      }, 3000);
+      }, duration);
     }
 
     db.ref("dogs").on("value", snapshot => {
@@ -318,7 +318,7 @@
 
       db.ref("photoRequests").push(data)
         .then(() => {
-          showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}. Nhân viên sẽ đến hỗ trợ nha!`, "success");
+          showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}. Nhân viên sẽ đến hỗ trợ nha!`, "success", 5000);
 
           selectedDogs = [];
           renderDogs(searchInput.value);
