@@ -101,17 +101,28 @@
       border: 3px solid #ff69b4;
     }
 
-    .dog-card.sleeping {
-  opacity: 0.8; /* Mờ nhẹ thôi */
-  filter: grayscale(20%) blur(1px); /* Làm hơi xám và hơi mờ */
-  pointer-events: none; /* Vẫn không cho chọn */
+   .dog-card.sleeping {
+  opacity: 0.8; /* Mờ nhẹ */
+  filter: grayscale(10%) blur(0.5px);
+  pointer-events: none;
   position: relative;
   transition: 0.3s ease;
 }
 
-/* Bỏ phần ::before nếu không muốn che chữ Khò khò */
 .dog-card.sleeping::before {
-  content: ""; /* Hoặc xóa hẳn phần này nếu không muốn hiển thị gì */
+  content: "💤 Khò khò";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.4em;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 8px 15px;
+  border-radius: 20px;
+  color: #d94f85;
+  font-family: 'Comic Sans MS', cursive;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 
