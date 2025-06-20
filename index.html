@@ -102,23 +102,18 @@
     }
 
     .dog-card.sleeping {
-      opacity: 0.5;
-      pointer-events: none;
-      position: relative;
-    }
+  opacity: 0.8; /* Mờ nhẹ thôi */
+  filter: grayscale(20%) blur(1px); /* Làm hơi xám và hơi mờ */
+  pointer-events: none; /* Vẫn không cho chọn */
+  position: relative;
+  transition: 0.3s ease;
+}
 
-    .dog-card.sleeping::before {
-      content: "💤 Khò khò";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 5px 15px;
-      border-radius: 10px;
-      color: #d94f85;
-      font-weight: bold;
-    }
+/* Bỏ phần ::before nếu không muốn che chữ Khò khò */
+.dog-card.sleeping::before {
+  content: ""; /* Hoặc xóa hẳn phần này nếu không muốn hiển thị gì */
+}
+
 
     #submit-btn {
       position: fixed;
