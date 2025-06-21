@@ -12,6 +12,67 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
+    .selected-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: rgba(255, 245, 250, 0.9); /* Nền hồng nhạt, gần trắng */
+  color: #d94f85; /* Màu chữ hồng tươi pastel */
+  padding: 10px 22px;
+  border-radius: 25px;
+  font-size: 1.1em;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Comic Sans MS', cursive;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transition: all 0.35s ease-in-out;
+  z-index: 2;
+  backdrop-filter: blur(2px); /* Mờ nhẹ nền phía sau */
+}
+
+/* Khi được chọn thì hiện overlay */
+.dog-card.selected .selected-overlay {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Icon nhẹ hơn và pastel */
+.selected-overlay i {
+  color: #e084b3;
+  font-size: 1.3em;
+  margin-right: 8px;
+}
+
+    .dog-image-wrapper {
+  position: relative;
+}
+
+.selected-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 105, 180, 0.85); /* Hồng nhẹ */
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 1.2em;
+  font-weight: bold;
+  display: none;
+  font-family: 'Comic Sans MS', cursive;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 10;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.dog-card.selected .selected-overlay {
+  display: block;
+}
+
     body {
       font-family: 'Comic Sans MS', cursive;
       background: linear-gradient(to bottom, #fffafc, #ffeef5);
@@ -303,11 +364,18 @@
         if (selectedDogs.includes(dog.name)) div.classList.add("selected");
         if (dog.status !== "play") div.classList.add("sleeping");
 
-        div.innerHTML = `
-          <img src="${dog.image}" alt="${dog.name}" />
-          <h3>${dog.name}</h3>
-          <p>Giống: ${dog.breed}</p>
-        `;
+      div.innerHTML = `
+  <div class="dog-image-wrapper">
+    <img src="${dog.image}" alt="${dog.name}" />
+    <div class="selected-overlay">
+      <i class="fa-solid fa-check-circle me-2"></i> Đã chọn
+    </div>
+  </div>
+  <h3>${dog.name}</h3>
+  <p>Giống: ${dog.breed}</p>
+`;
+
+
 
       div.addEventListener("click", () => {
   const dogName = dog.name;
