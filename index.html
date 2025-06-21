@@ -12,273 +12,241 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
-    .selected-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
-  background: rgba(255, 245, 250, 0.9); /* Nền hồng nhạt, gần trắng */
-  color: #d94f85; /* Màu chữ hồng tươi pastel */
-  padding: 10px 22px;
-  border-radius: 25px;
-  font-size: 1.1em;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Comic Sans MS', cursive;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  opacity: 0;
-  transition: all 0.35s ease-in-out;
-  z-index: 2;
-  backdrop-filter: blur(2px); /* Mờ nhẹ nền phía sau */
-}
+  body {
+    font-family: 'Comic Sans MS', cursive;
+    background: linear-gradient(to bottom, #fffafc, #ffeef5);
+    margin: 0;
+    padding: 20px 20px 100px;
+    text-align: center;
+  }
 
-/* Khi được chọn thì hiện overlay */
-.dog-card.selected .selected-overlay {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
+  h1 {
+    font-size: 2em;
+    color: #ff69b4;
+    margin-bottom: 10px;
+  }
 
-/* Icon nhẹ hơn và pastel */
-.selected-overlay i {
-  color: #e084b3;
-  font-size: 1.3em;
-  margin-right: 8px;
-}
+  #search-input {
+    width: 90%;
+    max-width: 400px;
+    padding: 12px 20px;
+    font-size: 1em;
+    border-radius: 30px;
+    border: 2px solid #ffd6e6;
+    background-color: #fff0f7;
+    color: #d94f85;
+  }
 
-    .dog-image-wrapper {
-  position: relative;
-}
+  #seat-info {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #d94f85;
+    font-size: 1.1em;
+  }
 
-.selected-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 105, 180, 0.85); /* Hồng nhẹ */
-  color: white;
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-size: 1.2em;
-  font-weight: bold;
-  display: none;
-  font-family: 'Comic Sans MS', cursive;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  z-index: 10;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-}
+  #dog-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
 
-.dog-card.selected .selected-overlay {
-  display: block;
-}
+  .dog-card {
+    background: #fff0f5;
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    position: relative;
+  }
 
-    body {
-      font-family: 'Comic Sans MS', cursive;
-      background: linear-gradient(to bottom, #fffafc, #ffeef5);
-      margin: 0;
-      padding: 20px;
-      padding-bottom: 100px;
-      text-align: center;
-    }
-    
-    #alert-box.show {
-      opacity: 1;
-    }
+  .dog-card img {
+    width: 100%;
+    height: 60vh;
+    object-fit: cover;
+    border-radius: 15px;
+  }
 
-   #alert-box-container {
-  position: fixed;
-  top: -100px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  transition: top 0.5s ease, opacity 0.3s ease;
-  opacity: 0;
-}
+  .dog-card h3 {
+    margin: 5px 0;
+    color: #d94f85;
+  }
 
-#alert-box-container.show {
-  top: 30px;
-  opacity: 1;
-  transform: translateX(-50%) scale(1.05);
-}
+  .dog-card p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #555;
+  }
 
+  .dog-card.selected {
+    border: 3px solid #ff69b4;
+  }
 
-#alert-box {
-  background: #fff0f5;
-  border: 2px solid #ffa8c5;
-  color: #d94f85;
-  font-size: 1em;
-  font-weight: bold;
-  border-radius: 25px;
-  padding: 12px 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
+  .dog-card.sleeping {
+    opacity: 0.8;
+    filter: grayscale(10%) blur(0.5px);
+    transition: 0.3s ease;
+  }
 
+  .dog-card.sleeping::before {
+    content: "💤 Khò khò";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.4em;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px 15px;
+    border-radius: 20px;
+    color: #d94f85;
+    font-family: 'Comic Sans MS', cursive;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 3;
+  }
 
-    h1 {
-      font-size: 2em;
-      color: #ff69b4;
-      margin-bottom: 10px;
-    }
+  .dog-image-wrapper {
+    position: relative;
+  }
 
-    #search-input {
-      width: 90%;
-      max-width: 400px;
-      padding: 12px 20px;
-      font-size: 1em;
-      border-radius: 30px;
-      border: 2px solid #ffd6e6;
-      background-color: #fff0f7;
-      color: #d94f85;
-    }
+  .selected-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: rgba(255, 245, 250, 0.9);
+    color: #d94f85;
+    padding: 10px 22px;
+    border-radius: 25px;
+    font-size: 1.1em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Comic Sans MS', cursive;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    transition: all 0.35s ease-in-out;
+    z-index: 2;
+    backdrop-filter: blur(2px);
+  }
 
-    #seat-info {
-      margin-top: 10px;
-      font-weight: bold;
-      color: #d94f85;
-      font-size: 1.1em;
-    }
+  .dog-card.selected .selected-overlay {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 
-    #dog-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
+  .selected-overlay i {
+    color: #e084b3;
+    font-size: 1.3em;
+    margin-right: 8px;
+  }
 
-    .dog-card {
-      background: #fff0f5;
-      padding: 10px;
-      border-radius: 20px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    }
+  #submit-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ff69b4;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
 
-   .dog-card img {
-  width: 100%;
-  height: 60vh; /* Chiều cao bằng 60% chiều cao màn hình */
-  object-fit: cover;
-  border-radius: 15px;
-}
+  #submit-btn:hover {
+    background-color: #ff1493;
+  }
 
+  #selected-count {
+    position: fixed;
+    top: 20px;
+    right: 50%;
+    transform: translateX(50%);
+    background: #ffecf4;
+    color: #d94f85;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: bold;
+    display: none;
+  }
 
-    .dog-card h3 {
-      margin: 5px 0;
-      color: #d94f85;
-    }
+  #alert-box-container {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    transition: top 0.5s ease, opacity 0.3s ease;
+    opacity: 0;
+  }
 
-    .dog-card p {
-      margin: 0;
-      font-size: 0.85em;
-      color: #555;
-    }
+  #alert-box-container.show {
+    top: 30px;
+    opacity: 1;
+    transform: translateX(-50%) scale(1.05);
+  }
 
-    .dog-card.selected {
-      border: 3px solid #ff69b4;
-    }
+  #alert-box {
+    background: #fff0f5;
+    border: 2px solid #ffa8c5;
+    color: #d94f85;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 25px;
+    padding: 12px 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
 
-   .dog-card.sleeping {
-  opacity: 0.8; /* Mờ nhẹ */
-  filter: grayscale(10%) blur(0.5px);
-/*  pointer-events: none;*/
-  position: relative;
-  transition: 0.3s ease;
-}
+  #photoOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.dog-card.sleeping::before {
-  content: "💤 Khò khò";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.4em;
-  font-weight: bold;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 8px 15px;
-  border-radius: 20px;
-  color: #d94f85;
-  font-family: 'Comic Sans MS', cursive;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
+  #photoOverlay img {
+    height: 80vh;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  }
 
+  .carousel-inner {
+    border-radius: 20px;
+    overflow: hidden;
+  }
 
-    #submit-btn {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #ff69b4;
-      color: white;
-      padding: 12px 30px;
-      border: none;
-      border-radius: 30px;
-      font-size: 1.2em;
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
+  #tapOverlayText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2em;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+    opacity: 0.85;
+    z-index: 100001;
+    animation: pulseText 1.5s infinite;
+    pointer-events: none;
+    font-family: 'Comic Sans MS', cursive;
+  }
 
-    #submit-btn:hover {
-      background-color: #ff1493;
-    }
+  @keyframes pulseText {
+    0%, 100% { opacity: 0.85; }
+    50% { opacity: 0.4; }
+  }
+</style>
 
-    #selected-count {
-      position: fixed;
-      top: 20px;
-      right: 50%;
-      transform: translateX(50%);
-      background: #ffecf4;
-      color: #d94f85;
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-weight: bold;
-      display: none;
-    }
-
-    #photoOverlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #photoOverlay img {
-      height: 80vh;
-      object-fit: cover;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-
-    .carousel-inner {
-      border-radius: 20px;
-      overflow: hidden;
-    }
-    #tapOverlayText {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2em;
-  font-weight: bold;
-  color: white;
-  text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
-  opacity: 0.85;
-  z-index: 100001;
-  animation: pulseText 1.5s infinite;
-  pointer-events: none;
-  font-family: 'Comic Sans MS', cursive;
-}
-
-@keyframes pulseText {
-  0%, 100% { opacity: 0.85; }
-  50% { opacity: 0.4; }
-}
-
-  </style>
 </head>
 <body>
 
