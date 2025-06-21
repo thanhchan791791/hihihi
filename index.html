@@ -436,7 +436,7 @@
       const lastTimestamp = snapshot.val();
       const now = Date.now();
 
-      if (lastTimestamp && now - lastTimestamp < 600000) {
+      if (lastTimestamp && now - lastTimestamp < 900000) {
         const wait = 600 - Math.floor((now - lastTimestamp) / 1000);
         const min = Math.floor(wait / 60);
         const sec = wait % 60;
