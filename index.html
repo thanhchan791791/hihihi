@@ -196,6 +196,27 @@
       border-radius: 20px;
       overflow: hidden;
     }
+    #tapOverlayText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2em;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+  opacity: 0.85;
+  z-index: 100001;
+  animation: pulseText 1.5s infinite;
+  pointer-events: none;
+  font-family: 'Comic Sans MS', cursive;
+}
+
+@keyframes pulseText {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 0.4; }
+}
+
   </style>
 </head>
 <body>
@@ -205,7 +226,11 @@
   <div id="carouselPhotos" class="carousel slide w-100" style="max-width: 900px;" data-bs-ride="carousel" data-bs-interval="800">
     <div class="carousel-inner"></div>
   </div>
+
+  <!-- DÒNG CHỮ CHẠM VÀO MÀN HÌNH -->
+  <div id="tapOverlayText"> Chạm vào màn hình để tiếp tục</div>
 </div>
+
 
 <h1>📸 Chọn các bé iu để chụp ảnh</h1>
 
@@ -460,7 +485,8 @@ if (selectedSleeping.length > 0) {
   });
 
   const photoUrls = [
-  
+      "image/slide6.jpg",
+
     "image/slide2.jpg",
     "image/slide3.jpg",
     "image/slide4.jpg",
@@ -476,15 +502,17 @@ if (selectedSleeping.length > 0) {
     div.innerHTML = `<img src="${url}" class="d-block w-100" alt="Ảnh chụp">`;
     carouselInner.appendChild(div);
   });
-
-  overlay.addEventListener("click", () => {
-    overlay.classList.add("fade");
-    setTimeout(() => overlay.remove(), 500);
-  });
+overlay.addEventListener("click", () => {
+  document.getElementById("tapOverlayText")?.remove();
+  overlay.classList.add("fade");
+  setTimeout(() => overlay.remove(), 500);
+});
 
   setTimeout(() => {
-    if (document.body.contains(overlay)) overlay.click();
-  }, 8000);
+  document.getElementById("tapOverlayText")?.remove();
+  if (document.body.contains(overlay)) overlay.click();
+}, 8000);
+
 </script>
 <!-- Modal xác nhận chọn bé đang ngủ -->
 <div class="modal fade" id="sleepModal" tabindex="-1" aria-labelledby="sleepModalLabel" aria-hidden="true">
