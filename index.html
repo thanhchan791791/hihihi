@@ -475,98 +475,104 @@
   window.addEventListener("DOMContentLoaded", updateSeatDisplay);
 
   submitBtn.addEventListener("click", () => {
-    db.ref("lastSelectTime").once("value").then(snapshot => {
-      const lastTimestamp = snapshot.val();
-      const now = Date.now();
+  db.ref("lastSelectTime").once("value").then(snapshot => {
+    const lastTimestamp = snapshot.val();
+    const now = Date.now();
 
-      if (lastTimestamp && now - lastTimestamp < 900000) {
-        const wait = 600 - Math.floor((now - lastTimestamp) / 1000);
-        const min = Math.floor(wait / 60);
-        const sec = wait % 60;
-        showBootstrapAlert(`⏳ Vui lòng quay lại sau ${min} phút ${sec} giây nha!`, "warning");
-        return;
+    if (lastTimestamp && now - lastTimestamp < 900000) {
+      // Sửa lỗi số âm
+      let wait = 900 - Math.floor((now - lastTimestamp) / 1000); // 10 phút = 600s
+      wait = Math.max(wait, 0);
+      const min = Math.floor(wait / 60);
+      const sec = wait % 60;
+      showBootstrapAlert(`⏳ Vui lòng quay lại sau ${min} phút ${sec} giây nha!`, "warning");
+      return;
+    }
+
+    const seatFromHash = getSeatFromHash() || { side: "Không rõ", table: "Không rõ" };
+    if (selectedDogs.length === 0) {
+      showBootstrapAlert("❗ Bạn chưa chọn bé cún nào cả!", "danger");
+      return;
+    }
+
+    const nowDate = new Date();
+    const timeStr = `${nowDate.getHours()}h${nowDate.getMinutes()}p`;
+
+    const selectedAwake = [];
+    const selectedSleeping = [];
+
+    selectedDogs.forEach(name => {
+      const dog = allDogs.find(d => d.name === name);
+      if (!dog) return;
+      if (dog.status === "play") {
+        selectedAwake.push(name);
+      } else {
+        selectedSleeping.push(name);
       }
+    });
 
-      const seatFromHash = getSeatFromHash() || { side: "Không rõ", table: "Không rõ" };
-      if (selectedDogs.length === 0) {
-        showBootstrapAlert("❗ Bạn chưa chọn bé cún nào cả!", "danger");
-        return;
-      }
+    let message = `⏰ Thời gian: ${timeStr}\n📍 Vị trí: ${seatFromHash.side} - ${seatFromHash.table}\n`;
 
-      const nowDate = new Date();
-      const timeStr = `${nowDate.getHours()}h${nowDate.getMinutes()}p`;
-const selectedAwake = [];
-const selectedSleeping = [];
+    if (selectedAwake.length > 0) {
+      message += `🐶 Bé đang chơi: ${selectedAwake.join(", ")}\n`;
+    }
+    if (selectedSleeping.length > 0) {
+      message += `😴 Bé đang ngủ (khách vẫn muốn order): ${selectedSleeping.join(", ")}`;
+    }
 
-selectedDogs.forEach(name => {
-  const dog = allDogs.find(d => d.name === name);
-  if (!dog) return;
-  if (dog.status === "play") {
-    selectedAwake.push(name);
-  } else {
-    selectedSleeping.push(name);
-  }
+    const encodedMsg = encodeURIComponent(message);
+    const data = { selectedDogs, time: timeStr, seat: seatFromHash };
+
+    db.ref("photoRequests").push(data)
+      .then(() => {
+        db.ref("lastSelectTime").set(firebase.database.ServerValue.TIMESTAMP);
+        showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}. Nhân viên sẽ đến hỗ trợ bạn sau vài phút nhé ^^`, "success", 5000);
+        selectedDogs = [];
+        renderDogs(searchInput.value);
+        updateSelectedCount();
+
+        fetch(`https://hihihi-cyan.vercel.app/api/send?text=${encodedMsg}`)
+          .then(res => res.json())
+          .then(json => console.log("✅ Đã gửi Telegram:", json))
+          .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
+      })
+      .catch(err => {
+        console.error("❌ Lỗi khi lưu Firebase:", err);
+        showBootstrapAlert("⚠️ Lỗi khi gửi thông tin chốt ảnh.", "danger");
+      });
+  });
 });
 
-let message = `⏰ Thời gian: ${timeStr}\n📍 Vị trí: ${seatFromHash.side} - ${seatFromHash.table}\n`;
+// Giao diện ảnh đầu trang
+const photoUrls = [
+  "image/slide6.jpg",
+  "image/slide2.jpg",
+  "image/slide3.jpg",
+  "image/slide4.jpg",
+  "image/slide5.jpg"
+];
 
-if (selectedAwake.length > 0) {
-  message += `🐶 Bé đang chơi: ${selectedAwake.join(", ")}\n`;
-}
-if (selectedSleeping.length > 0) {
-  message += `😴 Bé đang ngủ (khách vẫn muốn order): ${selectedSleeping.join(", ")}`;
-}
-      const encodedMsg = encodeURIComponent(message);
-      const data = { selectedDogs, time: timeStr, seat: seatFromHash };
+const carouselInner = document.querySelector("#carouselPhotos .carousel-inner");
+const overlay = document.getElementById("photoOverlay");
 
-      db.ref("photoRequests").push(data)
-        .then(() => {
-          db.ref("lastSelectTime").set(firebase.database.ServerValue.TIMESTAMP);
-          showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}. Nhân viên sẽ đến hỗ trợ bạn sau vài phút nhé ^^`, "success", 5000);
-          selectedDogs = [];
-          renderDogs(searchInput.value);
-          updateSelectedCount();
+photoUrls.forEach((url, idx) => {
+  const div = document.createElement("div");
+  div.className = "carousel-item" + (idx === 0 ? " active" : "");
+  div.innerHTML = `<img src="${url}" class="d-block w-100" alt="Ảnh chụp">`;
+  carouselInner.appendChild(div);
+});
 
-          fetch(`https://hihihi-cyan.vercel.app/api/send?text=${encodedMsg}`)
-            .then(res => res.json())
-            .then(json => console.log("✅ Đã gửi Telegram:", json))
-            .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
-        })
-        .catch(err => {
-          console.error("❌ Lỗi khi lưu Firebase:", err);
-          showBootstrapAlert("⚠️ Lỗi khi gửi thông tin chốt ảnh.", "danger");
-        });
-    });
-  });
-
-  const photoUrls = [
-      "image/slide6.jpg",
-
-    "image/slide2.jpg",
-    "image/slide3.jpg",
-    "image/slide4.jpg",
-    "image/slide5.jpg"
-  ];
-
-  const carouselInner = document.querySelector("#carouselPhotos .carousel-inner");
-  const overlay = document.getElementById("photoOverlay");
-
-  photoUrls.forEach((url, idx) => {
-    const div = document.createElement("div");
-    div.className = "carousel-item" + (idx === 0 ? " active" : "");
-    div.innerHTML = `<img src="${url}" class="d-block w-100" alt="Ảnh chụp">`;
-    carouselInner.appendChild(div);
-  });
 overlay.addEventListener("click", () => {
   document.getElementById("tapOverlayText")?.remove();
   overlay.classList.add("fade");
   setTimeout(() => overlay.remove(), 500);
 });
 
-  setTimeout(() => {
+setTimeout(() => {
   document.getElementById("tapOverlayText")?.remove();
   if (document.body.contains(overlay)) overlay.click();
 }, 8000);
+
 
 </script>
 <!-- Modal xác nhận chọn bé đang ngủ -->
