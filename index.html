@@ -20,26 +20,42 @@
       padding-bottom: 100px;
       text-align: center;
     }
-    #alert-box-container {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-      width: 80%;
-      max-width: 400px;
-      text-align: center;
-      transition: opacity 0.6s ease;
-    }
-
+    
     #alert-box.show {
       opacity: 1;
     }
 
-    #alert-box {
-      opacity: 0;
-      transition: opacity 0.6s ease;
-    }
+   #alert-box-container {
+  position: fixed;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  transition: top 0.5s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+#alert-box-container.show {
+  top: 30px;
+  opacity: 1;
+  transform: translateX(-50%) scale(1.05);
+}
+
+
+#alert-box {
+  background: #fff0f5;
+  border: 2px solid #ffa8c5;
+  color: #d94f85;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 25px;
+  padding: 12px 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
 
     h1 {
       font-size: 2em;
@@ -104,7 +120,7 @@
    .dog-card.sleeping {
   opacity: 0.8; /* Mờ nhẹ */
   filter: grayscale(10%) blur(0.5px);
-  pointer-events: none;
+/*  pointer-events: none;*/
   position: relative;
   transition: 0.3s ease;
 }
@@ -204,7 +220,7 @@
 
 <!-- Alert -->
 <div id="alert-box-container">
-  <div id="alert-box" class="alert alert-success d-none" role="alert">
+  <div id="alert-box" class="alert alert-success" role="alert">
     <i class="fa-solid fa-circle-check me-2"></i>
     <span id="alert-message">Đã gửi yêu cầu!</span>
   </div>
@@ -268,21 +284,47 @@
           <p>Giống: ${dog.breed}</p>
         `;
 
-        if (dog.status === "play") {
-          div.addEventListener("click", () => {
-            const dogName = dog.name;
-            if (selectedDogs.includes(dogName)) {
-              selectedDogs = selectedDogs.filter(n => n !== dogName);
-              div.classList.remove("selected");
-            } else if (selectedDogs.length < 3) {
-              selectedDogs.push(dogName);
-              div.classList.add("selected");
-            } else {
-              showBootstrapAlert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!", "warning");
-            }
-            updateSelectedCount();
-          });
-        }
+      div.addEventListener("click", () => {
+  const dogName = dog.name;
+
+  if (selectedDogs.includes(dogName)) {
+    selectedDogs = selectedDogs.filter(n => n !== dogName);
+    div.classList.remove("selected");
+    updateSelectedCount();
+    return;
+  }
+
+  if (selectedDogs.length >= 3) {
+    showBootstrapAlert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!", "warning");
+    return;
+  }
+
+  if (dog.status !== "play") {
+    const modalLabel = document.getElementById("sleepModalLabel");
+    const modalBody = document.getElementById("sleepModalBody");
+    const confirmSleepBtn = document.getElementById("confirmSleepBtn");
+
+    modalLabel.textContent = `💤 Bé "${dogName}" đang ngủ`;
+    modalBody.innerHTML = `Bạn vẫn muốn chọn bé <strong>${dogName}</strong> dù đang khò khò không?`;
+    
+    const bsModal = new bootstrap.Modal(document.getElementById("sleepModal"));
+    bsModal.show();
+
+    confirmSleepBtn.onclick = () => {
+      selectedDogs.push(dogName);
+      div.classList.add("selected");
+      updateSelectedCount();
+      bsModal.hide();
+    };
+
+    return;
+  }
+
+  selectedDogs.push(dogName);
+  div.classList.add("selected");
+  updateSelectedCount();
+});
+
 
         dogList.appendChild(div);
       });
@@ -308,16 +350,35 @@
     }
   }
 
-  function showBootstrapAlert(message, type = "success", duration = 3000) {
-    alertBox.classList.remove("d-none", "alert-success", "alert-warning", "alert-danger", "show");
-    alertBox.classList.add(`alert-${type}`);
-    alertMessage.textContent = message;
-    requestAnimationFrame(() => alertBox.classList.add("show"));
-    setTimeout(() => {
-      alertBox.classList.remove("show");
-      setTimeout(() => alertBox.classList.add("d-none"), 600);
-    }, duration);
+ function showBootstrapAlert(message, type = "success", duration = 3000) {
+  const container = document.getElementById("alert-box-container");
+  const alertBox = document.getElementById("alert-box");
+  const alertMessage = document.getElementById("alert-message");
+
+  alertMessage.textContent = message; // ✅ Gán đúng chỗ!
+
+  // Màu sắc theo loại
+  if (type === "warning") {
+    alertBox.style.backgroundColor = "#fff8e1";
+    alertBox.style.borderColor = "#ffc107";
+    alertBox.style.color = "#b66f00";
+  } else if (type === "danger") {
+    alertBox.style.backgroundColor = "#ffe0e0";
+    alertBox.style.borderColor = "#ff6b6b";
+    alertBox.style.color = "#c0392b";
+  } else {
+    alertBox.style.backgroundColor = "#fff0f5";
+    alertBox.style.borderColor = "#ffa8c5";
+    alertBox.style.color = "#d94f85";
   }
+
+  container.classList.add("show");
+
+  setTimeout(() => {
+    container.classList.remove("show");
+  }, duration);
+}
+
 
   db.ref("dogs").on("value", snapshot => {
     const data = snapshot.val();
@@ -354,14 +415,34 @@
 
       const nowDate = new Date();
       const timeStr = `${nowDate.getHours()}h${nowDate.getMinutes()}p`;
-      const message = `Thời gian: ${timeStr}\nBé: ${selectedDogs.join(", ")}\nVị trí: ${seatFromHash.side} - ${seatFromHash.table}`;
+const selectedAwake = [];
+const selectedSleeping = [];
+
+selectedDogs.forEach(name => {
+  const dog = allDogs.find(d => d.name === name);
+  if (!dog) return;
+  if (dog.status === "play") {
+    selectedAwake.push(name);
+  } else {
+    selectedSleeping.push(name);
+  }
+});
+
+let message = `⏰ Thời gian: ${timeStr}\n📍 Vị trí: ${seatFromHash.side} - ${seatFromHash.table}\n`;
+
+if (selectedAwake.length > 0) {
+  message += `🐶 Bé đang chơi: ${selectedAwake.join(", ")}\n`;
+}
+if (selectedSleeping.length > 0) {
+  message += `😴 Bé đang ngủ (khách vẫn muốn order): ${selectedSleeping.join(", ")}`;
+}
       const encodedMsg = encodeURIComponent(message);
       const data = { selectedDogs, time: timeStr, seat: seatFromHash };
 
       db.ref("photoRequests").push(data)
         .then(() => {
           db.ref("lastSelectTime").set(firebase.database.ServerValue.TIMESTAMP);
-          showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}. Nhân viên sẽ đến hỗ trợ nha!`, "success", 5000);
+          showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}. Nhân viên sẽ đến hỗ trợ bạn sau vài phút nhé ^^`, "success", 5000);
           selectedDogs = [];
           renderDogs(searchInput.value);
           updateSelectedCount();
@@ -405,5 +486,24 @@
     if (document.body.contains(overlay)) overlay.click();
   }, 8000);
 </script>
+<!-- Modal xác nhận chọn bé đang ngủ -->
+<div class="modal fade" id="sleepModal" tabindex="-1" aria-labelledby="sleepModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 20px;">
+      <div class="modal-header bg-warning-subtle">
+        <h5 class="modal-title" id="sleepModalLabel">💤 Bé đang ngủ</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body text-start" id="sleepModalBody">
+        <!-- Nội dung modal sẽ được thay đổi động -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thôi để bé nghỉ</button>
+        <button type="button" class="btn btn-pink" id="confirmSleepBtn" style="background-color: #ff69b4; color: white;">Vẫn chọn bé </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
