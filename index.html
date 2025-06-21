@@ -223,7 +223,7 @@
 
 <!-- Overlay slider ảnh chụp thật -->
 <div id="photoOverlay">
-  <div id="carouselPhotos" class="carousel slide w-100" style="max-width: 900px;" data-bs-ride="carousel" data-bs-interval="2500">
+  <div id="carouselPhotos" class="carousel slide w-100" style="max-width: 900px;" data-bs-ride="carousel" data-bs-interval="800">
     <div class="carousel-inner"></div>
   </div>
 
@@ -324,26 +324,38 @@
     return;
   }
 
-  if (dog.status !== "play") {
-    const modalLabel = document.getElementById("sleepModalLabel");
-    const modalBody = document.getElementById("sleepModalBody");
-    const confirmSleepBtn = document.getElementById("confirmSleepBtn");
+ if (dog.status !== "play") {
+  // Kiểm tra số bé đang ngủ đã chọn
+  const selectedSleepingCount = selectedDogs.filter(name => {
+    const d = allDogs.find(dog => dog.name === name);
+    return d && d.status !== "play";
+  }).length;
 
-    modalLabel.textContent = `💤 Bé "${dogName}" đang ngủ`;
-    modalBody.innerHTML = `Bạn vẫn muốn chọn bé <strong>${dogName}</strong> dù đang khò khò không?`;
-    
-    const bsModal = new bootstrap.Modal(document.getElementById("sleepModal"));
-    bsModal.show();
-
-    confirmSleepBtn.onclick = () => {
-      selectedDogs.push(dogName);
-      div.classList.add("selected");
-      updateSelectedCount();
-      bsModal.hide();
-    };
-
+  if (selectedSleepingCount >= 1) {
+    showBootstrapAlert("😴 Bạn chỉ được chọn 1 bé đang ngủ thôi nha!", "warning");
     return;
   }
+
+  // Hiện modal xác nhận
+  const modalLabel = document.getElementById("sleepModalLabel");
+  const modalBody = document.getElementById("sleepModalBody");
+  const confirmSleepBtn = document.getElementById("confirmSleepBtn");
+
+  modalLabel.textContent = `💤 Bé "${dogName}" đang ngủ`;
+  modalBody.innerHTML = `Bạn vẫn muốn chọn bé <strong>${dogName}</strong> dù đang khò khò không?`;
+
+  const bsModal = new bootstrap.Modal(document.getElementById("sleepModal"));
+  bsModal.show();
+
+  confirmSleepBtn.onclick = () => {
+    selectedDogs.push(dogName);
+    div.classList.add("selected");
+    updateSelectedCount();
+    bsModal.hide();
+  };
+
+  return;
+}
 
   selectedDogs.push(dogName);
   div.classList.add("selected");
