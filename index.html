@@ -299,6 +299,22 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
+  const isMaintenance = false; // ⚙️ Chế độ bảo trì: true = bật, false = tắt
+
+if (isMaintenance) {
+  document.body.innerHTML = `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;
+                height: 100vh; text-align: center; padding: 20px; font-family: 'Comic Sans MS', cursive; background: linear-gradient(to bottom, #fffafc, #ffeef5);">
+      <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="maintenance" width="120" style="margin-bottom: 20px;" />
+      <h2 style="color: #d94f85; font-size: 1.8em; margin-bottom: 10px;">🚧 Trang đang bảo trì</h2>
+      <p style="color: #555; font-size: 1.1em; max-width: 400px;">
+        Chúng mình đang cập nhật hệ thống, vui lòng quay lại sau nhé! 🐶💕
+      </p>
+    </div>
+  `;
+  throw new Error("Đang bảo trì, dừng chạy script còn lại.");
+}
+
   const firebaseConfig = {
     apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
     authDomain: "dogs-be72b.firebaseapp.com",
