@@ -271,6 +271,8 @@
 <h1>📸 Chọn các bé iu để chụp ảnh</h1>
 
 <div><input type="text" id="search-input" placeholder="Nhập tên bé cún..." /></div>
+<ul id="suggestion-list" style="list-style: none; padding-left: 0; margin-top: 10px; text-align: left; max-width: 400px; margin-inline: auto;"></ul>
+
 <div id="seat-info">Vị trí đang tải...</div>
 
 <div style="margin: 30px auto 20px; font-size: 1.1em; color: #d94f85; font-weight: bold;">
@@ -338,6 +340,14 @@ if (isMaintenance) {
 
   let selectedDogs = [];
   let allDogs = [];
+  const breedTraits = {
+  samoyed: ["quậy phá", "hiền lành", "thân thiện"],
+  corgi: ["lanh lợi", "hiếu động", "dễ thương"],
+  husky: ["ngáo", "tăng động", "đáng yêu"],
+  poodle: ["thông minh", "vui vẻ", "dễ bảo"],
+  // thêm các giống khác nếu cần
+};
+
 function getTodayDateString() {
   const today = new Date();
   return today.toISOString().split("T")[0]; // trả về dạng "2025-06-21"
@@ -351,7 +361,14 @@ function getTodayDateString() {
   function renderDogs(filter = "") {
     dogList.innerHTML = "";
     allDogs
-      .filter(d => d.name.toLowerCase().includes(filter.toLowerCase()))
+.filter(dog => {
+  const text = `${dog.name} ${dog.breed} ${dog.trait || dog.personality || ""}`.toLowerCase();
+  const keywords = filter.toLowerCase().split(/\s+/).filter(k => k); // Tách từng từ khóa
+
+  // Mỗi từ khóa phải xuất hiện trong text
+  return keywords.every(keyword => text.includes(keyword));
+})
+
       .forEach(dog => {
         const div = document.createElement("div");
         div.className = "dog-card";
@@ -492,6 +509,41 @@ function getTodayDateString() {
   });
 
   searchInput.addEventListener("input", () => renderDogs(searchInput.value));
+  searchInput.addEventListener("input", () => {
+  renderDogs(searchInput.value);
+
+  const suggestionList = document.getElementById("suggestion-list");
+  suggestionList.innerHTML = "";
+
+  const input = searchInput.value.trim().toLowerCase();
+  const breed = Object.keys(breedTraits).find(b => input.includes(b));
+
+  if (breed && breedTraits[breed]) {
+    breedTraits[breed].forEach(trait => {
+      const li = document.createElement("li");
+      li.textContent = trait;
+      li.style.padding = "6px 12px";
+      li.style.border = "1px solid #ffd6e6";
+      li.style.borderRadius = "15px";
+      li.style.background = "#fff0f7";
+      li.style.color = "#d94f85";
+      li.style.cursor = "pointer";
+      li.style.display = "inline-block";
+      li.style.margin = "5px 5px";
+
+      li.addEventListener("click", () => {
+        const current = searchInput.value.trim();
+        if (!current.toLowerCase().includes(trait)) {
+          searchInput.value = current + " " + trait;
+          renderDogs(searchInput.value);
+        }
+      });
+
+      suggestionList.appendChild(li);
+    });
+  }
+});
+
   window.addEventListener("hashchange", updateSeatDisplay);
   window.addEventListener("DOMContentLoaded", updateSeatDisplay);
 
