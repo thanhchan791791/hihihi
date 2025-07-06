@@ -213,32 +213,42 @@
       });
     }
 
-     // Cập nhật trong renderFilteredDogs
-    function renderFilteredDogs() {
-      const keyword = searchInput.value.toLowerCase().trim();
-      tableBody.innerHTML = "";
-      for (const id in allDogs) {
-        const dog = allDogs[id];
-        if (!dog.name.toLowerCase().includes(keyword)) continue;
-        const count = dogCounts[dog.name] || 0;
-        tableBody.innerHTML += `
-          <tr>
-            <td><img src="${dog.image || '#'}" alt="${dog.name}"></td>
-            <td>${dog.name}</td>
-            <td>${dog.breed || 'Không rõ'}</td>
-            <td>${dog.trait || 'Hiền lành'}</td> <!-- thêm dòng này -->
-            <td>${dog.status === 'play' ? '☀️ Đang chơi' : '🌙 Nghỉ ngơi'}</td>
-            <td>${count}</td>
-            <td>
-              <button class="btn btn-sm ${dog.status === 'play' ? 'btn-secondary' : 'btn-success'}" onclick="toggleStatus('${id}', '${dog.status}')">
-                ${dog.status === 'play' ? '🌙 Cho nghỉ' : '☀️ Xuống chơi'}
-              </button>
-              <button class="btn btn-sm btn-warning" onclick="openForm('${id}')">✏️</button>
-              <button class="btn btn-sm btn-danger" onclick="deleteDog('${id}')">🗑️</button>
-            </td>
-          </tr>`;
-      }
-    }
+   function renderFilteredDogs() {
+  const keyword = searchInput.value.toLowerCase().trim();
+  tableBody.innerHTML = "";
+
+  const dogList = Object.entries(allDogs)
+    .filter(([_, dog]) => {
+      const combined = `${dog.name} ${dog.breed || ''} ${dog.trait || ''}`.toLowerCase();
+      return combined.includes(keyword);
+    })
+    .sort(([_, a], [__, b]) => {
+      if (a.status === 'play' && b.status !== 'play') return -1;
+      if (a.status !== 'play' && b.status === 'play') return 1;
+      return 0;
+    });
+  for (const [id, dog] of dogList) {
+    const count = dogCounts[dog.name] || 0;
+    tableBody.innerHTML += `
+      <tr>
+        <td><img src="${dog.image || '#'}" alt="${dog.name}"></td>
+        <td>${dog.name}</td>
+        <td>${dog.breed || 'Không rõ'}</td>
+        <td>${dog.trait || 'Hiền lành'}</td>
+        <td>${dog.status === 'play' ? '☀️ Đang chơi' : '🌙 Nghỉ ngơi'}</td>
+        <td>${count}</td>
+        <td>
+          <button class="btn btn-sm ${dog.status === 'play' ? 'btn-secondary' : 'btn-success'}" onclick="toggleStatus('${id}', '${dog.status}')">
+            ${dog.status === 'play' ? '🌙 Cho nghỉ' : '☀️ Xuống chơi'}
+          </button>
+          <button class="btn btn-sm btn-warning" onclick="openForm('${id}')">✏️</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteDog('${id}')">🗑️</button>
+        </td>
+      </tr>`;
+  }
+}
+
+
 
 
     function toggleStatus(id, status) {
