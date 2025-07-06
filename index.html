@@ -299,7 +299,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-  const isMaintenance =  true; // ⚙️ Chế độ bảo trì: true = bật, false = tắt
+  const isMaintenance =  false; // ⚙️ Chế độ bảo trì: true = bật, false = tắt
 
 if (isMaintenance) {
   document.body.innerHTML = `
@@ -359,7 +359,7 @@ function getTodayDateString() {
         if (selectedDogs.includes(dog.name)) div.classList.add("selected");
         if (dog.status !== "play") div.classList.add("sleeping");
 
-      div.innerHTML = `
+    div.innerHTML = `
   <div class="dog-image-wrapper">
     <img src="${dog.image}" alt="${dog.name}" />
     <div class="selected-overlay">
@@ -368,6 +368,7 @@ function getTodayDateString() {
   </div>
   <h3>${dog.name}</h3>
   <p>Giống: ${dog.breed}</p>
+<p>Tính cách: ${dog.trait || dog.personality || "Chưa cập nhật"}</p>
 `;
 
 
