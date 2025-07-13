@@ -616,7 +616,7 @@ function getTodayDateString() {
           renderDogs(searchInput.value);
           updateSelectedCount();
 
-          fetch(`https://hihihi-cyan.vercel.app/api/send?text=${encodedMsg}`)
+fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`)
             .then(res => res.json())
             .then(json => console.log("✅ Đã gửi Telegram:", json))
             .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
