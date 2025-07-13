@@ -22,6 +22,21 @@
       color: #ff4d79;
       text-shadow: 1px 1px 1px #ffd6e8;
     }
+    .status-box {
+      background: linear-gradient(to right, #ffb3c6, #ffd6e8);
+      border: 2px dashed #ff69b4;
+      padding: 12px 20px;
+      font-size: 1.2rem;
+      color: #6b0033;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 105, 180, 0.5); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 105, 180, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 105, 180, 0); }
+    }
     .table {
       border: 2px solid #ffc2d1;
       border-radius: 12px;
@@ -114,27 +129,31 @@
 
   <div class="alert alert-info" id="notification">🔔 Đang tải thông báo...</div>
 
+  <!-- ✅ Thêm dòng hiển thị số lượng chó đang thả -->
+  <div class="status-box text-center fw-semibold mb-3" id="statusDisplay">
+    🐾 Đang tải trạng thái...
+  </div>
+
   <div class="d-flex justify-content-center gap-2 mb-3">
     <button class="btn btn-danger" onclick="clearNotifications()">🗑️ Xóa tất cả thông báo</button>
     <button class="btn btn-success" onclick="openForm()">➕ Thêm chó mới</button>
     <button class="btn btn-warning" onclick="setAllToRest()">🌙 Cho tất cả nghỉ</button>
   </div>
 
-  <!-- 🔍 Thanh tìm kiếm to hơn, chuyên nghiệp hơn -->
+  <!-- 🔍 Thanh tìm kiếm -->
   <div class="input-group mb-4 shadow-lg" style="max-width: 500px; margin: auto; font-size: 1.2rem;">
     <span class="input-group-text bg-pink">
       <i class="fas fa-dog"></i>
     </span>
     <input type="text" id="searchInput" class="form-control py-2" placeholder="Tìm theo tên bé cún..." oninput="renderFilteredDogs()">
   </div>
-
   <table class="table table-bordered table-hover text-center">
     <thead>
       <tr>
         <th>Ảnh</th>
         <th>Tên</th>
         <th>Giống</th>
-                <th><strong>Tính cách</strong></th> <!-- thêm dòng này -->
+        <th><strong>Tính cách</strong></th>
         <th>Trạng thái</th>
         <th>Lượt chọn</th>
         <th>Hành động</th>
@@ -143,7 +162,6 @@
     <tbody id="dog-table-body"></tbody>
   </table>
 
-   <!-- Modal thêm/sửa -->
   <div class="modal fade" id="dogModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -155,7 +173,7 @@
           <input type="hidden" id="dog-id">
           <input type="text" id="dog-name" class="form-control mb-2" placeholder="Tên">
           <input type="text" id="dog-breed" class="form-control mb-2" placeholder="Giống">
-          <input type="text" id="dog-trait" class="form-control mb-2" placeholder="Tính cách"> <!-- thêm dòng này -->
+          <input type="text" id="dog-trait" class="form-control mb-2" placeholder="Tính cách">
           <input type="text" id="dog-image" class="form-control mb-2" placeholder="Link ảnh">
         </div>
         <div class="modal-footer">
@@ -166,10 +184,11 @@
     </div>
   </div>
 
-  <!-- Firebase config + logic -->
+  <!-- Firebase + Bootstrap -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
@@ -186,7 +205,7 @@
     const tableBody = document.getElementById("dog-table-body");
     const searchInput = document.getElementById("searchInput");
     const notificationBox = document.getElementById("notification");
-
+    const statusDisplay = document.getElementById("statusDisplay");
     const dogModal = new bootstrap.Modal(document.getElementById('dogModal'));
     let allDogs = {}, dogCounts = {};
 
@@ -213,43 +232,48 @@
       });
     }
 
-   function renderFilteredDogs() {
-  const keyword = searchInput.value.toLowerCase().trim();
-  tableBody.innerHTML = "";
+    function renderFilteredDogs() {
+      const keyword = searchInput.value.toLowerCase().trim();
+      tableBody.innerHTML = "";
 
-  const dogList = Object.entries(allDogs)
-    .filter(([_, dog]) => {
-      const combined = `${dog.name} ${dog.breed || ''} ${dog.trait || ''}`.toLowerCase();
-      return combined.includes(keyword);
-    })
-    .sort(([_, a], [__, b]) => {
-      if (a.status === 'play' && b.status !== 'play') return -1;
-      if (a.status !== 'play' && b.status === 'play') return 1;
-      return 0;
-    });
-  for (const [id, dog] of dogList) {
-    const count = dogCounts[dog.name] || 0;
-    tableBody.innerHTML += `
-      <tr>
-        <td><img src="${dog.image || '#'}" alt="${dog.name}"></td>
-        <td>${dog.name}</td>
-        <td>${dog.breed || 'Không rõ'}</td>
-        <td>${dog.trait || 'Hiền lành'}</td>
-        <td>${dog.status === 'play' ? '☀️ Đang chơi' : '🌙 Nghỉ ngơi'}</td>
-        <td>${count}</td>
-        <td>
-          <button class="btn btn-sm ${dog.status === 'play' ? 'btn-secondary' : 'btn-success'}" onclick="toggleStatus('${id}', '${dog.status}')">
-            ${dog.status === 'play' ? '🌙 Cho nghỉ' : '☀️ Xuống chơi'}
-          </button>
-          <button class="btn btn-sm btn-warning" onclick="openForm('${id}')">✏️</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteDog('${id}')">🗑️</button>
-        </td>
-      </tr>`;
-  }
-}
+      const dogList = Object.entries(allDogs)
+        .filter(([_, dog]) => {
+          const combined = `${dog.name} ${dog.breed || ''} ${dog.trait || ''}`.toLowerCase();
+          return combined.includes(keyword);
+        })
+        .sort(([_, a], [__, b]) => {
+          if (a.status === 'play' && b.status !== 'play') return -1;
+          if (a.status !== 'play' && b.status === 'play') return 1;
+          return 0;
+        });
 
+      let total = 0, playing = 0;
 
+      for (const [id, dog] of dogList) {
+        const count = dogCounts[dog.name] || 0;
+        total++;
+        if (dog.status === 'play') playing++;
+        tableBody.innerHTML += `
+          <tr>
+            <td><img src="${dog.image || '#'}" alt="${dog.name}"></td>
+            <td>${dog.name}</td>
+            <td>${dog.breed || 'Không rõ'}</td>
+            <td>${dog.trait || 'Hiền lành'}</td>
+            <td>${dog.status === 'play' ? '☀️ Đang chơi' : '🌙 Nghỉ ngơi'}</td>
+            <td>${count}</td>
+            <td>
+              <button class="btn btn-sm ${dog.status === 'play' ? 'btn-secondary' : 'btn-success'}" onclick="toggleStatus('${id}', '${dog.status}')">
+                ${dog.status === 'play' ? '🌙 Cho nghỉ' : '☀️ Xuống chơi'}
+              </button>
+              <button class="btn btn-sm btn-warning" onclick="openForm('${id}')">✏️</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteDog('${id}')">🗑️</button>
+            </td>
+          </tr>`;
+      }
 
+      // ✅ Cập nhật số lượng bé đang chơi
+      statusDisplay.innerHTML = `🐾 Đang thả <strong>${playing}</strong> / Tổng <strong>${total}</strong> bé`;
+    }
 
     function toggleStatus(id, status) {
       const newStatus = status === "play" ? "rest" : "play";
@@ -263,32 +287,31 @@
         document.getElementById("form-title").innerText = "Sửa thông tin chó";
         document.getElementById("dog-name").value = d.name;
         document.getElementById("dog-breed").value = d.breed;
-        document.getElementById("dog-trait").value = d.trait || ""; // thêm dòng này
+        document.getElementById("dog-trait").value = d.trait || "";
         document.getElementById("dog-image").value = d.image;
       } else {
         document.getElementById("form-title").innerText = "Thêm chó mới";
         document.getElementById("dog-name").value = "";
         document.getElementById("dog-breed").value = "";
-        document.getElementById("dog-trait").value = ""; // thêm dòng này
+        document.getElementById("dog-trait").value = "";
         document.getElementById("dog-image").value = "";
       }
       dogModal.show();
     }
 
-
-     // Cập nhật hàm submitDog
     function submitDog() {
       const id = document.getElementById("dog-id").value;
       const name = document.getElementById("dog-name").value;
       const breed = document.getElementById("dog-breed").value;
-      const trait = document.getElementById("dog-trait").value; // thêm dòng này
+      const trait = document.getElementById("dog-trait").value;
       const image = document.getElementById("dog-image").value;
-      const data = { name, breed, trait, image, status: "rest" }; // cập nhật thêm trait
+      const data = { name, breed, trait, image, status: "rest" };
       if (id) db.ref("dogs/" + id).update(data);
       else db.ref("dogs").push(data);
       dogModal.hide();
       Swal.fire({ icon: 'success', title: 'Đã lưu thông tin chó!', timer: 1500, showConfirmButton: false });
     }
+
     function deleteDog(id) {
       Swal.fire({
         title: 'Xác nhận xoá?',
