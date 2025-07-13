@@ -187,7 +187,6 @@
     </span>
     <input type="text" id="searchInput" class="form-control py-2" placeholder="Tìm theo tên bé cún..." oninput="renderFilteredDogs()">
   </div>
-
   <table class="table table-bordered table-hover text-center">
     <thead>
       <tr>
@@ -230,8 +229,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
- <script>
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
     authDomain: "dogs-be72b.firebaseapp.com",
@@ -260,16 +258,25 @@
 
   function loadCounts() {
     db.ref("photoRequests").on("value", snapshot => {
-      dogCounts = {};
       const data = snapshot.val();
-      if (!data) return;
-      Object.values(data).forEach(item => {
-        const selected = Array.isArray(item.selectedDogs) ? item.selectedDogs : item.dog ? [item.dog] : [];
-        selected.forEach(name => {
-          if (!name) return;
-          dogCounts[name] = (dogCounts[name] || 0) + 1;
+      const counts = {};
+      if (data) {
+        Object.values(data).forEach(item => {
+          let selected = [];
+          if (Array.isArray(item.selectedDogs)) {
+            selected = item.selectedDogs;
+          } else if (typeof item.dog === 'string') {
+            selected = [item.dog];
+          }
+
+          selected
+            .filter(name => typeof name === 'string' && name.trim() !== "")
+            .forEach(name => {
+              counts[name] = (counts[name] || 0) + 1;
+            });
         });
-      });
+      }
+      dogCounts = counts;
       renderFilteredDogs();
     });
   }
@@ -289,12 +296,12 @@
         return 0;
       });
 
-    let total = 0, playing = 0;
+       let total = Object.keys(allDogs).length;
+    let playing = Object.values(allDogs).filter(d => d.status === 'play').length;
 
     for (const [id, dog] of dogList) {
       const count = dogCounts[dog.name] || 0;
-      total++;
-      if (dog.status === 'play') playing++;
+
       tableBody.innerHTML += `
         <tr>
           <td data-label="Ảnh"><img src="${dog.image || '#'}" alt="${dog.name}"></td>
