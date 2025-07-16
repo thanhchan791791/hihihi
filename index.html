@@ -1,4 +1,3 @@
-<!-- TOÀN BỘ CODE HTML - KHÔNG BỊ BỎ PHẦN NÀO - ĐÃ GỘP CHỨC NĂNG CHỜ 10 PHÚT CHUNG -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -57,6 +56,29 @@
     box-shadow: 0 0 8px rgba(0,0,0,0.1);
     position: relative;
   }
+.language-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.language-buttons .btn {
+  font-size: 1em;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: 2px solid #ff69b4;
+  background-color: #fff0f7;
+  color: #d94f85;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(255, 105, 180, 0.2);
+}
+
+.language-buttons .btn:hover {
+  background-color: #ff69b4;
+  color: white;
+}
 
   .dog-card img {
     width: 100%;
@@ -86,29 +108,27 @@
     transition: 0.3s ease;
   }
 
- .dog-card.sleeping::before {
-  content: "💤 Khò khò";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.4em;
-  font-weight: bold;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 8px 15px;
-  border-radius: 20px;
-  color: #d94f85;
-  font-family: 'Comic Sans MS', cursive;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  z-index: 3;
-  display: block;
-}
+  .dog-card.sleeping::before {
+    content: "💤 Khò khò";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.4em;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px 15px;
+    border-radius: 20px;
+    color: #d94f85;
+    font-family: 'Comic Sans MS', cursive;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 3;
+    display: block;
+  }
 
-/* Ẩn chữ Khò khò khi đang selected */
-.dog-card.sleeping.selected::before {
-  display: none;
-}
-
+  .dog-card.sleeping.selected::before {
+    display: none;
+  }
 
   .dog-image-wrapper {
     position: relative;
@@ -253,29 +273,33 @@
     50% { opacity: 0.4; }
   }
 </style>
-
 </head>
 <body>
-
 <!-- Overlay slider ảnh chụp thật -->
 <div id="photoOverlay">
-<div id="carouselPhotos" class="carousel slide w-100" style="max-width: 900px;" data-bs-ride="carousel" data-bs-interval="2500" data-bs-wrap="true">
+  <div id="carouselPhotos" class="carousel slide w-100" style="max-width: 900px;" data-bs-ride="carousel" data-bs-interval="2500" data-bs-wrap="true">
     <div class="carousel-inner"></div>
   </div>
-
   <!-- DÒNG CHỮ CHẠM VÀO MÀN HÌNH -->
-  <div id="tapOverlayText"> Chạm vào màn hình để tiếp tục</div>
+  <div id="tapOverlayText" data-i18n="tap_screen">Chạm vào màn hình để tiếp tục</div>
 </div>
 
+<h1 data-i18n="title">📸 Chọn các bé iu để chụp ảnh</h1>
 
-<h1>📸 Chọn các bé iu để chụp ảnh</h1>
+<div class="language-buttons">
+  <button id="lang-vi" class="btn">🇻🇳 Tiếng Việt</button>
+  <button id="lang-en" class="btn">🇺🇸 English</button>
+</div>
 
-<div><input type="text" id="search-input" placeholder="Nhập tên, giống hoặc tính cách bé cún..." /></div>
+<div>
+  <input type="text" id="search-input" placeholder="Nhập tên, giống hoặc tính cách bé cún..." data-i18n-placeholder="search_placeholder" />
+</div>
+
 <ul id="suggestion-list" style="list-style: none; padding-left: 0; margin-top: 10px; text-align: left; max-width: 400px; margin-inline: auto;"></ul>
 
-<div id="seat-info">Vị trí đang tải...</div>
+<div id="seat-info" data-i18n="seat_loading">Vị trí đang tải...</div>
 
-<div style="margin: 30px auto 20px; font-size: 1.1em; color: #d94f85; font-weight: bold;">
+<div style="margin: 30px auto 20px; font-size: 1.1em; color: #d94f85; font-weight: bold;" data-i18n="dog_list_intro">
   Dưới đây là danh sách các bé cún đang chờ được chọn nè!
 </div>
 
@@ -291,372 +315,12 @@
 
 <!-- Nút chốt -->
 <button id="submit-btn">
-  <i class="fa-solid fa-dog me-2"></i> Chốt các bé iu 💖
+  <i class="fa-solid fa-dog me-2"></i>
+  <span data-i18n="submit_button">Chốt các bé iu 💖</span>
 </button>
 
 <div id="selected-count">Đã chọn: 0 bé</div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-<script>
-  const isMaintenance =  false; // ⚙️ Chế độ bảo trì: true = bật, false = tắt
-
-if (isMaintenance) {
-  document.body.innerHTML = `
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;
-                height: 100vh; text-align: center; padding: 20px; font-family: 'Comic Sans MS', cursive; background: linear-gradient(to bottom, #fffafc, #ffeef5);">
-      <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="maintenance" width="120" style="margin-bottom: 20px;" />
-      <h2 style="color: #d94f85; font-size: 1.8em; margin-bottom: 10px;">🚧 Trang đang bảo trì</h2>
-      <p style="color: #555; font-size: 1.1em; max-width: 400px;">
-        Chúng mình đang cập nhật hệ thống, vui lòng quay lại sau hoặc nhờ trực tiếp nhân viên hỗ trợ nhé! 🐶💕
-      </p>
-    </div>
-  `;
-  throw new Error("Đang bảo trì, dừng chạy script còn lại.");
-}
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
-    authDomain: "dogs-be72b.firebaseapp.com",
-    databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
-    projectId: "dogs-be72b",
-    storageBucket: "dogs-be72b.appspot.com",
-    messagingSenderId: "1003873040746",
-    appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  const dogList = document.getElementById("dog-list");
-  const searchInput = document.getElementById("search-input");
-  const submitBtn = document.getElementById("submit-btn");
-  const selectedCount = document.getElementById("selected-count");
-  const seatInfo = document.getElementById("seat-info");
-  const alertBox = document.getElementById("alert-box");
-  const alertMessage = document.getElementById("alert-message");
-
-  let selectedDogs = [];
-  let allDogs = [];
-  const breedTraits = {
-  samoyed: ["quậy phá", "hiền lành", "thân thiện"],
-  corgi: ["lanh lợi", "hiếu động", "dễ thương"],
-  husky: ["ngáo", "tăng động", "đáng yêu"],
-  poodle: ["thông minh", "vui vẻ", "dễ bảo"],
-  // thêm các giống khác nếu cần
-};
-
-function getTodayDateString() {
-  const today = new Date();
-  return today.toISOString().split("T")[0]; // trả về dạng "2025-06-21"
-}
-
-  function updateSelectedCount() {
-    selectedCount.style.display = selectedDogs.length > 0 ? "block" : "none";
-    selectedCount.textContent = `Đã chọn: ${selectedDogs.length} bé`;
-  }
-
-  function renderDogs(filter = "") {
-    dogList.innerHTML = "";
-    allDogs
-.filter(dog => {
-  const text = `${dog.name} ${dog.breed} ${dog.trait || dog.personality || ""}`.toLowerCase();
-  const keywords = filter.toLowerCase().split(/\s+/).filter(k => k); // Tách từng từ khóa
-
-  // Mỗi từ khóa phải xuất hiện trong text
-  return keywords.every(keyword => text.includes(keyword));
-})
-
-      .forEach(dog => {
-        const div = document.createElement("div");
-        div.className = "dog-card";
-        div.dataset.name = dog.name;
-        if (selectedDogs.includes(dog.name)) div.classList.add("selected");
-        if (dog.status !== "play") div.classList.add("sleeping");
-
-    div.innerHTML = `
-  <div class="dog-image-wrapper">
-    <img src="${dog.image}" alt="${dog.name}" />
-    <div class="selected-overlay">
-      <i class="fa-solid fa-check-circle me-2"></i> Đã chọn
-    </div>
-  </div>
-  <h3>${dog.name}</h3>
-  <p>Giống: ${dog.breed}</p>
-<p>Tính cách: ${dog.trait || dog.personality || "Chưa cập nhật"}</p>
-`;
-
-
-
-      div.addEventListener("click", () => {
-  const dogName = dog.name;
-
-  if (selectedDogs.includes(dogName)) {
-    selectedDogs = selectedDogs.filter(n => n !== dogName);
-    div.classList.remove("selected");
-    updateSelectedCount();
-    return;
-  }
-
-  if (selectedDogs.length >= 3) {
-    showBootstrapAlert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!", "warning");
-    return;
-  }
-
- if (dog.status !== "play") {
-  // Kiểm tra số bé đang ngủ đã chọn
-  const selectedSleepingCount = selectedDogs.filter(name => {
-    const d = allDogs.find(dog => dog.name === name);
-    return d && d.status !== "play";
-  }).length;
-
-  if (selectedSleepingCount >= 1) {
-    showBootstrapAlert("😴 Bạn chỉ được chọn 1 bé đang ngủ thôi nha!", "warning");
-    return;
-  }
-
-  // Hiện modal xác nhận
-  const modalLabel = document.getElementById("sleepModalLabel");
-  const modalBody = document.getElementById("sleepModalBody");
-  const confirmSleepBtn = document.getElementById("confirmSleepBtn");
-
-  modalLabel.textContent = `💤 Bé "${dogName}" đang ngủ`;
-  modalBody.innerHTML = `Bạn vẫn muốn chọn bé <strong>${dogName}</strong> dù đang khò khò không?`;
-
-  const bsModal = new bootstrap.Modal(document.getElementById("sleepModal"));
-  bsModal.show();
-
-  confirmSleepBtn.onclick = () => {
-    selectedDogs.push(dogName);
-    div.classList.add("selected");
-    updateSelectedCount();
-    bsModal.hide();
-  };
-
-  return;
-}
-
-  selectedDogs.push(dogName);
-  div.classList.add("selected");
-  updateSelectedCount();
-});
-
-
-        dogList.appendChild(div);
-      });
-  }
-
-  function getSeatFromHash() {
-    const hash = window.location.hash.toLowerCase();
-    const match = hash.match(/^#\/?([lr])(\d)$/);
-    if (match) {
-      const side = match[1] === "r" ? "Bên phải" : "Bên trái";
-      const table = "Bàn " + match[2];
-      return { side, table };
-    }
-    return null;
-  }
-
-  function updateSeatDisplay() {
-    const seat = getSeatFromHash();
-    if (seat) {
-      seatInfo.textContent = `Vị trí của bạn: ${seat.side} - ${seat.table}`;
-    } else {
-      seatInfo.textContent = "Vị trí chưa xác định từ đường link!";
-    }
-  }
-
- function showBootstrapAlert(message, type = "success", duration = 3000) {
-  const container = document.getElementById("alert-box-container");
-  const alertBox = document.getElementById("alert-box");
-  const alertMessage = document.getElementById("alert-message");
-
-  alertMessage.textContent = message; // ✅ Gán đúng chỗ!
-
-  // Màu sắc theo loại
-  if (type === "warning") {
-    alertBox.style.backgroundColor = "#fff8e1";
-    alertBox.style.borderColor = "#ffc107";
-    alertBox.style.color = "#b66f00";
-  } else if (type === "danger") {
-    alertBox.style.backgroundColor = "#ffe0e0";
-    alertBox.style.borderColor = "#ff6b6b";
-    alertBox.style.color = "#c0392b";
-  } else {
-    alertBox.style.backgroundColor = "#fff0f5";
-    alertBox.style.borderColor = "#ffa8c5";
-    alertBox.style.color = "#d94f85";
-  }
-
-  container.classList.add("show");
-
-  setTimeout(() => {
-    container.classList.remove("show");
-  }, duration);
-}
-
-
-  db.ref("dogs").on("value", snapshot => {
-    const data = snapshot.val();
-    allDogs = Object.values(data || {}).sort((a, b) => {
-      if (a.status === "play" && b.status !== "play") return -1;
-      if (a.status !== "play" && b.status === "play") return 1;
-      return a.name.localeCompare(b.name);
-    });
-    renderDogs(searchInput.value);
-  });
-
-  searchInput.addEventListener("input", () => renderDogs(searchInput.value));
-  searchInput.addEventListener("input", () => {
-  renderDogs(searchInput.value);
-
-  const suggestionList = document.getElementById("suggestion-list");
-  suggestionList.innerHTML = "";
-
-  const input = searchInput.value.trim().toLowerCase();
-  const breed = Object.keys(breedTraits).find(b => input.includes(b));
-
-  if (breed && breedTraits[breed]) {
-    breedTraits[breed].forEach(trait => {
-      const li = document.createElement("li");
-      li.textContent = trait;
-      li.style.padding = "6px 12px";
-      li.style.border = "1px solid #ffd6e6";
-      li.style.borderRadius = "15px";
-      li.style.background = "#fff0f7";
-      li.style.color = "#d94f85";
-      li.style.cursor = "pointer";
-      li.style.display = "inline-block";
-      li.style.margin = "5px 5px";
-
-      li.addEventListener("click", () => {
-        const current = searchInput.value.trim();
-        if (!current.toLowerCase().includes(trait)) {
-          searchInput.value = current + " " + trait;
-          renderDogs(searchInput.value);
-        }
-      });
-
-      suggestionList.appendChild(li);
-    });
-  }
-});
-
-  window.addEventListener("hashchange", updateSeatDisplay);
-  window.addEventListener("DOMContentLoaded", updateSeatDisplay);
-
- submitBtn.addEventListener("click", () => {
-    const todayStr = new Date().toISOString().split("T")[0];
-    const lastSelectDate = localStorage.getItem("lastSelectDate");
-
-    // ✅ Nếu máy này đã chốt hôm nay rồi thì không cho chốt nữa
-    if (lastSelectDate === todayStr) {
-      showBootstrapAlert("📅 Bạn đã chốt rồi trong hôm nay. Hẹn gặp lại bạn vào ngày mai nhé!", "warning", 5000);
-      return;
-    }
-
-    db.ref("lastSelectTime").once("value").then(snapshot => {
-      const lastTimestamp = snapshot.val();
-      const now = Date.now();
-
-     if (lastTimestamp && now - lastTimestamp < 1800000) {
-  let wait = 1800 - Math.floor((now - lastTimestamp) / 1000); // 30 phút = 1800s
-  wait = Math.max(wait, 0);
-  const min = Math.floor(wait / 60);
-  const sec = wait % 60;
-  showBootstrapAlert(`⏳ Vui lòng quay lại sau ${min} phút ${sec} giây nha! Hoặc nhờ trực tiếp nhân viên hỗ trợ bạn chụp ảnh nhé!`, "warning");
-  return;
-}
-
-
-
-      const seatFromHash = getSeatFromHash() || { side: "Không rõ", table: "Không rõ" };
-      if (selectedDogs.length === 0) {
-        showBootstrapAlert("❗ Bạn chưa chọn bé cún nào cả!", "danger");
-        return;
-      }
-
-      const nowDate = new Date();
-      const timeStr = `${nowDate.getHours()}h${nowDate.getMinutes()}p`;
-
-      const selectedAwake = [];
-      const selectedSleeping = [];
-
-      selectedDogs.forEach(name => {
-        const dog = allDogs.find(d => d.name === name);
-        if (!dog) return;
-        if (dog.status === "play") {
-          selectedAwake.push(name);
-        } else {
-          selectedSleeping.push(name);
-        }
-      });
-
-      let message = `⏰ Thời gian: ${timeStr}\n📍 Vị trí: ${seatFromHash.side} - ${seatFromHash.table}\n`;
-
-      if (selectedAwake.length > 0) {
-        message += `🐶 Bé đang chơi: ${selectedAwake.join(", ")}\n`;
-      }
-      if (selectedSleeping.length > 0) {
-        message += `😴 Bé đang ngủ (khách vẫn muốn order): ${selectedSleeping.join(", ")}`;
-      }
-
-      const encodedMsg = encodeURIComponent(message);
-      const data = { selectedDogs, time: timeStr, seat: seatFromHash };
-
-      db.ref("photoRequests").push(data)
-        .then(() => {
-          db.ref("lastSelectTime").set(firebase.database.ServerValue.TIMESTAMP);
-          localStorage.setItem("lastSelectDate", todayStr); // ✅ Lưu lại đã chốt hôm nay
-
-          showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}. Nhân viên sẽ đến hỗ trợ bạn sau vài phút nhé ^^`, "success", 5000);
-          selectedDogs = [];
-          renderDogs(searchInput.value);
-          updateSelectedCount();
-
-fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`)
-            .then(res => res.json())
-            .then(json => console.log("✅ Đã gửi Telegram:", json))
-            .catch(err => console.error("❌ Lỗi gửi Telegram:", err));
-        })
-        .catch(err => {
-          console.error("❌ Lỗi khi lưu Firebase:", err);
-          showBootstrapAlert("⚠️ Lỗi khi gửi thông tin chốt ảnh.", "danger");
-        });
-    });
-  });
-
-  // Giao diện ảnh đầu trang
-  const photoUrls = [
-     "image/slide9.jpg",
-    "image/slide6.jpg",
-    "image/slide2.jpg",
-    "image/slide3.jpg",
-    "image/slide4.jpg",
-    "image/slide5.jpg"
-  ];
-
-  const carouselInner = document.querySelector("#carouselPhotos .carousel-inner");
-  const overlay = document.getElementById("photoOverlay");
-
-  photoUrls.forEach((url, idx) => {
-    const div = document.createElement("div");
-    div.className = "carousel-item" + (idx === 0 ? " active" : "");
-    div.innerHTML = `<img src="${url}" class="d-block w-100" alt="Ảnh chụp">`;
-    carouselInner.appendChild(div);
-  });
-
-  overlay.addEventListener("click", () => {
-    document.getElementById("tapOverlayText")?.remove();
-    overlay.classList.add("fade");
-    setTimeout(() => overlay.remove(), 500);
-  });
-
-  
-
-</script>
 <!-- Modal xác nhận chọn bé đang ngủ -->
 <div class="modal fade" id="sleepModal" tabindex="-1" aria-labelledby="sleepModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -669,12 +333,319 @@ fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUr
         <!-- Nội dung modal sẽ được thay đổi động -->
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thôi để bé nghỉ</button>
-        <button type="button" class="btn btn-pink" id="confirmSleepBtn" style="background-color: #ff69b4; color: white;">Vẫn chọn bé </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="modal_cancel">Thôi để bé nghỉ</button>
+        <button type="button" class="btn btn-pink" id="confirmSleepBtn" style="background-color: #ff69b4; color: white;" data-i18n="modal_confirm">Vẫn chọn bé</button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<!-- SCRIPT QUẢN LÝ NGÔN NGỮ -->
+<script>
+const LANGS = {
+  vi: {
+    title: "📸 Chọn các bé iu để chụp ảnh",
+    tap_screen: "Chạm vào màn hình để tiếp tục",
+    search_placeholder: "Nhập tên, giống hoặc tính cách bé cún...",
+    seat_loading: "Vị trí đang tải...",
+    dog_list_intro: "Dưới đây là danh sách các bé cún đang chờ được chọn nè!",
+    submit_button: "Chốt các bé iu 💖",
+    modal_cancel: "Thôi để bé nghỉ",
+    modal_confirm: "Vẫn chọn bé"
+  },
+  en: {
+    title: "📸 Choose your favorite dogs to take pictures",
+    tap_screen: "Tap the screen to continue",
+    search_placeholder: "Enter dog name, breed, or personality...",
+    seat_loading: "Loading seat info...",
+    dog_list_intro: "Below is the list of dogs waiting to be selected!",
+    submit_button: "Confirm selected dogs 💖",
+    modal_cancel: "Let the dog sleep",
+    modal_confirm: "Still select the dog"
+  }
+};
+
+let currentLang = localStorage.getItem("lang") || "vi";
+
+// Dịch nội dung theo key và ngôn ngữ hiện tại
+function t(key) {
+  return LANGS[currentLang]?.[key] || key;
+}
+
+// Gán văn bản cho các phần tử có thuộc tính data-i18n hoặc data-i18n-placeholder
+function applyLanguage() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.innerText = t(el.dataset.i18n);
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+    el.setAttribute("placeholder", t(el.dataset.i18nPlaceholder));
+  });
+}
+
+// Gán sự kiện chọn ngôn ngữ
+document.addEventListener("DOMContentLoaded", () => {
+  applyLanguage();
+  document.getElementById("lang-vi").addEventListener("click", () => {
+    currentLang = "vi";
+    localStorage.setItem("lang", "vi");
+    applyLanguage();
+  });
+
+  document.getElementById("lang-en").addEventListener("click", () => {
+    currentLang = "en";
+    localStorage.setItem("lang", "en");
+    applyLanguage();
+  });
+});
+</script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+  authDomain: "dogs-be72b.firebaseapp.com",
+  databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+  projectId: "dogs-be72b",
+  storageBucket: "dogs-be72b.appspot.com",
+  messagingSenderId: "1003873040746",
+  appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const dogList = document.getElementById("dog-list");
+const searchInput = document.getElementById("search-input");
+const submitBtn = document.getElementById("submit-btn");
+const selectedCount = document.getElementById("selected-count");
+const seatInfo = document.getElementById("seat-info");
+const alertMessage = document.getElementById("alert-message");
+
+let selectedDogs = [];
+let allDogs = [];
+
+// Hiển thị cảnh báo Bootstrap
+function showBootstrapAlert(message, type = "success", duration = 3000) {
+  const container = document.getElementById("alert-box-container");
+  const alertBox = document.getElementById("alert-box");
+  alertMessage.textContent = message;
+
+  const colors = {
+    success: ["#fff0f5", "#ffa8c5", "#d94f85"],
+    warning: ["#fff8e1", "#ffc107", "#b66f00"],
+    danger:  ["#ffe0e0", "#ff6b6b", "#c0392b"]
+  };
+
+  const [bg, border, color] = colors[type] || colors.success;
+  alertBox.style.backgroundColor = bg;
+  alertBox.style.borderColor = border;
+  alertBox.style.color = color;
+
+  container.classList.add("show");
+  setTimeout(() => container.classList.remove("show"), duration);
+}
+
+function updateSelectedCount() {
+  selectedCount.style.display = selectedDogs.length > 0 ? "block" : "none";
+  selectedCount.textContent = `${currentLang === "vi" ? "Đã chọn" : "Selected"}: ${selectedDogs.length}`;
+}
+
+function getSeatFromHash() {
+  const hash = window.location.hash.toLowerCase();
+  const match = hash.match(/^#\/?([lr])(\d)$/);
+  if (match) {
+    const side = match[1] === "r" ? (currentLang === "vi" ? "Bên phải" : "Right") : (currentLang === "vi" ? "Bên trái" : "Left");
+    const table = (currentLang === "vi" ? "Bàn " : "Table ") + match[2];
+    return { side, table };
+  }
+  return null;
+}
+
+function updateSeatDisplay() {
+  const seat = getSeatFromHash();
+  seatInfo.textContent = seat
+    ? `${currentLang === "vi" ? "Vị trí của bạn" : "Your seat"}: ${seat.side} - ${seat.table}`
+    : (currentLang === "vi" ? "Vị trí chưa xác định từ đường link!" : "Seat not determined from URL!");
+}
+
+function renderDogs(filter = "") {
+  dogList.innerHTML = "";
+  const keywords = filter.toLowerCase().split(/\s+/).filter(k => k);
+
+  allDogs.filter(dog => {
+    const text = `${dog.name} ${dog.breed} ${dog.trait || dog.personality || ""}`.toLowerCase();
+    return keywords.every(k => text.includes(k));
+  }).forEach(dog => {
+    const div = document.createElement("div");
+    div.className = "dog-card";
+    div.dataset.name = dog.name;
+    if (selectedDogs.includes(dog.name)) div.classList.add("selected");
+    if (dog.status !== "play") div.classList.add("sleeping");
+
+    div.innerHTML = `
+      <div class="dog-image-wrapper">
+        <img src="${dog.image}" alt="${dog.name}" />
+        <div class="selected-overlay"><i class="fa-solid fa-check-circle me-2"></i> ${currentLang === "vi" ? "Đã chọn" : "Selected"}</div>
+      </div>
+      <h3>${dog.name}</h3>
+      <p>${currentLang === "vi" ? "Giống" : "Breed"}: ${dog.breed}</p>
+      <p>${currentLang === "vi" ? "Tính cách" : "Personality"}: ${dog.trait || dog.personality || (currentLang === "vi" ? "Chưa cập nhật" : "Not updated")}</p>
+    `;
+
+    div.addEventListener("click", () => {
+      const dogName = dog.name;
+      if (selectedDogs.includes(dogName)) {
+        selectedDogs = selectedDogs.filter(n => n !== dogName);
+        div.classList.remove("selected");
+        updateSelectedCount();
+        return;
+      }
+
+      if (selectedDogs.length >= 3) {
+        showBootstrapAlert(currentLang === "vi" ? "🐾 Bạn chỉ được chọn tối đa 3 bé nha!" : "🐾 You can only select up to 3 dogs!", "warning");
+        return;
+      }
+
+      if (dog.status !== "play") {
+        const selectedSleepingCount = selectedDogs.filter(name => {
+          const d = allDogs.find(d => d.name === name);
+          return d && d.status !== "play";
+        }).length;
+
+        if (selectedSleepingCount >= 1) {
+          showBootstrapAlert(currentLang === "vi" ? "😴 Bạn chỉ được chọn 1 bé đang ngủ thôi nha!" : "😴 You can only select 1 sleeping dog!", "warning");
+          return;
+        }
+
+        const modalLabel = document.getElementById("sleepModalLabel");
+        const modalBody = document.getElementById("sleepModalBody");
+        const confirmSleepBtn = document.getElementById("confirmSleepBtn");
+
+        modalLabel.textContent = `💤 ${currentLang === "vi" ? "Bé" : "Dog"} "${dogName}" ${currentLang === "vi" ? "đang ngủ" : "is sleeping"}`;
+        modalBody.innerHTML = `${currentLang === "vi" ? "Bạn vẫn muốn chọn" : "Do you still want to select"} <strong>${dogName}</strong>?`;
+
+        const bsModal = new bootstrap.Modal(document.getElementById("sleepModal"));
+        bsModal.show();
+
+        confirmSleepBtn.onclick = () => {
+          selectedDogs.push(dogName);
+          div.classList.add("selected");
+          updateSelectedCount();
+          bsModal.hide();
+        };
+        return;
+      }
+
+      selectedDogs.push(dogName);
+      div.classList.add("selected");
+      updateSelectedCount();
+    });
+
+    dogList.appendChild(div);
+  });
+}
+
+// Xử lý khởi động
+db.ref("dogs").on("value", snapshot => {
+  const data = snapshot.val();
+  allDogs = Object.values(data || {}).sort((a, b) => {
+    if (a.status === "play" && b.status !== "play") return -1;
+    if (a.status !== "play" && b.status === "play") return 1;
+    return a.name.localeCompare(b.name);
+  });
+  renderDogs(searchInput.value);
+});
+
+searchInput.addEventListener("input", () => renderDogs(searchInput.value));
+window.addEventListener("hashchange", updateSeatDisplay);
+window.addEventListener("DOMContentLoaded", updateSeatDisplay);
+
+// Nút gửi yêu cầu chụp ảnh
+submitBtn.addEventListener("click", () => {
+  const todayStr = new Date().toISOString().split("T")[0];
+  const lastSelectDate = localStorage.getItem("lastSelectDate");
+
+  if (lastSelectDate === todayStr) {
+    showBootstrapAlert(currentLang === "vi" ? "📅 Bạn đã chốt rồi trong hôm nay. Hẹn gặp lại bạn vào ngày mai nhé!" : "📅 You've already confirmed today. Come back tomorrow!", "warning", 5000);
+    return;
+  }
+
+  db.ref("lastSelectTime").once("value").then(snapshot => {
+    const lastTimestamp = snapshot.val();
+    const now = Date.now();
+    if (lastTimestamp && now - lastTimestamp < 1800000) {
+      const wait = 1800 - Math.floor((now - lastTimestamp) / 1000);
+      const min = Math.floor(wait / 60);
+      const sec = wait % 60;
+      const msg = currentLang === "vi"
+        ? `⏳ Vui lòng quay lại sau ${min} phút ${sec} giây nha!`
+        : `⏳ Please come back in ${min} minutes ${sec} seconds!`;
+      showBootstrapAlert(msg, "warning");
+      return;
+    }
+
+    const seat = getSeatFromHash() || { side: "?", table: "?" };
+    if (selectedDogs.length === 0) {
+      showBootstrapAlert(currentLang === "vi" ? "❗ Bạn chưa chọn bé cún nào cả!" : "❗ You haven't selected any dogs!", "danger");
+      return;
+    }
+
+    const nowDate = new Date();
+    const timeStr = `${nowDate.getHours()}h${nowDate.getMinutes()}p`;
+    const awake = [], sleep = [];
+
+    selectedDogs.forEach(name => {
+      const dog = allDogs.find(d => d.name === name);
+      if (!dog) return;
+      (dog.status === "play" ? awake : sleep).push(name);
+    });
+
+    let msg = `⏰ ${currentLang === "vi" ? "Thời gian" : "Time"}: ${timeStr}\n📍 ${currentLang === "vi" ? "Vị trí" : "Seat"}: ${seat.side} - ${seat.table}\n`;
+    if (awake.length > 0) msg += `🐶 ${currentLang === "vi" ? "Bé đang chơi" : "Awake"}: ${awake.join(", ")}\n`;
+    if (sleep.length > 0) msg += `😴 ${currentLang === "vi" ? "Bé đang ngủ (khách vẫn muốn order)" : "Sleeping dogs (still selected)"}: ${sleep.join(", ")}`;
+
+    db.ref("photoRequests").push({ selectedDogs, time: timeStr, seat })
+      .then(() => {
+        db.ref("lastSelectTime").set(firebase.database.ServerValue.TIMESTAMP);
+        localStorage.setItem("lastSelectDate", todayStr);
+
+        showBootstrapAlert(`${currentLang === "vi" ? "🎉 Bạn đã chốt" : "🎉 Confirmed"}: ${selectedDogs.join(", ")}`, "success", 5000);
+        selectedDogs = [];
+        renderDogs(searchInput.value);
+        updateSelectedCount();
+
+        const encodedMsg = encodeURIComponent(msg);
+        fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`);
+      });
+  });
+});
+
+// Hiển thị slider ảnh nền ban đầu
+const photoUrls = [
+  "image/slide9.jpg",
+  "image/slide6.jpg",
+  "image/slide2.jpg",
+  "image/slide3.jpg",
+  "image/slide4.jpg",
+  "image/slide5.jpg"
+];
+const carouselInner = document.querySelector("#carouselPhotos .carousel-inner");
+const overlay = document.getElementById("photoOverlay");
+
+photoUrls.forEach((url, idx) => {
+  const div = document.createElement("div");
+  div.className = "carousel-item" + (idx === 0 ? " active" : "");
+  div.innerHTML = `<img src="${url}" class="d-block w-100" alt="Ảnh chụp">`;
+  carouselInner.appendChild(div);
+});
+
+overlay.addEventListener("click", () => {
+  document.getElementById("tapOverlayText")?.remove();
+  overlay.classList.add("fade");
+  setTimeout(() => overlay.remove(), 500);
+});
+</script>
 </body>
 </html>
