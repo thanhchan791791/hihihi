@@ -18,6 +18,10 @@
     padding: 20px 20px 100px;
     text-align: center;
   }
+.language-buttons .btn.active {
+  background-color: #ff69b4;
+  color: white;
+}
 
   h1 {
     font-size: 2em;
@@ -375,7 +379,13 @@ const LANGS = {
 
 
 
-let currentLang = localStorage.getItem("lang") || "vi";
+let currentLang = localStorage.getItem("lang");
+
+if (!currentLang) {
+  const browserLang = navigator.language.toLowerCase();
+  currentLang = browserLang.startsWith("vi") ? "vi" : "en";
+  localStorage.setItem("lang", currentLang);
+}
 
 // Dịch nội dung theo key và ngôn ngữ hiện tại
 function t(key) {
@@ -392,14 +402,21 @@ function applyLanguage() {
     el.setAttribute("placeholder", t(el.dataset.i18nPlaceholder));
   });
 }
+function updateActiveLangButton() {
+  document.getElementById("lang-vi").classList.toggle("active", currentLang === "vi");
+  document.getElementById("lang-en").classList.toggle("active", currentLang === "en");
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   applyLanguage();
+  updateActiveLangButton(); // ✅ Thêm dòng này
 
  document.getElementById("lang-en").addEventListener("click", () => {
   currentLang = "en";
   localStorage.setItem("lang", "en");
   applyLanguage();
+    updateActiveLangButton(); // ✅ Thêm dòng này
+
   renderDogs(searchInput.value); // ✅ Cập nhật lại text "Selected"
   updateSeatDisplay();           // ✅ Cập nhật lại vị trí theo ngôn ngữ
 });
@@ -409,6 +426,8 @@ document.addEventListener("DOMContentLoaded", () => {
   currentLang = "vi";
   localStorage.setItem("lang", "vi");
   applyLanguage();
+  updateActiveLangButton(); // ✅ Thêm dòng này
+
   renderDogs(searchInput.value); // ✅ Cập nhật lại text "Đã chọn"
   updateSeatDisplay();           // ✅ Cập nhật lại vị trí theo ngôn ngữ
 });
