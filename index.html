@@ -355,7 +355,9 @@ const LANGS = {
     dog_list_intro: "Dưới đây là danh sách các bé cún đang chờ được chọn nè!",
     submit_button: "Chốt các bé iu 💖",
     modal_cancel: "Thôi để bé nghỉ",
-    modal_confirm: "Vẫn chọn bé"
+    modal_confirm: "Vẫn chọn bé",
+    selected_count: "Đã chọn: {count} bé",
+    selected: "Đã chọn"
   },
   en: {
     title: "📸 Choose your favorite dogs to take pictures",
@@ -365,9 +367,13 @@ const LANGS = {
     dog_list_intro: "Below is the list of dogs waiting to be selected!",
     submit_button: "Confirm selected dogs 💖",
     modal_cancel: "Let the dog sleep",
-    modal_confirm: "Still select the dog"
+    modal_confirm: "Still select the dog",
+    selected_count: "Selected: {count} dogs",
+    selected: "Selected"
   }
 };
+
+
 
 let currentLang = localStorage.getItem("lang") || "vi";
 
@@ -387,21 +393,28 @@ function applyLanguage() {
   });
 }
 
-// Gán sự kiện chọn ngôn ngữ
 document.addEventListener("DOMContentLoaded", () => {
   applyLanguage();
-  document.getElementById("lang-vi").addEventListener("click", () => {
-    currentLang = "vi";
-    localStorage.setItem("lang", "vi");
-    applyLanguage();
-  });
 
-  document.getElementById("lang-en").addEventListener("click", () => {
-    currentLang = "en";
-    localStorage.setItem("lang", "en");
-    applyLanguage();
-  });
+ document.getElementById("lang-en").addEventListener("click", () => {
+  currentLang = "en";
+  localStorage.setItem("lang", "en");
+  applyLanguage();
+  renderDogs(searchInput.value); // ✅ Cập nhật lại text "Selected"
+  updateSeatDisplay();           // ✅ Cập nhật lại vị trí theo ngôn ngữ
 });
+
+
+  document.getElementById("lang-vi").addEventListener("click", () => {
+  currentLang = "vi";
+  localStorage.setItem("lang", "vi");
+  applyLanguage();
+  renderDogs(searchInput.value); // ✅ Cập nhật lại text "Đã chọn"
+  updateSeatDisplay();           // ✅ Cập nhật lại vị trí theo ngôn ngữ
+});
+
+});
+
 </script>
 <script>
 const firebaseConfig = {
@@ -449,8 +462,9 @@ function showBootstrapAlert(message, type = "success", duration = 3000) {
 
 function updateSelectedCount() {
   selectedCount.style.display = selectedDogs.length > 0 ? "block" : "none";
-  selectedCount.textContent = `${currentLang === "vi" ? "Đã chọn" : "Selected"}: ${selectedDogs.length}`;
+  selectedCount.textContent = t("selected_count").replace("{count}", selectedDogs.length);
 }
+
 
 function getSeatFromHash() {
   const hash = window.location.hash.toLowerCase();
@@ -487,7 +501,7 @@ function renderDogs(filter = "") {
     div.innerHTML = `
       <div class="dog-image-wrapper">
         <img src="${dog.image}" alt="${dog.name}" />
-        <div class="selected-overlay"><i class="fa-solid fa-check-circle me-2"></i> ${currentLang === "vi" ? "Đã chọn" : "Selected"}</div>
+<div class="selected-overlay"><i class="fa-solid fa-check-circle me-2"></i> ${t("selected")}</div>
       </div>
       <h3>${dog.name}</h3>
       <p>${currentLang === "vi" ? "Giống" : "Breed"}: ${dog.breed}</p>
