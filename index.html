@@ -99,6 +99,32 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
   }
+#ketqua {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.khach-photo {
+  width: 100%;
+  max-width: 160px;
+  text-align: center;
+}
+
+.khach-photo img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.khach-photo .download-btn {
+  margin-top: 8px;
+  width: 100%;
+  padding: 8px 0;
+  font-size: 0.9em;
+}
 
   .dog-card {
     background: #fff0f5;
@@ -788,10 +814,9 @@ function xemAnh() {
     const links = snapshot.val();
     if (links && Array.isArray(links)) {
     ketqua.innerHTML = links.map((link, index) => `
-  <div style="display:inline-block;margin:15px;text-align:center;">
-    <img src="${link}" alt="Ảnh khách" style="max-width:180px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-    <br>
-    <button class="download-btn" onclick="downloadImage('${link}', 'anh-khach-${index + 1}.jpg')">Tải ảnh </button>
+  <div class="khach-photo">
+    <img src="${link}" alt="Ảnh khách">
+    <button class="download-btn" onclick="downloadImage('${link}', 'anh-khach-${index + 1}.jpg')">Tải ảnh</button>
   </div>
 `).join("");
 
