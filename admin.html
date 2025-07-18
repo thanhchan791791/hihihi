@@ -180,6 +180,47 @@
     <button class="btn btn-success" onclick="openForm()">➕ Thêm chó mới</button>
     <button class="btn btn-warning" onclick="setAllToRest()">🌙 Cho tất cả nghỉ</button>
   </div>
+<!-- Nút hiện/ẩn form upload -->
+<div class="text-center mb-3">
+  <button class="btn btn-outline-primary" onclick="toggleUploadPanel()">📸 Upload ảnh khách</button>
+</div>
+
+<!-- Form upload ảnh, mặc định ẩn -->
+<div id="uploadPanel" class="p-3 border rounded shadow" style="
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  background-color: #fff0f5;
+  z-index: 9999;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  border: 2px solid #ffc2d1;
+  border-radius: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s ease;
+">
+  <button onclick="toggleUploadPanel()" class="btn-close position-absolute" style="top:10px; right:10px;"></button>
+
+  <h4>📸 Upload nhiều ảnh khách</h4>
+
+  <div class="form-group mb-3">
+    <label for="fileInput">Chọn ảnh:</label>
+    <input type="file" id="fileInput" class="form-control" accept="image/*" multiple>
+  </div>
+
+  <div class="form-group mb-3">
+    <label for="tenAnh">Tên nhóm ảnh (VD: khach1):</label>
+    <input type="text" id="tenAnh" class="form-control" placeholder="Nhập tên nhóm ảnh">
+  </div>
+
+  <button class="btn btn-primary" onclick="uploadImages()">📤 Upload và Lưu</button>
+
+  <div id="uploadResult" class="mt-4"></div>
+</div>
+
 
   <div class="input-group mb-4 shadow-lg" style="max-width: 500px; margin: auto; font-size: 1.2rem;">
     <span class="input-group-text bg-pink">
@@ -376,6 +417,21 @@
       }
     });
   }
+let isUploadVisible = false;
+function toggleUploadPanel() {
+  const panel = document.getElementById("uploadPanel");
+
+  if (isUploadVisible) {
+    panel.style.opacity = "0";
+    panel.style.pointerEvents = "none";
+  } else {
+    panel.style.opacity = "1";
+    panel.style.pointerEvents = "auto";
+  }
+
+  isUploadVisible = !isUploadVisible;
+}
+
 
   function clearNotifications() {
     Swal.fire({
@@ -446,7 +502,56 @@
         : "📥 Không có thông tin hợp lệ để hiển thị.";
     });
   }
+ async function uploadImages() {
+    const files = document.getElementById("fileInput").files;
+    const ten = document.getElementById("tenAnh").value.trim().toLowerCase();
+    const apiKey = "b5107933ec7b5e31a4bb280bf121e183"; // imgbb API key
 
+    if (files.length === 0 || !ten) {
+      alert("Vui lòng chọn ít nhất 1 ảnh và nhập tên nhóm!");
+      return;
+    }
+
+    let uploadedLinks = [];
+    document.getElementById("uploadResult").innerHTML = "<p>⏳ Đang tải ảnh lên...</p>";
+
+    for (let i = 0; i < files.length; i++) {
+      const formData = new FormData();
+      formData.append("image", files[i]);
+
+      try {
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          uploadedLinks.push(data.data.url);
+        } else {
+          console.warn(`Ảnh thứ ${i + 1} lỗi khi upload`);
+        }
+      } catch (error) {
+        console.error("Lỗi upload:", error);
+      }
+    }
+
+    if (uploadedLinks.length > 0) {
+      await firebase.database().ref("anhKhach/" + ten).set(uploadedLinks);
+
+      document.getElementById("uploadResult").innerHTML = `
+        <p style="color:green;">✅ Đã upload ${uploadedLinks.length} ảnh cho nhóm <b>${ten}</b></p>
+        <div style="display:flex; flex-wrap:wrap;">
+          ${uploadedLinks.map(link => `
+            <div style="margin:10px;">
+              <img src="${link}" style="max-width:150px;border-radius:6px;">
+            </div>
+          `).join("")}
+        </div>
+      `;
+    } else {
+      document.getElementById("uploadResult").innerHTML = "<p style='color:red;'>❌ Không upload được ảnh nào!</p>";
+    }
+  }
   loadDogs();
   loadCounts();
   loadNotifications();
