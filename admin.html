@@ -503,62 +503,54 @@ function toggleUploadPanel() {
     });
   }
  async function uploadImages() {
-  const files = document.getElementById("fileInput").files;
-  const ten = document.getElementById("tenAnh").value.trim().toLowerCase();
-  const apiKey = "b5107933ec7b5e31a4bb280bf121e183"; // imgbb API key
+    const files = document.getElementById("fileInput").files;
+    const ten = document.getElementById("tenAnh").value.trim().toLowerCase();
+    const apiKey = "b5107933ec7b5e31a4bb280bf121e183"; // imgbb API key
 
-  if (files.length === 0 || !ten) {
-    alert("Vui lòng chọn ít nhất 1 ảnh và nhập tên nhóm!");
-    return;
-  }
+    if (files.length === 0 || !ten) {
+      alert("Vui lòng chọn ít nhất 1 ảnh và nhập tên nhóm!");
+      return;
+    }
 
-  let uploadedLinks = [];
-  document.getElementById("uploadResult").innerHTML = "<p>⏳ Đang nén và tải ảnh lên...</p>";
+    let uploadedLinks = [];
+    document.getElementById("uploadResult").innerHTML = "<p>⏳ Đang tải ảnh lên...</p>";
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const image = await createImageBitmap(file);
-    const canvas = document.createElement("canvas");
-    canvas.width = image.width;
-    canvas.height = image.height;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(image, 0, 0);
+    for (let i = 0; i < files.length; i++) {
+      const formData = new FormData();
+      formData.append("image", files[i]);
 
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/webp", 0.8));
-    const formData = new FormData();
-    formData.append("image", blob, file.name.replace(/\.[^/.]+$/, "") + ".webp");
-
-    try {
-      const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-        method: "POST",
-        body: formData
-      });
-      const data = await res.json();
-      if (data.success) {
-        uploadedLinks.push(data.data.url);
-      } else {
-        console.warn(`Ảnh thứ ${i + 1} lỗi khi upload`);
+      try {
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          uploadedLinks.push(data.data.url);
+        } else {
+          console.warn(`Ảnh thứ ${i + 1} lỗi khi upload`);
+        }
+      } catch (error) {
+        console.error("Lỗi upload:", error);
       }
-    } catch (error) {
-      console.error("Lỗi upload:", error);
+    }
+
+    if (uploadedLinks.length > 0) {
+      await firebase.database().ref("anhKhach/" + ten).set(uploadedLinks);
+
+     Swal.fire({
+  icon: 'success',
+  title: `✅ Đã upload ${uploadedLinks.length} ảnh`,
+  text: `Nhóm ảnh: ${ten}`,
+  showConfirmButton: false,
+  timer: 2000
+});
+toggleUploadPanel(); // Ẩn form sau khi upload
+
+    } else {
+      document.getElementById("uploadResult").innerHTML = "<p style='color:red;'>❌ Không upload được ảnh nào!</p>";
     }
   }
-
-  if (uploadedLinks.length > 0) {
-    await firebase.database().ref("anhKhach/" + ten).set(uploadedLinks);
-    Swal.fire({
-      icon: 'success',
-      title: `✅ Đã upload ${uploadedLinks.length} ảnh`,
-      text: `Nhóm ảnh: ${ten}`,
-      showConfirmButton: false,
-      timer: 2000
-    });
-    toggleUploadPanel(); // Ẩn form sau khi upload
-  } else {
-    document.getElementById("uploadResult").innerHTML = "<p style='color:red;'>❌ Không upload được ảnh nào!</p>";
-  }
-}
-
   loadDogs();
   loadCounts();
   loadNotifications();
