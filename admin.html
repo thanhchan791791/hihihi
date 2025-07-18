@@ -538,16 +538,15 @@ function toggleUploadPanel() {
     if (uploadedLinks.length > 0) {
       await firebase.database().ref("anhKhach/" + ten).set(uploadedLinks);
 
-      document.getElementById("uploadResult").innerHTML = `
-        <p style="color:green;">✅ Đã upload ${uploadedLinks.length} ảnh cho nhóm <b>${ten}</b></p>
-        <div style="display:flex; flex-wrap:wrap;">
-          ${uploadedLinks.map(link => `
-            <div style="margin:10px;">
-              <img src="${link}" style="max-width:150px;border-radius:6px;">
-            </div>
-          `).join("")}
-        </div>
-      `;
+     Swal.fire({
+  icon: 'success',
+  title: `✅ Đã upload ${uploadedLinks.length} ảnh`,
+  text: `Nhóm ảnh: ${ten}`,
+  showConfirmButton: false,
+  timer: 2000
+});
+toggleUploadPanel(); // Ẩn form sau khi upload
+
     } else {
       document.getElementById("uploadResult").innerHTML = "<p style='color:red;'>❌ Không upload được ảnh nào!</p>";
     }
