@@ -313,94 +313,76 @@
       }, 3500);
     }
 
-    function xemAnh() {
-      const name = document.getElementById("nameInput").value.trim().toLowerCase();
-      const sliderGallery = document.getElementById("sliderGallery");
-      const sliderWrapper = document.getElementById("sliderWrapper");
-      const thankYou = document.getElementById("thankYou");
-      const loading = document.getElementById("loading");
-      const loadingProgress = document.getElementById("loadingProgress");
+   function xemAnh() {
+  const name = document.getElementById("nameInput").value.trim().toLowerCase();
+  const sliderGallery = document.getElementById("sliderGallery");
+  const sliderWrapper = document.getElementById("sliderWrapper");
+  const thankYou = document.getElementById("thankYou");
+  const loading = document.getElementById("loading");
+  const loadingProgress = document.getElementById("loadingProgress");
 
-      sliderWrapper.innerHTML = "";
-      sliderGallery.style.display = "none";
-      thankYou.style.display = "none";
-      loadingProgress.style.display = "none";
+  sliderWrapper.innerHTML = "";
+  sliderGallery.style.display = "none";
+  thankYou.style.display = "none";
+  loadingProgress.style.display = "none";
 
-      if (swiper) {
-        swiper.destroy(true, true);
-        swiper = null;
-      }
+  if (swiper) {
+    swiper.destroy(true, true);
+    swiper = null;
+  }
 
-      if (!name) {
-        showError("Vui lòng nhập tên!");
-        return;
-      }
+  if (!name) {
+    showError("Vui lòng nhập tên!");
+    return;
+  }
 
-      loading.style.display = "flex";
-      loadingProgress.style.display = "block";
-      loadingProgress.innerText = "Đang tải ảnh...";
+  loading.style.display = "flex";
+  loadingProgress.style.display = "block";
+  loadingProgress.innerText = "Đang tải ảnh...";
 
-      db.ref("anhKhach/" + name).once("value").then(snapshot => {
-        const links = snapshot.val();
-        if (links && Array.isArray(links) && links.length > 0) {
-          const total = links.length;
-          let loaded = 0;
-          const tempSlides = [];
+  db.ref("anhKhach/" + name).once("value").then(snapshot => {
+    const links = snapshot.val();
+    if (links && Array.isArray(links) && links.length > 0) {
+      const total = links.length;
+      let loaded = 0;
 
-          links.forEach((url, index) => {
-            const img = new Image();
-            img.src = url;
+      links.forEach((url, index) => {
+        // Hiển thị ảnh ngay không cần chờ onload
+        const slide = document.createElement("div");
+        slide.className = "swiper-slide";
+        slide.innerHTML = `<img src="${url}" alt="Ảnh ${index + 1}" onclick="toggleZoom(this)" />`;
+        sliderWrapper.appendChild(slide);
 
-            img.onload = () => {
-              const slide = document.createElement("div");
-              slide.className = "swiper-slide";
-              slide.innerHTML = `<img src="${url}" alt="Ảnh ${index + 1}" onclick="toggleZoom(this)" />`;
-              tempSlides.push(slide);
-              loaded++;
-              const percent = Math.round(loaded / total * 100);
-              loadingProgress.innerText = `Tải ảnh: ${loaded}/${total} (${percent}%)`;
+        loaded++;
+        const percent = Math.round(loaded / total * 100);
+        loadingProgress.innerText = `Đã tải: ${loaded}/${total} (${percent}%)`;
 
-              if (loaded === total) {
-                tempSlides.forEach(slide => sliderWrapper.appendChild(slide));
-                loading.style.display = "none";
-                sliderGallery.style.display = "block";
-                thankYou.style.display = "block";
-
-                swiper = new Swiper(".mySwiper", {
-                  loop: true,
-                  pagination: { el: ".swiper-pagination", clickable: true },
-                  navigation: {
-                    nextEl: ".swiper-button-next",
-                    prevEl: ".swiper-button-prev",
-                  },
-                });
-              }
-            };
-
-            img.onerror = () => {
-              loaded++;
-              if (loaded === total) {
-                if (tempSlides.length > 0) {
-                  tempSlides.forEach(slide => sliderWrapper.appendChild(slide));
-                  sliderGallery.style.display = "block";
-                  thankYou.style.display = "block";
-                } else {
-                  showError("❌ Không tải được ảnh nào!");
-                }
-                loading.style.display = "none";
-              }
-            };
-          });
-        } else {
-          showError("❌ Không tìm thấy ảnh!");
+        if (loaded === total) {
           loading.style.display = "none";
+          sliderGallery.style.display = "block";
+          thankYou.style.display = "block";
+
+          swiper = new Swiper(".mySwiper", {
+            loop: true,
+            pagination: { el: ".swiper-pagination", clickable: true },
+            navigation: {
+              nextEl: ".swiper-button-next",
+              prevEl: ".swiper-button-prev",
+            },
+          });
         }
-      }).catch(err => {
-        console.error(err);
-        showError("⚠️ Lỗi khi truy cập dữ liệu!");
-        loading.style.display = "none";
       });
+    } else {
+      showError("❌ Không tìm thấy ảnh!");
+      loading.style.display = "none";
     }
+  }).catch(err => {
+    console.error(err);
+    showError("⚠️ Lỗi khi truy cập dữ liệu!");
+    loading.style.display = "none";
+  });
+}
+
 
     function toggleZoom(img) {
       if (document.querySelector(".fullscreen")) {
