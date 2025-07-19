@@ -243,7 +243,7 @@
     async function uploadSingleImage(file, token, tenKhach, index) {
       const ext = file.name.split('.').pop();
       const timestamp = Date.now();
-      const fileName = `${tenKhach}-${timestamp}-${index + 1}.${ext}`;
+const fileName = file.name;
       const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
 
       try {
@@ -277,53 +277,79 @@
     }
 
     async function uploadImages() {
-      const files = document.getElementById("fileInput").files;
-      const token = document.getElementById("token").value.trim();
-      const tenKhachRaw = document.getElementById("tenKhach").value.trim();
+  const files = document.getElementById("fileInput").files;
+  const token = document.getElementById("token").value.trim();
+  const tenKhachRaw = document.getElementById("tenKhach").value.trim();
 
-      if (files.length === 0 || !tenKhachRaw || !token) {
-        alert("❗ Vui lòng chọn ảnh, nhập tên khách và token.");
-        return;
-      }
+  if (files.length === 0 || !tenKhachRaw || !token) {
+    alert("❗ Vui lòng chọn ảnh, nhập tên khách và token.");
+    return;
+  }
 
-      const tenKhach = tenKhachRaw.toLowerCase().replace(/\s+/g, '-');
+  const tenKhach = tenKhachRaw.toLowerCase().replace(/\s+/g, '-');
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = `<span class="loading-dots">⏳ Đang tải lên</span>`;
 
-      const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = `<span class="loading-dots">⏳ Đang tải lên</span>`;
+  const uploadedLinks = [];
+  let failedCount = 0;
 
-      // Upload ảnh song song
-      const uploadPromises = [];
-      for (let i = 0; i < files.length; i++) {
-        uploadPromises.push(uploadSingleImage(files[i], token, tenKhach, i));
-      }
+  // Upload tuần tự từng ảnh
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const ext = file.name.split('.').pop();
+    const fileName = file.name; // giữ nguyên tên ảnh gốc
+    const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
 
-      const results = await Promise.all(uploadPromises);
+    try {
+      const base64Content = await readFileAsBase64(file);
+      const response = await fetch(apiUrl, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: `Upload ${fileName}`,
+          content: base64Content,
+          branch: BRANCH,
+        }),
+      });
 
-      const uploadedLinks = results
-        .filter(r => r.success)
-        .map(r => r.url);
+      const data = await response.json();
 
-      const failedCount = results.length - uploadedLinks.length;
-
-      if (uploadedLinks.length > 0) {
-        await db.ref("anhKhach/" + tenKhach).set(uploadedLinks);
-
-        resultDiv.innerHTML = `
-          ✅ Upload thành công <strong>${uploadedLinks.length}</strong> ảnh cho <strong>${tenKhach}</strong>.<br>
-          ${failedCount > 0 ? `⚠️ Có <strong>${failedCount}</strong> ảnh upload thất bại.<br>` : ""}
-          <a href="https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${BRANCH}/${IMAGE_FOLDER}" target="_blank">📁 Xem ảnh trên GitHub</a>
-        `;
-
-        Swal.fire(
-          "✅ Upload hoàn tất!",
-          `Đã lưu ${uploadedLinks.length} ảnh cho ${tenKhach}` + (failedCount > 0 ? `\nCó ${failedCount} ảnh thất bại` : ""),
-          "success"
-        );
+      if (response.ok) {
+        const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
+        uploadedLinks.push(url);
       } else {
-        resultDiv.innerHTML = "❌ Không upload được ảnh nào!";
-        Swal.fire("❌ Upload thất bại", "Không có ảnh nào được tải lên thành công.", "error");
+        console.warn(`❌ Upload ảnh ${fileName} thất bại:`, data.message);
+        failedCount++;
       }
+    } catch (err) {
+      console.error(`❌ Lỗi upload ảnh ${file.name}:`, err);
+      failedCount++;
     }
+  }
+
+  if (uploadedLinks.length > 0) {
+    await db.ref("anhKhach/" + tenKhach).set(uploadedLinks);
+
+    resultDiv.innerHTML = `
+      ✅ Upload thành công <strong>${uploadedLinks.length}</strong> ảnh cho <strong>${tenKhach}</strong>.<br>
+      ${failedCount > 0 ? `⚠️ Có <strong>${failedCount}</strong> ảnh upload thất bại.<br>` : ""}
+      <a href="https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${BRANCH}/${IMAGE_FOLDER}" target="_blank">📁 Xem ảnh trên GitHub</a>
+    `;
+
+    Swal.fire(
+      "✅ Upload hoàn tất!",
+      `Đã lưu ${uploadedLinks.length} ảnh cho ${tenKhach}` + (failedCount > 0 ? `\nCó ${failedCount} ảnh thất bại` : ""),
+      "success"
+    );
+  } else {
+    resultDiv.innerHTML = "❌ Không upload được ảnh nào!";
+    Swal.fire("❌ Upload thất bại", "Không có ảnh nào được tải lên thành công.", "error");
+  }
+}
+
   </script>
 </body>
 
