@@ -2,18 +2,20 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Upload ảnh sdasdasd vào GitHub Repo (images/)</title>
+  <title>Upload ảnh lên GitHub</title>
 </head>
 <body>
-  <h2>📤 Upload ảnh vào GitHub Repo: <code>hihihi/images/</code></h2>
-  <input type="file" id="fileInput" accept="image/*" />
-  <br><br>
-  <button onclick="uploadImage()">Tải ảnh lên GitHub</button>
+  <h2>🖼️ Upload ảnh vào repo GitHub (thư mục /images)</h2>
+  <input type="file" id="fileInput" accept="image/*"><br><br>
+
+  <label for="token">Nhập GitHub Token:</label>
+  <input type="password" id="token" placeholder="github_pat_..."><br><br>
+
+  <button onclick="uploadImage()">📤 Tải ảnh lên</button>
+
   <div id="result" style="margin-top:20px;"></div>
 
   <script>
-    // ✅ Dán token thật của bạn vào dòng dưới
-    const GITHUB_TOKEN = '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';
     const REPO_OWNER = 'thanhchan791791';
     const REPO_NAME = 'hihihi';
     const BRANCH = 'main';
@@ -21,7 +23,12 @@
 
     async function uploadImage() {
       const file = document.getElementById('fileInput').files[0];
-      if (!file) return alert("Vui lòng chọn một ảnh.");
+      const token = document.getElementById('token').value.trim();
+
+      if (!file || !token) {
+        alert('Vui lòng chọn ảnh và nhập token.');
+        return;
+      }
 
       const reader = new FileReader();
       reader.onloadend = async () => {
@@ -32,7 +39,7 @@
         const res = await fetch(apiUrl, {
           method: "PUT",
           headers: {
-            "Authorization": `Bearer ${GITHUB_TOKEN}`,
+            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
@@ -47,7 +54,7 @@
           const imageUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
           document.getElementById('result').innerHTML = `
             ✅ Upload thành công!<br>
-            📎 <a href="${imageUrl}" target="_blank">${fileName}</a><br>
+            🔗 <a href="${imageUrl}" target="_blank">${fileName}</a><br>
             <img src="${imageUrl}" style="max-width:300px; margin-top:10px;">
           `;
         } else {
