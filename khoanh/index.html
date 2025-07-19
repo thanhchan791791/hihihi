@@ -10,211 +10,278 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+ <style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #ffe0ec, #ffffff);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      overflow-x: hidden;
-      position: relative;
-    }
+  body {
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #ffe0ec, #ffffff);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-x: hidden;
+    position: relative;
+  }
 
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: url("https://www.transparenttextures.com/patterns/diamond-upholstery.png");
-      opacity: 0.2;
-      z-index: 0;
-    }
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("https://www.transparenttextures.com/patterns/diamond-upholstery.png");
+    opacity: 0.2;
+    z-index: 0;
+  }
 
-    .container {
-      background-color: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      padding: 30px 20px;
-      max-width: 1000px;
-      width: 100%;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      z-index: 1;
-      position: relative;
-    }
-
-    h1 {
-      color: #ff3385;
-      font-size: 2rem;
-      margin-bottom: 10px;
-    }
-
-    p { color: #555; margin-bottom: 10px; }
-
-    input[type="text"] {
-      padding: 12px 16px;
-      font-size: 1rem;
-      border: 2px solid #ff3385;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 10px;
-      outline: none;
-    }
-
-    button {
-      padding: 10px 18px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 10px;
-      background-color: #ff3385;
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      margin: 10px 5px;
-    }
-
-    button:hover { background-color: #e6006f; }
-
-    .swiper { margin-top: 30px; display: none; }
-
-    .swiper-slide {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-   .swiper-slide img {
-  max-width: 95vw;
-  max-height: 75vh;
-  border-radius: 20px;
-  border: 6px solid #ffd6e8;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: zoom-in;
-}
-
-
-    .swiper-button-next::after,
-    .swiper-button-prev::after {
-      font-family: "Font Awesome 6 Free";
-      font-weight: 900;
-      font-size: 24px;
-      color: #ff69b4;
-    }
-
-    .swiper-button-next::after { content: '\f105'; }
-    .swiper-button-prev::after { content: '\f104'; }
-
-    #thankYou {
-      margin-top: 40px;
-      font-size: 1.1rem;
-      color: #444;
-      display: none;
-      background-color: #fff0f6;
-      padding: 20px;
-      border-radius: 15px;
-      position: relative;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    #thankYou img {
-      width: 40px;
-      position: absolute;
-      top: -20px;
-      left: 20px;
-    }
-
-    #errorText {
-      color: red;
-      margin-top: 10px;
-    }
-
-    footer {
-      margin-top: 30px;
-      font-size: 0.85rem;
-      color: #888;
-    }
-
-    @media (max-width: 600px) {
-   @media (max-width: 600px) {
   .container {
-    padding: 20px 10px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px 20px;
+    max-width: 1000px;
+    width: 100%;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    z-index: 1;
+    position: relative;
   }
 
   h1 {
-    font-size: 1.4rem;
-    line-height: 1.5;
+    color: #ff3385;
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  p {
+    color: #555;
+    margin-bottom: 10px;
   }
 
   input[type="text"] {
-    font-size: 0.95rem;
-    padding: 10px 12px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border: 2px solid #ff3385;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 10px;
+    outline: none;
   }
 
   button {
-    padding: 10px 14px;
-    font-size: 0.95rem;
+    padding: 10px 18px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    background-color: #ff3385;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 10px 5px;
+  }
+
+  button:hover {
+    background-color: #e6006f;
+  }
+
+  .swiper {
+    margin-top: 30px;
+    display: none;
+  }
+
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .swiper-slide img {
-    max-height: 60vh;
+    max-width: 95vw;
+    max-height: 75vh;
+    border-radius: 20px;
+    border: 6px solid #ffd6e8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: zoom-in;
+  }
+
+  .swiper-button-next::after,
+  .swiper-button-prev::after {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 24px;
+    color: #ff69b4;
+  }
+
+  .swiper-button-next::after {
+    content: '\f105';
+  }
+
+  .swiper-button-prev::after {
+    content: '\f104';
   }
 
   #thankYou {
-    font-size: 0.95rem;
-    padding: 15px;
+    margin-top: 40px;
+    font-size: 1.1rem;
+    color: #444;
+    display: none;
+    background-color: #fff0f6;
+    padding: 20px;
+    border-radius: 15px;
+    position: relative;
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  #thankYou img {
+    width: 40px;
+    position: absolute;
+    top: -20px;
+    left: 20px;
+  }
+
+  #errorText {
+    color: red;
+    margin-top: 10px;
   }
 
   footer {
-    font-size: 0.75rem;
+    margin-top: 30px;
+    font-size: 0.85rem;
+    color: #888;
   }
-}
 
-    .fullscreen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      cursor: zoom-out;
+  @media (max-width: 600px) {
+    .container {
+      padding: 20px 10px;
     }
 
-    .fullscreen img {
-      max-width: 90vw;
-      max-height: 90vh;
-      border-radius: 10px;
-      border: none;
+    h1 {
+      font-size: 1.4rem;
+      line-height: 1.5;
     }
 
-    /* Hiệu ứng loading mới */
-    #loading {
-      display: none;
-      margin-top: 20px;
+    input[type="text"] {
+      font-size: 0.95rem;
+      padding: 10px 12px;
     }
 
-    .spinner-circle {
-      width: 50px;
-      height: 50px;
-      border: 6px solid #ffd6e8;
-      border-top: 6px solid #ff3385;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
+    button {
+      padding: 10px 14px;
+      font-size: 0.95rem;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .swiper-slide img {
+      max-height: 60vh;
     }
-  </style>
+
+    #thankYou {
+      font-size: 0.95rem;
+      padding: 15px;
+    }
+
+    footer {
+      font-size: 0.75rem;
+    }
+  }
+
+  .fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    cursor: zoom-out;
+  }
+
+  .fullscreen img {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 10px;
+    border: none;
+  }
+
+  /* === Loading mới đẹp hơn === */
+  #loading {
+    display: none;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .spinner-heart {
+    width: 60px;
+    height: 60px;
+    background-color: #ff80b3;
+    position: relative;
+    transform: rotate(-45deg);
+    animation: pulseHeart 1s infinite ease-in-out;
+  }
+
+  .spinner-heart::before,
+  .spinner-heart::after {
+    content: "";
+    width: 60px;
+    height: 60px;
+    background-color: #ff80b3;
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  .spinner-heart::before {
+    top: -30px;
+    left: 0;
+  }
+
+  .spinner-heart::after {
+    left: 30px;
+    top: 0;
+  }
+
+  @keyframes pulseHeart {
+    0% {
+      transform: scale(1) rotate(-45deg);
+    }
+    50% {
+      transform: scale(1.15) rotate(-45deg);
+    }
+    100% {
+      transform: scale(1) rotate(-45deg);
+    }
+  }
+
+  #loadingProgress {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #e6006f;
+    background: #ffe6f0;
+    border: 2px dashed #ffaad4;
+    padding: 10px 20px;
+    border-radius: 16px;
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
 </head>
 <body>
   <div class="container">
@@ -230,7 +297,11 @@
     <!-- Loading animation -->
     <div id="loading">
       <div class="spinner-circle"></div>
+      <p id="loadingProgress">Đang tải ảnh...</p>
+
     </div>
+
+
 
     <!-- Slider -->
     <div class="swiper mySwiper" id="sliderGallery">
@@ -262,117 +333,133 @@
   <!-- Swiper JS -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
-      authDomain: "dogs-be72b.firebaseapp.com",
-      databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
-      projectId: "dogs-be72b",
-      storageBucket: "dogs-be72b.appspot.com",
-      messagingSenderId: "1003873040746",
-      appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
-    };
+ <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+    authDomain: "dogs-be72b.firebaseapp.com",
+    databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+    projectId: "dogs-be72b",
+    storageBucket: "dogs-be72b.appspot.com",
+    messagingSenderId: "1003873040746",
+    appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
+  };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    let swiper;
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  let swiper;
 
-    function xemAnh() {
-      const name = document.getElementById("nameInput").value.trim().toLowerCase();
-      const sliderGallery = document.getElementById("sliderGallery");
-      const sliderWrapper = document.getElementById("sliderWrapper");
-      const thankYou = document.getElementById("thankYou");
-      const errorText = document.getElementById("errorText");
-      const loading = document.getElementById("loading");
+  function xemAnh() {
+    const name = document.getElementById("nameInput").value.trim().toLowerCase();
+    const sliderGallery = document.getElementById("sliderGallery");
+    const sliderWrapper = document.getElementById("sliderWrapper");
+    const thankYou = document.getElementById("thankYou");
+    const errorText = document.getElementById("errorText");
+    const loading = document.getElementById("loading");
+    const loadingProgress = document.getElementById("loadingProgress");
 
-      errorText.innerText = "";
-      sliderWrapper.innerHTML = "";
-      sliderGallery.style.display = "none";
-      thankYou.style.display = "none";
-      loading.style.display = "block";
+    errorText.innerText = "";
+    sliderWrapper.innerHTML = "";
+    sliderGallery.style.display = "none";
+    thankYou.style.display = "none";
+    loading.style.display = "block";
+    loadingProgress.style.display = "block";
+    loadingProgress.innerText = "Đang tải ảnh...";
 
-      if (swiper) {
-        swiper.destroy(true, true);
-        swiper = null;
-      }
+    if (swiper) {
+      swiper.destroy(true, true);
+      swiper = null;
+    }
 
-      if (!name) {
-        errorText.innerText = "Vui lòng nhập tên!";
-        loading.style.display = "none";
-        return;
-      }
+    if (!name) {
+      errorText.innerText = "Vui lòng nhập tên!";
+      loading.style.display = "none";
+      loadingProgress.style.display = "none";
+      return;
+    }
 
-      db.ref("anhKhach/" + name).once("value").then(snapshot => {
-        const links = snapshot.val();
-        if (links && Array.isArray(links)) {
-          const total = links.length;
-          let loaded = 0;
-          const tempSlides = [];
+    db.ref("anhKhach/" + name).once("value").then(snapshot => {
+      const links = snapshot.val();
+      if (links && Array.isArray(links)) {
+        const total = links.length;
+        let loaded = 0;
+        const tempSlides = [];
 
-          links.forEach((url, index) => {
-            const img = new Image();
-            img.src = url;
+        links.forEach((url, index) => {
+          const img = new Image();
+          img.src = url;
 
-            img.onload = () => {
-              const slide = document.createElement("div");
-              slide.className = "swiper-slide";
-              slide.innerHTML = `<img src="${url}" alt="Ảnh ${index + 1}" onclick="toggleZoom(this)" />`;
-              tempSlides.push(slide);
-              loaded++;
-              if (loaded === total) {
+          img.onload = () => {
+            const slide = document.createElement("div");
+            slide.className = "swiper-slide";
+            slide.innerHTML = `<img src="${url}" alt="Ảnh ${index + 1}" onclick="toggleZoom(this)" />`;
+            tempSlides.push(slide);
+            loaded++;
+
+            // Cập nhật % loading
+            loadingProgress.innerText = `Đang tải: ${loaded} / ${total} ảnh (${Math.round(loaded / total * 100)}%)`;
+
+            if (loaded === total) {
+              tempSlides.forEach(slide => sliderWrapper.appendChild(slide));
+              loading.style.display = "none";
+              loadingProgress.style.display = "none";
+              sliderGallery.style.display = "block";
+              thankYou.style.display = "block";
+
+              swiper = new Swiper(".mySwiper", {
+                loop: true,
+                pagination: { el: ".swiper-pagination", clickable: true },
+                navigation: {
+                  nextEl: ".swiper-button-next",
+                  prevEl: ".swiper-button-prev",
+                },
+              });
+            }
+          };
+
+          img.onerror = () => {
+            loaded++;
+
+            loadingProgress.innerText = `Đang tải: ${loaded} / ${total} ảnh (${Math.round(loaded / total * 100)}%)`;
+
+            if (loaded === total) {
+              if (tempSlides.length > 0) {
                 tempSlides.forEach(slide => sliderWrapper.appendChild(slide));
-                loading.style.display = "none";
                 sliderGallery.style.display = "block";
                 thankYou.style.display = "block";
-
-                swiper = new Swiper(".mySwiper", {
-                  loop: true,
-                  pagination: { el: ".swiper-pagination", clickable: true },
-                  navigation: {
-                    nextEl: ".swiper-button-next",
-                    prevEl: ".swiper-button-prev",
-                  },
-                });
+              } else {
+                errorText.innerText = "❌ Không tải được ảnh nào!";
               }
-            };
-
-            img.onerror = () => {
-              loaded++;
-              if (loaded === total) {
-                if (tempSlides.length > 0) {
-                  tempSlides.forEach(slide => sliderWrapper.appendChild(slide));
-                  sliderGallery.style.display = "block";
-                  thankYou.style.display = "block";
-                } else {
-                  errorText.innerText = "❌ Không tải được ảnh nào!";
-                }
-                loading.style.display = "none";
-              }
-            };
-          });
-        } else {
-          loading.style.display = "none";
-          errorText.innerText = "❌ Không tìm thấy ảnh!";
-        }
-      }).catch(err => {
-        loading.style.display = "none";
-        errorText.innerText = "⚠️ Lỗi khi truy cập dữ liệu!";
-        console.error(err);
-      });
-    }
-
-    function toggleZoom(img) {
-      if (document.querySelector(".fullscreen")) {
-        document.body.removeChild(document.querySelector(".fullscreen"));
+              loading.style.display = "none";
+              loadingProgress.style.display = "none";
+            }
+          };
+        });
       } else {
-        const wrapper = document.createElement("div");
-        wrapper.className = "fullscreen";
-        const clone = img.cloneNode();
-        wrapper.appendChild(clone);
-        wrapper.onclick = () => wrapper.remove();
-        document.body.appendChild(wrapper);
+        loading.style.display = "none";
+        loadingProgress.style.display = "none";
+        errorText.innerText = "❌ Không tìm thấy ảnh!";
       }
+    }).catch(err => {
+      loading.style.display = "none";
+      loadingProgress.style.display = "none";
+      errorText.innerText = "⚠️ Lỗi khi truy cập dữ liệu!";
+      console.error(err);
+    });
+  }
+
+  function toggleZoom(img) {
+    if (document.querySelector(".fullscreen")) {
+      document.body.removeChild(document.querySelector(".fullscreen"));
+    } else {
+      const wrapper = document.createElement("div");
+      wrapper.className = "fullscreen";
+      const clone = img.cloneNode();
+      wrapper.appendChild(clone);
+      wrapper.onclick = () => wrapper.remove();
+      document.body.appendChild(wrapper);
     }
-  </script>
+  }
+</script>
+
 </body>
 </html>
