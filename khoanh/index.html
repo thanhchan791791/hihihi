@@ -313,7 +313,7 @@
       }, 3500);
     }
 
- function xemAnh() {
+  function xemAnh() {
   const name = document.getElementById("nameInput").value.trim().toLowerCase();
   const sliderGallery = document.getElementById("sliderGallery");
   const sliderWrapper = document.getElementById("sliderWrapper");
@@ -321,6 +321,7 @@
   const loading = document.getElementById("loading");
   const loadingProgress = document.getElementById("loadingProgress");
 
+  // Reset giao diện
   sliderWrapper.innerHTML = "";
   sliderGallery.style.display = "none";
   thankYou.style.display = "none";
@@ -340,24 +341,16 @@
   loadingProgress.style.display = "block";
   loadingProgress.innerText = "Đang tải ảnh...";
 
-  db.ref("anhKhach/" + name).once("value").then(snapshot => {
-    const links = snapshot.val();
-    if (links && Array.isArray(links) && links.length > 0) {
-      const total = links.length;
+  // 🔁 Đọc thẻ HTML đã lưu thay vì từng link
+  db.ref("anhKhachHtml/" + name).once("value").then(snapshot => {
+    const html = snapshot.val();
+    if (html) {
+      sliderWrapper.innerHTML = html;
 
-      // Gộp slide trước khi render
-      let slidesHtml = "";
-      links.forEach((url, index) => {
-        slidesHtml += `<div class="swiper-slide"><img src="${url}" alt="Ảnh ${index + 1}" onclick="toggleZoom(this)" /></div>`;
-      });
-
-      sliderWrapper.innerHTML = slidesHtml;
-
+      // Hiển thị sau khi có HTML
       loading.style.display = "none";
       sliderGallery.style.display = "block";
       thankYou.style.display = "block";
-
-      loadingProgress.innerText = `Đã tải: ${total}/${total} (100%)`;
 
       swiper = new Swiper(".mySwiper", {
         loop: true,
@@ -377,7 +370,6 @@
     loading.style.display = "none";
   });
 }
-
 
 
     function toggleZoom(img) {
