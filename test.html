@@ -2,67 +2,110 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Upload ảnh vào ImagesKhach - GitHub</title>
+  <title>Upload ảnh khách nhiều ảnh</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </head>
 <body>
-  <h2>📤 Upload ảnh vào thư mục <code>ImagesKhach</code> trên GitHub</h2>
+  <h2>📤 Upload nhiều ảnh khách lên GitHub + lưu theo tên khách</h2>
 
-  <label for="token">🔑 Nhập GitHub Token:</label><br>
-  <input type="password" id="token" placeholder="github_pat_..." style="width: 300px;"><br><br>
+  <label>🔑 GitHub Token:</label><br>
+  <input type="password" id="token" placeholder="github_pat_..." style="width:300px;"><br><br>
 
-  <input type="file" id="fileInput" accept="image/*"><br><br>
-  <button onclick="uploadImage()">📤 Tải ảnh lên</button>
+  <label>🧑 Nhập tên khách:</label><br>
+  <input type="text" id="tenKhach" placeholder="ví dụ: nguyen-thi-a"><br><br>
 
-  <div id="result" style="margin-top: 20px;"></div>
+  <input type="file" id="fileInput" accept="image/*" multiple><br><br>
+  <button onclick="uploadImages()">📤 Tải ảnh lên</button>
+
+  <div id="result" style="margin-top:20px;"></div>
 
   <script>
+    // GitHub config
     const REPO_OWNER = 'thanhchan791791';
     const REPO_NAME = 'hihihi';
     const BRANCH = 'main';
-    const IMAGE_FOLDER = 'ImagesKhach'; // ✅ Folder đích bạn muốn
+    const IMAGE_FOLDER = 'ImagesKhach';
 
-    async function uploadImage() {
-      const file = document.getElementById('fileInput').files[0];
-      const token = document.getElementById('token').value.trim();
+  const firebaseConfig = {
+  apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+  authDomain: "dogs-be72b.firebaseapp.com",
+  databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+  projectId: "dogs-be72b",
+  storageBucket: "dogs-be72b.appspot.com",
+  messagingSenderId: "1003873040746",
+  appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
+};
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-      if (!file || !token) {
-        alert('❗ Vui lòng chọn ảnh và nhập token.');
+    async function uploadImages() {
+      const files = document.getElementById("fileInput").files;
+      const token = document.getElementById("token").value.trim();
+      let ten = document.getElementById("tenKhach").value.trim().toLowerCase().replace(/\s+/g, '-');
+
+      if (files.length === 0 || !ten || !token) {
+        alert("❗ Vui lòng chọn ảnh, nhập tên khách và token.");
         return;
       }
 
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64Data = reader.result.split(',')[1];
-        const fileName = file.name;
+      document.getElementById("result").innerHTML = "⏳ Đang tải lên...";
+      let uploadedLinks = [];
 
-        const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
 
-        const response = await fetch(apiUrl, {
-          method: "PUT",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            message: `Upload ${fileName} vào ${IMAGE_FOLDER}`,
-            content: base64Data,
-            branch: BRANCH
-          })
+        const base64 = await new Promise((resolve, reject) => {
+          reader.onloadend = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = () => reject("Lỗi đọc ảnh");
+          reader.readAsDataURL(file);
         });
 
-        const result = await response.json();
-        if (response.ok) {
-          const imageUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
-          document.getElementById('result').innerHTML = `
-            ✅ Upload thành công!<br>
-            🔗 <a href="${imageUrl}" target="_blank">${fileName}</a><br>
-            <img src="${imageUrl}" style="max-width:300px; margin-top:10px;">
-          `;
-        } else {
-          document.getElementById('result').innerHTML = `❌ Lỗi: ${result.message || 'Không rõ lỗi.'}`;
+        const ext = file.name.split('.').pop();
+        const fileName = `${ten}-${Date.now()}-${i + 1}.${ext}`;
+        const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
+
+        try {
+          const res = await fetch(apiUrl, {
+            method: "PUT",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              message: `Upload ${fileName}`,
+              content: base64,
+              branch: BRANCH
+            })
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
+            uploadedLinks.push(url);
+          } else {
+            console.warn(`❌ Upload ảnh ${i + 1} thất bại:`, data.message);
+          }
+
+        } catch (err) {
+          console.error("❌ Lỗi kết nối:", err);
         }
-      };
-      reader.readAsDataURL(file);
+      }
+
+      // ✅ Sau khi upload xong, lưu vào Firebase
+      if (uploadedLinks.length > 0) {
+        await db.ref("anhKhach/" + ten).set(uploadedLinks);
+        document.getElementById("result").innerHTML = `
+          ✅ Upload thành công ${uploadedLinks.length} ảnh cho <strong>${ten}</strong>.<br>
+          <a href="https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${BRANCH}/${IMAGE_FOLDER}" target="_blank">📁 Xem ảnh trên GitHub</a>
+        `;
+        Swal.fire("✅ Upload thành công!", `Đã lưu ${uploadedLinks.length} ảnh cho ${ten}`, "success");
+      } else {
+        document.getElementById("result").innerHTML = "❌ Không upload được ảnh nào!";
+      }
     }
   </script>
 </body>
