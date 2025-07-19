@@ -704,6 +704,18 @@ overlay.addEventListener("click", () => {
   overlay.classList.add("fade");
   setTimeout(() => overlay.remove(), 500);
 });
+   const isMaintenance = false; // ✅ Chuyển thành true khi muốn bật bảo trì
+
+  if (isMaintenance) {
+    document.write(`
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#fff0f5;text-align:center;font-family:'Comic Sans MS', cursive;">
+        <div>
+          <h1 style="color:#ff69b4;font-size:2em;">🚧 Trang đang bảo trì</h1>
+          <p style="color:#d94f85;">Cherry Pet Coffee đang cập nhật để phục vụ bạn tốt hơn.<br>Vui lòng quay lại sau nhé! 🐶💕</p>
+        </div>
+      </div>
+    `);
+  }
 </script>
 </body>
 </html>
