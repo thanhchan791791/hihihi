@@ -104,15 +104,13 @@
       align-items: center;
     }
 
-   .swiper-slide img {
-  width: 100vw;
-  height: 100vh;
-  object-fit: contain;
-  border-radius: 0;
-  border: none;
-  box-shadow: none;
-}
-
+    .swiper-slide img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      cursor: zoom-in;
+      transition: all 0.3s ease-in-out;
+    }
 
     .swiper-button-next::after,
     .swiper-button-prev::after {
@@ -192,6 +190,10 @@
       max-height: 95vh;
       border-radius: 10px;
       border: none;
+    }
+
+    #fullscreenOverlay {
+      display: none;
     }
 
     #loading {
@@ -278,6 +280,11 @@
     <footer>© 2025 Cherry Pet Coffee</footer>
   </div>
 
+  <!-- Khung ảnh toàn màn -->
+  <div class="fullscreen" id="fullscreenOverlay" onclick="toggleZoomBack()">
+    <img id="fullscreenImg" src="" alt="Phóng to ảnh">
+  </div>
+
   <audio id="backgroundMusic" autoplay loop>
     <source src="https://cdn.pixabay.com/audio/2023/03/06/audio_b1b7e2042c.mp3" type="audio/mpeg">
     Trình duyệt của bạn không hỗ trợ phát nhạc.
@@ -312,67 +319,77 @@
       }, 3500);
     }
 
-  function xemAnh() {
-  const name = document.getElementById("nameInput").value.trim().toLowerCase().replace(/\s+/g, '-');
-  const sliderGallery = document.getElementById("sliderGallery");
-  const sliderWrapper = document.getElementById("sliderWrapper");
-  const thankYou = document.getElementById("thankYou");
-  const loading = document.getElementById("loading");
-  const loadingProgress = document.getElementById("loadingProgress");
+    function xemAnh() {
+      const name = document.getElementById("nameInput").value.trim().toLowerCase().replace(/\s+/g, '-');
+      const sliderGallery = document.getElementById("sliderGallery");
+      const sliderWrapper = document.getElementById("sliderWrapper");
+      const thankYou = document.getElementById("thankYou");
+      const loading = document.getElementById("loading");
+      const loadingProgress = document.getElementById("loadingProgress");
 
-  // Reset giao diện
-  sliderWrapper.innerHTML = "";
-  sliderGallery.style.display = "none";
-  thankYou.style.display = "none";
-  loadingProgress.style.display = "none";
+      // Reset
+      sliderWrapper.innerHTML = "";
+      sliderGallery.style.display = "none";
+      thankYou.style.display = "none";
+      loadingProgress.style.display = "none";
 
-  if (swiper) {
-    swiper.destroy(true, true);
-    swiper = null;
-  }
+      if (swiper) {
+        swiper.destroy(true, true);
+        swiper = null;
+      }
 
-  if (!name) {
-    showError("Vui lòng nhập tên!");
-    return;
-  }
+      if (!name) {
+        showError("Vui lòng nhập tên!");
+        return;
+      }
 
-  loading.style.display = "flex";
-  loadingProgress.style.display = "block";
-  loadingProgress.innerText = "Đang tải ảnh...";
+      loading.style.display = "flex";
+      loadingProgress.style.display = "block";
+      loadingProgress.innerText = "Đang tải ảnh...";
 
-  db.ref("anhKhach/" + name).once("value").then(snapshot => {
-    const urls = snapshot.val();
+      db.ref("anhKhach/" + name).once("value").then(snapshot => {
+        const urls = snapshot.val();
 
-    if (urls && urls.length > 0) {
-      // Tạo HTML swiper-slide từ mảng URL
-      sliderWrapper.innerHTML = urls.map(url => 
-        `<div class="swiper-slide"><img src="${url}" onclick="toggleZoom(this)" alt="Ảnh khách"/></div>`
-      ).join('');
+        if (urls && urls.length > 0) {
+          sliderWrapper.innerHTML = urls.map(url =>
+            `<div class="swiper-slide"><img src="${url}" onclick="toggleZoom(this)" alt="Ảnh khách"/></div>`
+          ).join('');
 
-      // Hiển thị sau khi có HTML
-      loading.style.display = "none";
-      sliderGallery.style.display = "block";
-      thankYou.style.display = "block";
+          loading.style.display = "none";
+          sliderGallery.style.display = "block";
+          thankYou.style.display = "block";
 
-      swiper = new Swiper(".mySwiper", {
-        loop: true,
-        pagination: { el: ".swiper-pagination", clickable: true },
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
+          swiper = new Swiper(".mySwiper", {
+            loop: true,
+            pagination: { el: ".swiper-pagination", clickable: true },
+            navigation: {
+              nextEl: ".swiper-button-next",
+              prevEl: ".swiper-button-prev",
+            },
+          });
+        } else {
+          showError("❌ Không tìm thấy ảnh!");
+          loading.style.display = "none";
+        }
+      }).catch(err => {
+        console.error(err);
+        showError("⚠️ Lỗi khi truy cập dữ liệu!");
+        loading.style.display = "none";
       });
-    } else {
-      showError("❌ Không tìm thấy ảnh!");
-      loading.style.display = "none";
     }
-  }).catch(err => {
-    console.error(err);
-    showError("⚠️ Lỗi khi truy cập dữ liệu!");
-    loading.style.display = "none";
-  });
-}
 
+    function toggleZoom(imgElement) {
+      const fullscreenOverlay = document.getElementById("fullscreenOverlay");
+      const fullscreenImg = document.getElementById("fullscreenImg");
+
+      fullscreenImg.src = imgElement.src;
+      fullscreenOverlay.style.display = "flex";
+    }
+
+    function toggleZoomBack() {
+      const fullscreenOverlay = document.getElementById("fullscreenOverlay");
+      fullscreenOverlay.style.display = "none";
+    }
   </script>
 </body>
 </html>
