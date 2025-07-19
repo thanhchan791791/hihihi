@@ -1,141 +1,330 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Upload ảnh khách nhiều ảnh</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📤 Upload Ảnh Khách - Cherry Pet Coffee</title>
+  
+  <!-- SweetAlert2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    /* Reset */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #fcefee, #ffe6f0);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+      color: #4a3c57;
+      user-select: none;
+    }
+
+    .upload-container {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(255, 102, 180, 0.25);
+      padding: 40px 50px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: slideInUp 0.8s ease forwards;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h2 {
+      font-weight: 600;
+      font-size: 1.9rem;
+      color: #d6336c;
+      margin-bottom: 24px;
+      letter-spacing: 1.2px;
+      text-shadow: 0 2px 6px rgba(214, 51, 108, 0.5);
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #c72c66;
+      display: block;
+      margin-bottom: 6px;
+      text-align: left;
+      user-select: text;
+    }
+
+    input[type="password"],
+    input[type="text"],
+    input[type="file"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2.5px solid #f9a7ca;
+      border-radius: 12px;
+      font-size: 1rem;
+      color: #7a577a;
+      background-color: #fff0f5;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      margin-bottom: 20px;
+      font-weight: 500;
+      outline-offset: 2px;
+      cursor: pointer;
+      user-select: text;
+    }
+
+    input[type="password"]:focus,
+    input[type="text"]:focus,
+    input[type="file"]:focus {
+      border-color: #e83273;
+      box-shadow: 0 0 10px rgba(232, 50, 115, 0.4);
+      background-color: #ffe6f3;
+    }
+
+    input[type="file"] {
+      cursor: pointer;
+    }
+
+    button {
+      background: linear-gradient(135deg, #e92a74, #ff5599);
+      border: none;
+      color: white;
+      font-weight: 600;
+      font-size: 1.15rem;
+      padding: 14px 0;
+      width: 100%;
+      border-radius: 18px;
+      box-shadow: 0 8px 18px rgba(255, 85, 153, 0.4);
+      cursor: pointer;
+      transition: background 0.4s ease, transform 0.25s ease;
+      user-select: none;
+      letter-spacing: 0.8px;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #ff3a8a, #ff7ab2);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(255, 122, 178, 0.6);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 14px rgba(255, 85, 153, 0.3);
+    }
+
+    #result {
+      margin-top: 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ad1457;
+      min-height: 38px;
+      line-height: 1.3;
+      user-select: text;
+      transition: opacity 0.5s ease;
+    }
+
+    #result a {
+      color: #e91e63;
+      text-decoration: none;
+      font-weight: 700;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.3s ease;
+    }
+
+    #result a:hover {
+      border-color: #e91e63;
+    }
+
+    /* Loading dots animation */
+    .loading-dots::after {
+      content: '';
+      display: inline-block;
+      animation: dots 1.4s infinite linear;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #e91e63;
+      margin-left: 6px;
+    }
+
+    @keyframes dots {
+      0% { content: '.'; }
+      33% { content: '..'; }
+      66% { content: '...'; }
+      100% { content: '.'; }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .upload-container {
+        padding: 30px 20px;
+        max-width: 100%;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+      }
+
+      button {
+        font-size: 1.05rem;
+        padding: 12px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="upload-container">
+    <h2>📤 Upload nhiều ảnh khách lên GitHub</h2>
+
+    <label for="token">🔑 GitHub Token</label>
+    <input type="password" id="token" placeholder="github_pat_..." autocomplete="off" />
+
+    <label for="tenKhach">🧑 Nhập tên khách</label>
+    <input type="text" id="tenKhach" placeholder="ví dụ: nguyen-thi-a" autocomplete="off" />
+
+    <label for="fileInput">📂 Chọn ảnh (nhiều ảnh)</label>
+    <input type="file" id="fileInput" accept="image/*" multiple />
+
+    <button onclick="uploadImages()">📤 Tải ảnh lên</button>
+
+    <div id="result"></div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-</head>
-<body>
-  <h2>📤 Upload nhiều ảnh khách lên GitHub + lưu theo tên khách</h2>
-
-  <label>🔑 GitHub Token:</label><br>
-  <input type="password" id="token" placeholder="github_pat_..." style="width:300px;"><br><br>
-
-  <label>🧑 Nhập tên khách:</label><br>
-  <input type="text" id="tenKhach" placeholder="ví dụ: nguyen-thi-a"><br><br>
-
-  <input type="file" id="fileInput" accept="image/*" multiple><br><br>
-  <button onclick="uploadImages()">📤 Tải ảnh lên</button>
-
-  <div id="result" style="margin-top:20px;"></div>
 
   <script>
-    // GitHub config
     const REPO_OWNER = 'thanhchan791791';
     const REPO_NAME = 'hihihi';
     const BRANCH = 'main';
     const IMAGE_FOLDER = 'ImagesKhach';
 
-  const firebaseConfig = {
-  apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
-  authDomain: "dogs-be72b.firebaseapp.com",
-  databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
-  projectId: "dogs-be72b",
-  storageBucket: "dogs-be72b.appspot.com",
-  messagingSenderId: "1003873040746",
-  appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+      authDomain: "dogs-be72b.firebaseapp.com",
+      databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+      projectId: "dogs-be72b",
+      storageBucket: "dogs-be72b.appspot.com",
+      messagingSenderId: "1003873040746",
+      appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-  async function readFileAsBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64Data = reader.result.split(',')[1];
-      resolve(base64Data);
-    };
-    reader.onerror = () => reject("Lỗi đọc ảnh");
-    reader.readAsDataURL(file);
-  });
-}
-
-async function uploadSingleImage(file, token, tenKhach, index) {
-  const ext = file.name.split('.').pop();
-  const timestamp = Date.now();
-  const fileName = `${tenKhach}-${timestamp}-${index + 1}.${ext}`;
-  const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
-
-  try {
-    const base64Content = await readFileAsBase64(file);
-    const response = await fetch(apiUrl, {
-      method: "PUT",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: `Upload ${fileName}`,
-        content: base64Content,
-        branch: BRANCH,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
-      return { success: true, url };
-    } else {
-      console.warn(`❌ Upload ảnh ${index + 1} thất bại:`, data.message);
-      return { success: false, error: data.message };
+    function readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64Data = reader.result.split(',')[1];
+          resolve(base64Data);
+        };
+        reader.onerror = () => reject("Lỗi đọc ảnh");
+        reader.readAsDataURL(file);
+      });
     }
-  } catch (err) {
-    console.error(`❌ Lỗi upload ảnh ${index + 1}:`, err);
-    return { success: false, error: err };
-  }
-}
 
-async function uploadImages() {
-  const files = document.getElementById("fileInput").files;
-  const token = document.getElementById("token").value.trim();
-  const tenKhachRaw = document.getElementById("tenKhach").value.trim();
+    async function uploadSingleImage(file, token, tenKhach, index) {
+      const ext = file.name.split('.').pop();
+      const timestamp = Date.now();
+      const fileName = `${tenKhach}-${timestamp}-${index + 1}.${ext}`;
+      const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
 
-  if (files.length === 0 || !tenKhachRaw || !token) {
-    alert("❗ Vui lòng chọn ảnh, nhập tên khách và token.");
-    return;
-  }
+      try {
+        const base64Content = await readFileAsBase64(file);
+        const response = await fetch(apiUrl, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: `Upload ${fileName}`,
+            content: base64Content,
+            branch: BRANCH,
+          }),
+        });
 
-  const tenKhach = tenKhachRaw.toLowerCase().replace(/\s+/g, '-');
+        const data = await response.json();
 
-  document.getElementById("result").innerHTML = "⏳ Đang tải lên...";
+        if (response.ok) {
+          const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
+          return { success: true, url };
+        } else {
+          console.warn(`❌ Upload ảnh ${index + 1} thất bại:`, data.message);
+          return { success: false, error: data.message };
+        }
+      } catch (err) {
+        console.error(`❌ Lỗi upload ảnh ${index + 1}:`, err);
+        return { success: false, error: err };
+      }
+    }
 
-  // Upload ảnh song song (có thể đổi thành tuần tự nếu cần)
-  const uploadPromises = [];
-  for (let i = 0; i < files.length; i++) {
-    uploadPromises.push(uploadSingleImage(files[i], token, tenKhach, i));
-  }
+    async function uploadImages() {
+      const files = document.getElementById("fileInput").files;
+      const token = document.getElementById("token").value.trim();
+      const tenKhachRaw = document.getElementById("tenKhach").value.trim();
 
-  const results = await Promise.all(uploadPromises);
+      if (files.length === 0 || !tenKhachRaw || !token) {
+        alert("❗ Vui lòng chọn ảnh, nhập tên khách và token.");
+        return;
+      }
 
-  const uploadedLinks = results
-    .filter(r => r.success)
-    .map(r => r.url);
+      const tenKhach = tenKhachRaw.toLowerCase().replace(/\s+/g, '-');
 
-  const failedCount = results.length - uploadedLinks.length;
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `<span class="loading-dots">⏳ Đang tải lên</span>`;
 
-  if (uploadedLinks.length > 0) {
-    await db.ref("anhKhach/" + tenKhach).set(uploadedLinks);
+      // Upload ảnh song song
+      const uploadPromises = [];
+      for (let i = 0; i < files.length; i++) {
+        uploadPromises.push(uploadSingleImage(files[i], token, tenKhach, i));
+      }
 
-    document.getElementById("result").innerHTML = `
-      ✅ Upload thành công ${uploadedLinks.length} ảnh cho <strong>${tenKhach}</strong>.<br>
-      ${failedCount > 0 ? `⚠️ Có ${failedCount} ảnh upload thất bại.<br>` : ""}
-      <a href="https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${BRANCH}/${IMAGE_FOLDER}" target="_blank">📁 Xem ảnh trên GitHub</a>
-    `;
+      const results = await Promise.all(uploadPromises);
 
-    Swal.fire(
-      "✅ Upload hoàn tất!",
-      `Đã lưu ${uploadedLinks.length} ảnh cho ${tenKhach}` + (failedCount > 0 ? `\nCó ${failedCount} ảnh thất bại` : ""),
-      "success"
-    );
-  } else {
-    document.getElementById("result").innerHTML = "❌ Không upload được ảnh nào!";
-    Swal.fire("❌ Upload thất bại", "Không có ảnh nào được tải lên thành công.", "error");
-  }
-}
+      const uploadedLinks = results
+        .filter(r => r.success)
+        .map(r => r.url);
 
+      const failedCount = results.length - uploadedLinks.length;
+
+      if (uploadedLinks.length > 0) {
+        await db.ref("anhKhach/" + tenKhach).set(uploadedLinks);
+
+        resultDiv.innerHTML = `
+          ✅ Upload thành công <strong>${uploadedLinks.length}</strong> ảnh cho <strong>${tenKhach}</strong>.<br>
+          ${failedCount > 0 ? `⚠️ Có <strong>${failedCount}</strong> ảnh upload thất bại.<br>` : ""}
+          <a href="https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${BRANCH}/${IMAGE_FOLDER}" target="_blank">📁 Xem ảnh trên GitHub</a>
+        `;
+
+        Swal.fire(
+          "✅ Upload hoàn tất!",
+          `Đã lưu ${uploadedLinks.length} ảnh cho ${tenKhach}` + (failedCount > 0 ? `\nCó ${failedCount} ảnh thất bại` : ""),
+          "success"
+        );
+      } else {
+        resultDiv.innerHTML = "❌ Không upload được ảnh nào!";
+        Swal.fire("❌ Upload thất bại", "Không có ảnh nào được tải lên thành công.", "error");
+      }
+    }
   </script>
 </body>
+
 </html>
