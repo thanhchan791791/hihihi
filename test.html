@@ -2,98 +2,67 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Upload ảnh khách</title>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <title>Upload ảnh vào ImagesKhach - GitHub</title>
 </head>
 <body>
-  <h2>📤 Upload ảnh khách lên GitHub</h2>
-  <label>🔑 GitHub Token:</label><br>
-  <input type="password" id="githubToken" placeholder="github_pat_..." style="width:300px"><br><br>
+  <h2>📤 Upload ảnh vào thư mục <code>ImagesKhach</code> trên GitHub</h2>
 
-  <label>🧑 Tên khách:</label><br>
-  <input type="text" id="tenKhach" placeholder="vd: nguyen-thi-a"><br><br>
+  <label for="token">🔑 Nhập GitHub Token:</label><br>
+  <input type="password" id="token" placeholder="github_pat_..." style="width: 300px;"><br><br>
 
-  <input type="file" id="fileInput" multiple><br><br>
-  <button onclick="uploadImages()">Tải ảnh lên</button>
+  <input type="file" id="fileInput" accept="image/*"><br><br>
+  <button onclick="uploadImage()">📤 Tải ảnh lên</button>
 
-  <div id="uploadResult" style="margin-top:20px;"></div>
+  <div id="result" style="margin-top: 20px;"></div>
 
   <script>
     const REPO_OWNER = 'thanhchan791791';
     const REPO_NAME = 'hihihi';
     const BRANCH = 'main';
-    const IMAGE_FOLDER = 'images';
+    const IMAGE_FOLDER = 'ImagesKhach'; // ✅ Folder đích bạn muốn
 
-    // Firebase config
-    const firebaseConfig = {
-      databaseURL: "https://YOUR_FIREBASE_ID.firebaseio.com"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    async function uploadImage() {
+      const file = document.getElementById('fileInput').files[0];
+      const token = document.getElementById('token').value.trim();
 
-    async function uploadImages() {
-      const files = document.getElementById("fileInput").files;
-      const ten = document.getElementById("tenKhach").value.trim().toLowerCase().replace(/\s+/g, '-');
-      const token = document.getElementById("githubToken").value.trim();
-
-      if (files.length === 0 || !ten || !token) {
-        alert("❗ Vui lòng chọn ảnh, nhập tên khách và token!");
+      if (!file || !token) {
+        alert('❗ Vui lòng chọn ảnh và nhập token.');
         return;
       }
 
-      document.getElementById("uploadResult").innerHTML = "⏳ Đang tải lên...";
-      let uploadedLinks = [];
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Data = reader.result.split(',')[1];
+        const fileName = file.name;
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const reader = new FileReader();
-        const base64 = await new Promise((resolve, reject) => {
-          reader.onloadend = () => resolve(reader.result.split(',')[1]);
-          reader.onerror = () => reject("Lỗi khi đọc ảnh!");
-          reader.readAsDataURL(file);
-        });
-
-        const fileName = `${ten}-${Date.now()}-${i + 1}.${file.name.split('.').pop()}`;
         const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
 
-        try {
-          const res = await fetch(apiUrl, {
-            method: "PUT",
-            headers: {
-              "Authorization": `Bearer ${token}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              message: `Upload ảnh ${fileName}`,
-              content: base64,
-              branch: BRANCH
-            })
-          });
-
-          if (res.ok) {
-            const imageUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
-            uploadedLinks.push(imageUrl);
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      }
-
-      if (uploadedLinks.length > 0) {
-        await db.ref("anhKhach/" + ten).set(uploadedLinks);
-        Swal.fire({
-          icon: "success",
-          title: `✅ Upload thành công ${uploadedLinks.length} ảnh`,
-          html: `Tên khách: <strong>${ten}</strong>`,
-          timer: 2000
+        const response = await fetch(apiUrl, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: `Upload ${fileName} vào ${IMAGE_FOLDER}`,
+            content: base64Data,
+            branch: BRANCH
+          })
         });
-      } else {
-        Swal.fire("❌ Upload thất bại!", "", "error");
-      }
 
-      document.getElementById("uploadResult").innerHTML = "";
+        const result = await response.json();
+        if (response.ok) {
+          const imageUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
+          document.getElementById('result').innerHTML = `
+            ✅ Upload thành công!<br>
+            🔗 <a href="${imageUrl}" target="_blank">${fileName}</a><br>
+            <img src="${imageUrl}" style="max-width:300px; margin-top:10px;">
+          `;
+        } else {
+          document.getElementById('result').innerHTML = `❌ Lỗi: ${result.message || 'Không rõ lỗi.'}`;
+        }
+      };
+      reader.readAsDataURL(file);
     }
   </script>
 </body>
