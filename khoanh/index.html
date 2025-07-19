@@ -313,7 +313,7 @@
       }, 3500);
     }
 
-   function xemAnh() {
+ function xemAnh() {
   const name = document.getElementById("nameInput").value.trim().toLowerCase();
   const sliderGallery = document.getElementById("sliderGallery");
   const sliderWrapper = document.getElementById("sliderWrapper");
@@ -344,33 +344,28 @@
     const links = snapshot.val();
     if (links && Array.isArray(links) && links.length > 0) {
       const total = links.length;
-      let loaded = 0;
 
+      // Gộp slide trước khi render
+      let slidesHtml = "";
       links.forEach((url, index) => {
-        // Hiển thị ảnh ngay không cần chờ onload
-        const slide = document.createElement("div");
-        slide.className = "swiper-slide";
-        slide.innerHTML = `<img src="${url}" alt="Ảnh ${index + 1}" onclick="toggleZoom(this)" />`;
-        sliderWrapper.appendChild(slide);
+        slidesHtml += `<div class="swiper-slide"><img src="${url}" alt="Ảnh ${index + 1}" onclick="toggleZoom(this)" /></div>`;
+      });
 
-        loaded++;
-        const percent = Math.round(loaded / total * 100);
-        loadingProgress.innerText = `Đã tải: ${loaded}/${total} (${percent}%)`;
+      sliderWrapper.innerHTML = slidesHtml;
 
-        if (loaded === total) {
-          loading.style.display = "none";
-          sliderGallery.style.display = "block";
-          thankYou.style.display = "block";
+      loading.style.display = "none";
+      sliderGallery.style.display = "block";
+      thankYou.style.display = "block";
 
-          swiper = new Swiper(".mySwiper", {
-            loop: true,
-            pagination: { el: ".swiper-pagination", clickable: true },
-            navigation: {
-              nextEl: ".swiper-button-next",
-              prevEl: ".swiper-button-prev",
-            },
-          });
-        }
+      loadingProgress.innerText = `Đã tải: ${total}/${total} (100%)`;
+
+      swiper = new Swiper(".mySwiper", {
+        loop: true,
+        pagination: { el: ".swiper-pagination", clickable: true },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
       });
     } else {
       showError("❌ Không tìm thấy ảnh!");
@@ -382,6 +377,7 @@
     loading.style.display = "none";
   });
 }
+
 
 
     function toggleZoom(img) {
