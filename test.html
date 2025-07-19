@@ -1,1 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload ảnh vào GitHub Repo (images/)</title>
+</head>
+<body>
+  <h2>📤 Upload ảnh vào GitHub Repo: <code>hihihi/images/</code></h2>
+  <input type="file" id="fileInput" accept="image/*" />
+  <br><br>
+  <button onclick="uploadImage()">Tải ảnh lên GitHub</button>
+  <div id="result" style="margin-top:20px;"></div>
 
+  <script>
+    // ✅ Dán token thật của bạn vào dòng dưới
+    const GITHUB_TOKEN = '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';
+    const REPO_OWNER = 'thanhchan791791';
+    const REPO_NAME = 'hihihi';
+    const BRANCH = 'main';
+    const IMAGE_FOLDER = 'images';
+
+    async function uploadImage() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) return alert("Vui lòng chọn một ảnh.");
+
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Data = reader.result.split(',')[1];
+        const fileName = file.name;
+        const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
+
+        const res = await fetch(apiUrl, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${GITHUB_TOKEN}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: `upload ${fileName}`,
+            content: base64Data,
+            branch: BRANCH
+          })
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+          const imageUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
+          document.getElementById('result').innerHTML = `
+            ✅ Upload thành công!<br>
+            📎 <a href="${imageUrl}" target="_blank">${fileName}</a><br>
+            <img src="${imageUrl}" style="max-width:300px; margin-top:10px;">
+          `;
+        } else {
+          document.getElementById('result').innerHTML = `❌ Lỗi: ${result.message}`;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
+</body>
+</html>
