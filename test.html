@@ -2,31 +2,31 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Upload ảnh lên GitHub</title>
+  <title>Upload ảnh vào ImagesKhach - GitHub</title>
 </head>
 <body>
-  <h2>🖼️ Upload ảnh vào repo GitHub (thư mục /images)</h2>
+  <h2>📤 Upload ảnh vào thư mục <code>ImagesKhach</code> trên GitHub</h2>
+
+  <label for="token">🔑 Nhập GitHub Token:</label><br>
+  <input type="password" id="token" placeholder="github_pat_..." style="width: 300px;"><br><br>
+
   <input type="file" id="fileInput" accept="image/*"><br><br>
-
-  <label for="token">Nhập GitHub Token:</label>
-  <input type="password" id="token" placeholder="github_pat_..."><br><br>
-
   <button onclick="uploadImage()">📤 Tải ảnh lên</button>
 
-  <div id="result" style="margin-top:20px;"></div>
+  <div id="result" style="margin-top: 20px;"></div>
 
   <script>
     const REPO_OWNER = 'thanhchan791791';
     const REPO_NAME = 'hihihi';
     const BRANCH = 'main';
-    const IMAGE_FOLDER = 'images';
+    const IMAGE_FOLDER = 'ImagesKhach'; // ✅ Folder đích bạn muốn
 
     async function uploadImage() {
       const file = document.getElementById('fileInput').files[0];
       const token = document.getElementById('token').value.trim();
 
       if (!file || !token) {
-        alert('Vui lòng chọn ảnh và nhập token.');
+        alert('❗ Vui lòng chọn ảnh và nhập token.');
         return;
       }
 
@@ -34,23 +34,24 @@
       reader.onloadend = async () => {
         const base64Data = reader.result.split(',')[1];
         const fileName = file.name;
+
         const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
 
-        const res = await fetch(apiUrl, {
+        const response = await fetch(apiUrl, {
           method: "PUT",
           headers: {
             "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            message: `upload ${fileName}`,
+            message: `Upload ${fileName} vào ${IMAGE_FOLDER}`,
             content: base64Data,
             branch: BRANCH
           })
         });
 
-        const result = await res.json();
-        if (res.ok) {
+        const result = await response.json();
+        if (response.ok) {
           const imageUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
           document.getElementById('result').innerHTML = `
             ✅ Upload thành công!<br>
@@ -58,7 +59,7 @@
             <img src="${imageUrl}" style="max-width:300px; margin-top:10px;">
           `;
         } else {
-          document.getElementById('result').innerHTML = `❌ Lỗi: ${result.message}`;
+          document.getElementById('result').innerHTML = `❌ Lỗi: ${result.message || 'Không rõ lỗi.'}`;
         }
       };
       reader.readAsDataURL(file);
