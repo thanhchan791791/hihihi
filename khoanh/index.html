@@ -3,298 +3,221 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🐾 Album Ảnh - Cherry Pet Coffee 🐾</title>
+  <title>📸 Album Ảnh Khách - Cherry Pet Coffee</title>
 
-  <!-- Swiper CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet"/>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #ffe0ec, #ffffff);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      overflow-x: hidden;
-      position: relative;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: url("https://www.transparenttextures.com/patterns/diamond-upholstery.png");
-      opacity: 0.2;
-      z-index: 0;
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #fff1f5, #ffe3ec);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      animation: fadeInBody 1s ease;
+    }
+
+    @keyframes fadeInBody {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .container {
-      background-color: rgba(255, 255, 255, 0.95);
+      background: #fff;
       border-radius: 20px;
-      padding: 30px 20px;
-      max-width: 1000px;
+      padding: 30px 24px;
+      max-width: 680px;
       width: 100%;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.1);
       text-align: center;
-      z-index: 1;
-      position: relative;
+      animation: slideIn 1s ease-in-out;
     }
 
-    input[type="text"]::placeholder {
-      color: #ffaad4;
-      font-style: italic;
-      font-weight: 500;
-    }
-
-    input[type="text"]:focus {
-      box-shadow: 0 0 8px #ffaad4;
-      background-color: #fff5f9;
+    @keyframes slideIn {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     h1 {
-      color: #ff3385;
+      color: #e91e63;
+      margin-bottom: 12px;
       font-size: 2rem;
-      margin-bottom: 10px;
+      font-weight: 600;
     }
 
     p {
-      color: #555;
-      margin-bottom: 10px;
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
     }
 
-    input[type="text"] {
+    input {
       padding: 12px 16px;
-      font-size: 1rem;
-      border: 2px solid #ff3385;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 10px;
+      border: 2px solid #f06292;
+      border-radius: 30px;
       outline: none;
+      width: 100%;
+      max-width: 360px;
+      font-size: 1rem;
+      margin-bottom: 14px;
+      transition: border 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #e91e63;
     }
 
     button {
-      padding: 10px 18px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 10px;
-      background-color: #ff3385;
+      background-color: #f06292;
       color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-size: 1rem;
       cursor: pointer;
-      transition: background-color 0.3s;
-      margin: 10px 5px;
+      transition: all 0.3s ease;
     }
 
-    button:hover { background-color: #e6006f; }
-
-    .swiper {
-      margin-top: 30px;
-      display: none;
-    }
-
-    .swiper-slide {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .swiper-slide img {
-      max-width: 100%;
-      max-height: 80vh;
-      object-fit: contain;
-      cursor: zoom-in;
-      transition: all 0.3s ease-in-out;
-    }
-
-    .swiper-button-next::after,
-    .swiper-button-prev::after {
-      font-family: "Font Awesome 6 Free";
-      font-weight: 900;
-      font-size: 24px;
-      color: #ff69b4;
-    }
-
-    .swiper-button-next::after { content: '\f105'; }
-    .swiper-button-prev::after { content: '\f104'; }
-
-    #thankYou {
-      margin-top: 40px;
-      font-size: 1.1rem;
-      color: #444;
-      display: none;
-      background-color: #fff0f6;
-      padding: 20px;
-      border-radius: 15px;
-      position: relative;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    #thankYou img {
-      width: 40px;
-      position: absolute;
-      top: -20px;
-      left: 20px;
+    button:hover {
+      background-color: #e91e63;
+      transform: scale(1.05);
     }
 
     #errorText {
       color: red;
       margin-top: 10px;
+      font-size: 0.9rem;
     }
 
-    #errorText.show {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #ffe6ea;
-      padding: 20px 30px;
+    /* Loading spinner */
+    #loading {
+      display: none;
+      margin: 30px auto 0;
+      width: 48px;
+      height: 48px;
+      border: 5px solid #f8bbd0;
+      border-top: 5px solid #e91e63;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .gallery {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin-top: 30px;
+      animation: fadeInGallery 0.6s ease-in-out;
+    }
+
+    @keyframes fadeInGallery {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .photo-frame {
+      background: #fff0f5;
+      border: 4px double #f06292;
+      padding: 8px;
+      border-radius: 16px;
+      position: relative;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    }
+
+    .photo-frame img {
+      width: 100%;
+      border-radius: 10px;
+      cursor: zoom-in;
+      transition: transform 0.2s ease;
+    }
+
+    .photo-frame img:hover {
+      transform: scale(1.04);
+    }
+
+    #thankYou {
+      display: none;
+      background: #ffe6f0;
+      color: #c2185b;
+      padding: 14px 18px;
+      margin-top: 30px;
       border-radius: 12px;
-      font-size: 1.1rem;
       font-weight: 600;
-      color: #e6006f;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-      animation: slideInCenter 0.6s ease forwards;
-      z-index: 10000;
+      font-size: 1.1rem;
+      animation: popIn 0.6s ease forwards;
     }
 
-    @keyframes slideInCenter {
-      0% { opacity: 0; transform: translate(-50%, -70%); }
-      100% { opacity: 1; transform: translate(-50%, -50%); }
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     footer {
-      margin-top: 30px;
+      margin-top: 40px;
       font-size: 0.85rem;
-      color: #888;
+      color: #aaa;
     }
 
     .fullscreen {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.9);
-      display: flex;
+      background: rgba(0,0,0,0.85);
+      display: none;
       justify-content: center;
       align-items: center;
       z-index: 9999;
-      cursor: zoom-out;
     }
 
     .fullscreen img {
       max-width: 95vw;
       max-height: 95vh;
-      border-radius: 10px;
-      border: none;
-    }
-
-    #fullscreenOverlay {
-      display: none;
-    }
-
-    #loading {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    .spinner-heart {
-      width: 60px;
-      height: 60px;
-      background-color: #ff80b3;
-      position: relative;
-      transform: rotate(-45deg);
-      animation: pulseHeart 1s infinite ease-in-out;
-    }
-
-    .spinner-heart::before,
-    .spinner-heart::after {
-      content: "";
-      width: 60px;
-      height: 60px;
-      background-color: #ff80b3;
-      position: absolute;
-      border-radius: 50%;
-    }
-
-    .spinner-heart::before { top: -30px; left: 0; }
-    .spinner-heart::after { left: 30px; top: 0; }
-
-    #loadingProgress {
-      display: none;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #e6006f;
-      background: #ffe6f0;
-      border: 2px dashed #ffaad4;
-      padding: 10px 20px;
-      border-radius: 16px;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    @keyframes pulseHeart {
-      0% { transform: scale(1) rotate(-45deg); }
-      50% { transform: scale(1.15) rotate(-45deg); }
-      100% { transform: scale(1) rotate(-45deg); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      border-radius: 12px;
+      box-shadow: 0 0 30px #000;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Album Ảnh Cherry Pet Coffee</h1>
-    <p>Nhập tên + ngày tháng năm sinh của bạn để xem lại những khoảnh khắc đáng yêu nhé!</p>
-    <input type="text" id="nameInput" placeholder="nhập tên năm sinh không dấu không cách" />
-    <br />
-    <button onclick="xemAnh()">Xem Ảnh</button>
+    <h1>🎀 Album Ảnh Cherry Pet</h1>
+    <p>Nhập tên viết liền không dấu để xem album ảnh của bạn</p>
+    <input id="nameInput" type="text" placeholder="vd: nguyenvana2002">
+    <br>
+    <button onclick="xemAlbum()">📸 Xem Album</button>
     <div id="errorText"></div>
-
-    <div id="loading">
-      <div class="spinner-heart" id="spinnerHeart"></div>
-      <p id="loadingProgress"></p>
-    </div>
-
-    <div class="swiper mySwiper" id="sliderGallery">
-      <div class="swiper-wrapper" id="sliderWrapper"></div>
-      <div class="swiper-pagination"></div>
-      <div class="swiper-button-next"></div>
-      <div class="swiper-button-prev"></div>
-    </div>
-
-    <div id="thankYou">
-      <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="paw">
-      ❤️ Cảm ơn bạn đã ghé thăm <strong>Cherry Pet Coffee</strong>!
-    </div>
-
+    <div id="loading"></div>
+    <div class="gallery" id="galleryContainer"></div>
+    <div id="thankYou">🎉 Cảm ơn bạn đã ghé thăm Cherry Pet Coffee!</div>
     <footer>© 2025 Cherry Pet Coffee</footer>
   </div>
-
-  <!-- Khung ảnh toàn màn -->
   <div class="fullscreen" id="fullscreenOverlay" onclick="toggleZoomBack()">
-    <img id="fullscreenImg" src="" alt="Phóng to ảnh">
+    <img id="fullscreenImg" src="">
   </div>
-
-  <audio id="backgroundMusic" autoplay loop>
+  <!-- Nhạc nền -->
+  <audio autoplay loop id="bgm">
     <source src="https://cdn.pixabay.com/audio/2023/03/06/audio_b1b7e2042c.mp3" type="audio/mpeg">
-    Trình duyệt của bạn không hỗ trợ phát nhạc.
   </audio>
 
+  <!-- Firebase + Confetti -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
   <script>
+    // Cấu hình Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
       authDomain: "dogs-be72b.firebaseapp.com",
@@ -307,88 +230,84 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let swiper;
 
-    function showError(message) {
-      const errorText = document.getElementById("errorText");
-      errorText.innerText = message;
-      errorText.classList.add("show");
-      setTimeout(() => {
-        errorText.classList.remove("show");
-        errorText.innerText = "";
-      }, 3500);
-    }
-
-    function xemAnh() {
-      const name = document.getElementById("nameInput").value.trim().toLowerCase().replace(/\s+/g, '-');
-      const sliderGallery = document.getElementById("sliderGallery");
-      const sliderWrapper = document.getElementById("sliderWrapper");
-      const thankYou = document.getElementById("thankYou");
+    function xemAlbum() {
+      const name = document.getElementById("nameInput").value.trim().toLowerCase();
+      const gallery = document.getElementById("galleryContainer");
       const loading = document.getElementById("loading");
-      const loadingProgress = document.getElementById("loadingProgress");
+      const thankYou = document.getElementById("thankYou");
+      const errorText = document.getElementById("errorText");
 
-      // Reset
-      sliderWrapper.innerHTML = "";
-      sliderGallery.style.display = "none";
+      gallery.innerHTML = "";
+      gallery.style.display = "none";
       thankYou.style.display = "none";
-      loadingProgress.style.display = "none";
-
-      if (swiper) {
-        swiper.destroy(true, true);
-        swiper = null;
-      }
+      errorText.innerText = "";
+      loading.style.display = "block";
 
       if (!name) {
-        showError("Vui lòng nhập tên!");
+        errorText.innerText = "Vui lòng nhập tên!";
+        loading.style.display = "none";
         return;
       }
 
-      loading.style.display = "flex";
-      loadingProgress.style.display = "block";
-      loadingProgress.innerText = "Đang tải ảnh...";
-
       db.ref("anhKhach/" + name).once("value").then(snapshot => {
-        const urls = snapshot.val();
+        const urlsData = snapshot.val();
+        const urls = Array.isArray(urlsData) ? urlsData : Object.values(urlsData || {});
+        let loaded = 0;
 
-        if (urls && urls.length > 0) {
-          sliderWrapper.innerHTML = urls.map(url =>
-            `<div class="swiper-slide"><img src="${url}" onclick="toggleZoom(this)" alt="Ảnh khách"/></div>`
-          ).join('');
+        if (urls.length > 0) {
+          urls.forEach(url => {
+            const frame = document.createElement("div");
+            frame.className = "photo-frame";
 
-          loading.style.display = "none";
-          sliderGallery.style.display = "block";
-          thankYou.style.display = "block";
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = "Ảnh khách";
+            img.onclick = () => toggleZoom(url);
 
-          swiper = new Swiper(".mySwiper", {
-            loop: true,
-            pagination: { el: ".swiper-pagination", clickable: true },
-            navigation: {
-              nextEl: ".swiper-button-next",
-              prevEl: ".swiper-button-prev",
-            },
+            img.onload = () => {
+              loaded++;
+              if (loaded === urls.length) {
+                setTimeout(() => {
+                  loading.style.display = "none";
+                  gallery.style.display = "grid";
+                  thankYou.style.display = "block";
+                  document.getElementById("bgm")?.play();
+
+                  // Bắn pháo hoa
+                  for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                      confetti({
+                        particleCount: 100,
+                        spread: 80 + i * 10,
+                        origin: { y: 0.6 - i * 0.05 }
+                      });
+                    }, i * 300);
+                  }
+                }, 300);
+              }
+            };
+
+            frame.appendChild(img);
+            gallery.appendChild(frame);
           });
         } else {
-          showError("❌ Không tìm thấy ảnh!");
           loading.style.display = "none";
+          errorText.innerText = "❌ Không tìm thấy ảnh!";
         }
       }).catch(err => {
-        console.error(err);
-        showError("⚠️ Lỗi khi truy cập dữ liệu!");
         loading.style.display = "none";
+        errorText.innerText = "⚠️ Lỗi kết nối!";
       });
     }
 
-    function toggleZoom(imgElement) {
-      const fullscreenOverlay = document.getElementById("fullscreenOverlay");
-      const fullscreenImg = document.getElementById("fullscreenImg");
-
-      fullscreenImg.src = imgElement.src;
-      fullscreenOverlay.style.display = "flex";
+    function toggleZoom(url) {
+      document.getElementById("fullscreenImg").src = url;
+      document.getElementById("fullscreenOverlay").style.display = "flex";
     }
 
     function toggleZoomBack() {
-      const fullscreenOverlay = document.getElementById("fullscreenOverlay");
-      fullscreenOverlay.style.display = "none";
+      document.getElementById("fullscreenOverlay").style.display = "none";
     }
   </script>
 </body>
