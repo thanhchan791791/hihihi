@@ -272,6 +272,8 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/compressorjs@1.2.1/dist/compressor.min.js"></script>
+
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
@@ -504,28 +506,46 @@ function toggleUploadPanel() {
         : "📥 Không có thông tin hợp lệ để hiển thị.";
     });
   }
- async function uploadImages() {
+function compressImageToWebP(file) {
+  return new Promise((resolve) => {
+    new Compressor(file, {
+      quality: 0.6,
+      convertTypes: ['image/webp'],
+      mimeType: 'image/webp',
+      success(result) {
+        resolve(result);
+      },
+      error(err) {
+        console.warn("❌ Lỗi nén ảnh:", err);
+        resolve(file); // fallback nếu nén lỗi
+      }
+    });
+  });
+}
+
+async function uploadImages() {
   const files = document.getElementById("fileInput").files;
   const ten = document.getElementById("tenAnh").value.trim().toLowerCase();
-  const apiKey = "b5107933ec7b5e31a4bb280bf121e183"; // imgbb API key
+  const apiKey = "b5107933ec7b5e31a4bb280bf121e183";
 
-  if (files.length === 0 || !ten) {
-    alert("Vui lòng chọn ít nhất 1 ảnh và nhập tên nhóm!");
-    return;
-  }
-
-  let htmlSlides = ""; // Chuỗi chứa HTML <img>
   const resultBox = document.getElementById("uploadResult");
   const progressBox = document.getElementById("uploadProgress");
 
-  resultBox.innerHTML = "<p>⏳ Đang tải ảnh lên...</p>";
+  if (files.length === 0 || !ten) {
+    Swal.fire("⚠️ Thiếu thông tin", "Vui lòng chọn ít nhất 1 ảnh và nhập tên nhóm!", "warning");
+    return;
+  }
+
+  resultBox.innerHTML = "<p>⏳ Đang nén và upload ảnh...</p>";
   progressBox.innerText = "0%";
 
-  for (let i = 0; i < files.length; i++) {
-    const formData = new FormData();
-    formData.append("image", files[i]);
-
+  const uploadTasks = [...files].map(async (file, index) => {
     try {
+      const compressed = await compressImageToWebP(file);
+
+      const formData = new FormData();
+      formData.append("image", compressed);
+
       const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
         method: "POST",
         body: formData
@@ -533,32 +553,36 @@ function toggleUploadPanel() {
 
       const data = await res.json();
       if (data.success) {
-        const url = data.data.url;
-        htmlSlides += `<div class="swiper-slide"><img src="${url}" alt="Ảnh ${i + 1}" onclick="toggleZoom(this)" /></div>`;
+        return `<div class="swiper-slide"><img src="${data.data.url}" alt="Ảnh ${index + 1}" onclick="toggleZoom(this)" /></div>`;
       } else {
-        console.warn(`❌ Ảnh thứ ${i + 1} lỗi khi upload`);
+        console.warn(`❌ Ảnh ${index + 1} upload thất bại`);
+        return "";
       }
-
-      const percent = Math.round(((i + 1) / files.length) * 100);
+    } catch (err) {
+      console.error("❌ Lỗi xử lý ảnh:", err);
+      return "";
+    } finally {
+      const percent = Math.round(((index + 1) / files.length) * 100);
       progressBox.innerText = `${percent}%`;
-
-    } catch (error) {
-      console.error("❌ Lỗi upload:", error);
     }
-  }
+  });
 
-  if (htmlSlides) {
+  const results = await Promise.all(uploadTasks);
+  const htmlSlides = results.filter(Boolean).join("");
+  const successCount = results.filter(Boolean).length;
+
+  if (successCount > 0) {
     await firebase.database().ref("anhKhachHtml/" + ten).set(htmlSlides);
 
     Swal.fire({
       icon: 'success',
-      title: `✅ Đã upload ${files.length} ảnh`,
+      title: `✅ Đã upload ${successCount} ảnh`,
       text: `Đã lưu nhóm: ${ten}`,
       showConfirmButton: false,
       timer: 2000
     });
 
-    toggleUploadPanel(); // Ẩn form sau khi upload
+    toggleUploadPanel();
     document.getElementById("fileInput").value = "";
     document.getElementById("tenAnh").value = "";
     progressBox.innerText = "";
