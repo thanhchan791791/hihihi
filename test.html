@@ -40,73 +40,102 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    async function uploadImages() {
-      const files = document.getElementById("fileInput").files;
-      const token = document.getElementById("token").value.trim();
-      let ten = document.getElementById("tenKhach").value.trim().toLowerCase().replace(/\s+/g, '-');
+  async function readFileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Data = reader.result.split(',')[1];
+      resolve(base64Data);
+    };
+    reader.onerror = () => reject("Lỗi đọc ảnh");
+    reader.readAsDataURL(file);
+  });
+}
 
-      if (files.length === 0 || !ten || !token) {
-        alert("❗ Vui lòng chọn ảnh, nhập tên khách và token.");
-        return;
-      }
+async function uploadSingleImage(file, token, tenKhach, index) {
+  const ext = file.name.split('.').pop();
+  const timestamp = Date.now();
+  const fileName = `${tenKhach}-${timestamp}-${index + 1}.${ext}`;
+  const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
 
-      document.getElementById("result").innerHTML = "⏳ Đang tải lên...";
-      let uploadedLinks = [];
+  try {
+    const base64Content = await readFileAsBase64(file);
+    const response = await fetch(apiUrl, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: `Upload ${fileName}`,
+        content: base64Content,
+        branch: BRANCH,
+      }),
+    });
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const reader = new FileReader();
+    const data = await response.json();
 
-        const base64 = await new Promise((resolve, reject) => {
-          reader.onloadend = () => resolve(reader.result.split(',')[1]);
-          reader.onerror = () => reject("Lỗi đọc ảnh");
-          reader.readAsDataURL(file);
-        });
-
-        const ext = file.name.split('.').pop();
-        const fileName = `${ten}-${Date.now()}-${i + 1}.${ext}`;
-        const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
-
-        try {
-          const res = await fetch(apiUrl, {
-            method: "PUT",
-            headers: {
-              "Authorization": `Bearer ${token}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              message: `Upload ${fileName}`,
-              content: base64,
-              branch: BRANCH
-            })
-          });
-
-          const data = await res.json();
-
-          if (res.ok) {
-            const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
-            uploadedLinks.push(url);
-          } else {
-            console.warn(`❌ Upload ảnh ${i + 1} thất bại:`, data.message);
-          }
-
-        } catch (err) {
-          console.error("❌ Lỗi kết nối:", err);
-        }
-      }
-
-      // ✅ Sau khi upload xong, lưu vào Firebase
-      if (uploadedLinks.length > 0) {
-        await db.ref("anhKhach/" + ten).set(uploadedLinks);
-        document.getElementById("result").innerHTML = `
-          ✅ Upload thành công ${uploadedLinks.length} ảnh cho <strong>${ten}</strong>.<br>
-          <a href="https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${BRANCH}/${IMAGE_FOLDER}" target="_blank">📁 Xem ảnh trên GitHub</a>
-        `;
-        Swal.fire("✅ Upload thành công!", `Đã lưu ${uploadedLinks.length} ảnh cho ${ten}`, "success");
-      } else {
-        document.getElementById("result").innerHTML = "❌ Không upload được ảnh nào!";
-      }
+    if (response.ok) {
+      const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
+      return { success: true, url };
+    } else {
+      console.warn(`❌ Upload ảnh ${index + 1} thất bại:`, data.message);
+      return { success: false, error: data.message };
     }
+  } catch (err) {
+    console.error(`❌ Lỗi upload ảnh ${index + 1}:`, err);
+    return { success: false, error: err };
+  }
+}
+
+async function uploadImages() {
+  const files = document.getElementById("fileInput").files;
+  const token = document.getElementById("token").value.trim();
+  const tenKhachRaw = document.getElementById("tenKhach").value.trim();
+
+  if (files.length === 0 || !tenKhachRaw || !token) {
+    alert("❗ Vui lòng chọn ảnh, nhập tên khách và token.");
+    return;
+  }
+
+  const tenKhach = tenKhachRaw.toLowerCase().replace(/\s+/g, '-');
+
+  document.getElementById("result").innerHTML = "⏳ Đang tải lên...";
+
+  // Upload ảnh song song (có thể đổi thành tuần tự nếu cần)
+  const uploadPromises = [];
+  for (let i = 0; i < files.length; i++) {
+    uploadPromises.push(uploadSingleImage(files[i], token, tenKhach, i));
+  }
+
+  const results = await Promise.all(uploadPromises);
+
+  const uploadedLinks = results
+    .filter(r => r.success)
+    .map(r => r.url);
+
+  const failedCount = results.length - uploadedLinks.length;
+
+  if (uploadedLinks.length > 0) {
+    await db.ref("anhKhach/" + tenKhach).set(uploadedLinks);
+
+    document.getElementById("result").innerHTML = `
+      ✅ Upload thành công ${uploadedLinks.length} ảnh cho <strong>${tenKhach}</strong>.<br>
+      ${failedCount > 0 ? `⚠️ Có ${failedCount} ảnh upload thất bại.<br>` : ""}
+      <a href="https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${BRANCH}/${IMAGE_FOLDER}" target="_blank">📁 Xem ảnh trên GitHub</a>
+    `;
+
+    Swal.fire(
+      "✅ Upload hoàn tất!",
+      `Đã lưu ${uploadedLinks.length} ảnh cho ${tenKhach}` + (failedCount > 0 ? `\nCó ${failedCount} ảnh thất bại` : ""),
+      "success"
+    );
+  } else {
+    document.getElementById("result").innerHTML = "❌ Không upload được ảnh nào!";
+    Swal.fire("❌ Upload thất bại", "Không có ảnh nào được tải lên thành công.", "error");
+  }
+}
+
   </script>
 </body>
 </html>
