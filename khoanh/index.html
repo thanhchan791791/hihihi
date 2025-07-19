@@ -163,6 +163,33 @@
       margin-top: 10px;
     }
 
+    #errorText.show {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #ffe6ea;
+      padding: 20px 30px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #e6006f;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      animation: slideInCenter 0.6s ease forwards;
+      z-index: 10000;
+    }
+
+    @keyframes slideInCenter {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -70%);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+
     footer {
       margin-top: 30px;
       font-size: 0.85rem;
@@ -190,7 +217,6 @@
       border: none;
     }
 
-    /* Loading mới */
     #loading {
       margin-top: 30px;
       display: flex;
@@ -306,16 +332,24 @@
     const db = firebase.database();
     let swiper;
 
+    function showError(message) {
+      const errorText = document.getElementById("errorText");
+      errorText.innerText = message;
+      errorText.classList.add("show");
+      setTimeout(() => {
+        errorText.classList.remove("show");
+        errorText.innerText = "";
+      }, 3500);
+    }
+
     function xemAnh() {
       const name = document.getElementById("nameInput").value.trim().toLowerCase();
       const sliderGallery = document.getElementById("sliderGallery");
       const sliderWrapper = document.getElementById("sliderWrapper");
       const thankYou = document.getElementById("thankYou");
-      const errorText = document.getElementById("errorText");
       const loading = document.getElementById("loading");
       const loadingProgress = document.getElementById("loadingProgress");
 
-      errorText.innerText = "";
       sliderWrapper.innerHTML = "";
       sliderGallery.style.display = "none";
       thankYou.style.display = "none";
@@ -327,7 +361,7 @@
       }
 
       if (!name) {
-        errorText.innerText = "Vui lòng nhập tên!";
+        showError("Vui lòng nhập tên!");
         return;
       }
 
@@ -357,7 +391,6 @@
               if (loaded === total) {
                 tempSlides.forEach(slide => sliderWrapper.appendChild(slide));
                 loading.style.display = "none";
-                loadingProgress.style.display = "none";
                 sliderGallery.style.display = "block";
                 thankYou.style.display = "block";
 
@@ -380,23 +413,20 @@
                   sliderGallery.style.display = "block";
                   thankYou.style.display = "block";
                 } else {
-                  errorText.innerText = "❌ Không tải được ảnh nào!";
+                  showError("❌ Không tải được ảnh nào!");
                 }
                 loading.style.display = "none";
-                loadingProgress.style.display = "none";
               }
             };
           });
         } else {
-          errorText.innerText = "❌ Không tìm thấy ảnh!";
+          showError("❌ Không tìm thấy ảnh!");
           loading.style.display = "none";
-          loadingProgress.style.display = "none";
         }
       }).catch(err => {
-        errorText.innerText = "⚠️ Lỗi khi truy cập dữ liệu!";
         console.error(err);
+        showError("⚠️ Lỗi khi truy cập dữ liệu!");
         loading.style.display = "none";
-        loadingProgress.style.display = "none";
       });
     }
 
