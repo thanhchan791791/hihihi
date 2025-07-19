@@ -88,15 +88,16 @@
       align-items: center;
     }
 
-    .swiper-slide img {
-      max-width: 100%;
-      max-height: 500px;
-      border-radius: 20px;
-      border: 6px solid #ffd6e8;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: zoom-in;
-    }
+   .swiper-slide img {
+  max-width: 95vw;
+  max-height: 75vh;
+  border-radius: 20px;
+  border: 6px solid #ffd6e8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: zoom-in;
+}
+
 
     .swiper-button-next::after,
     .swiper-button-prev::after {
@@ -188,12 +189,11 @@
 <body>
   <div class="container">
     <h1> Album Ảnh Cherry Pet Coffee </h1>
-    <p>Nhập tên của bạn để xem lại những khoảnh khắc đáng yêu nhé!</p>
-    <p><small>Ví dụ: <code>huy2002</code></small></p>
+    <p>Nhập tên + ngày tháng năm sinh của bạn để xem lại những khoảnh khắc đáng yêu nhé!</p>
 
     <input type="text" id="nameInput" placeholder="Nhập tên (ví dụ: huy2002)" />
     <br />
-    <button onclick="xemAnh()">📸 Xem Ảnh</button>
+    <button onclick="xemAnh()">Xem Ảnh</button>
 
     <div id="errorText"></div>
 
