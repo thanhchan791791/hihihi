@@ -86,6 +86,24 @@
   gap: 10px;
   margin-bottom: 15px;
 }
+#qrContainer {
+  position: fixed;
+  bottom: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff0f7;
+  padding: 30px 20px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  z-index: 9999;
+  transition: bottom 0.5s ease;
+  text-align: center;
+}
+
+#qrContainer.show {
+  bottom: 50%;
+  transform: translate(-50%, 50%);
+}
 
 .language-buttons .btn {
   font-size: 1em;
@@ -115,6 +133,17 @@
     margin: 5px 0;
     color: #d94f85;
   }
+.slide-section {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease, padding 0.5s ease;
+  padding: 0;
+}
+
+.slide-section.show {
+  max-height: 300px;
+  padding: 20px 0;
+}
 
   .dog-card p {
     margin: 0;
@@ -309,11 +338,29 @@
 </div>
 
 <h1 data-i18n="title">📸 Chọn các bé iu để chụp ảnh</h1>
+<!-- Nút xem ảnh khách -->
 <div style="margin-top: 10px;">
-  <a href="https://thanhchan791791.github.io/hihihi/khoanh" target="_blank" id="view-photos-btn" class="btn btn-view-photos">
+  <button id="toggleGuestInput" class="btn btn-view-photos">
     <i class="fa-solid fa-image me-2"></i> Xem ảnh khách
-  </a>
+  </button>
 </div>
+
+<!-- Khối nhập tên và mã QR (ẩn ban đầu) -->
+<div id="guestLookupSection" style="margin-top: 20px; display: none;">
+  <input type="text" id="guestNameInput" placeholder="Nhập tên bạn để xem ảnh"
+    style="padding: 10px 20px; border-radius: 30px; border: 2px solid #ffd6e6; background-color: #fff0f7; color: #d94f85; max-width: 400px; width: 80%;" />
+  <button onclick="xemAlbum()" style="margin-left: 10px; padding: 10px 25px; border-radius: 30px; background-color: #ff69b4; color: white; border: none; font-weight: bold;">
+    🔍 Tìm ảnh
+  </button>
+  <p id="errorText" style="color: red; margin-top: 10px;"></p>
+
+ <div id="qrContainer" class="slide-section">
+
+    <p>Mã QR dẫn tới album của bạn:</p>
+    <div id="qrcode"></div>
+  </div>
+</div>
+
 
 <div class="language-buttons">
   <button id="lang-vi" class="btn">🇻🇳 Tiếng Việt</button>
@@ -372,6 +419,7 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
 <!-- SCRIPT QUẢN LÝ NGÔN NGỮ -->
 <script>
@@ -716,6 +764,51 @@ overlay.addEventListener("click", () => {
       </div>
     `);
   }
+ function xemAlbum() {
+  const name = document.getElementById("guestNameInput").value.trim().toLowerCase();
+  const errorText = document.getElementById("errorText");
+  const qrContainer = document.getElementById("qrContainer");
+  const qrcodeDiv = document.getElementById("qrcode");
+
+  if (!name) {
+    errorText.innerText = "❗ Vui lòng nhập tên!";
+    qrContainer.classList.remove("show");
+    return;
+  }
+
+  db.ref("anhKhach/" + name).once("value").then(snapshot => {
+    const data = snapshot.val();
+    if (data) {
+      qrcodeDiv.innerHTML = ""; // Xoá QR cũ nếu có
+
+      const url = `https://thanhchan791791.github.io/hihihi/khoanh/?name=${encodeURIComponent(name)}`;
+      new QRCode(qrcodeDiv, {
+        text: url,
+        width: 200,
+        height: 200,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      qrContainer.classList.add("show");
+      errorText.innerText = "";
+    } else {
+      errorText.innerText = "❌ Không tìm thấy tên trong hệ thống!";
+      qrContainer.classList.remove("show");
+    }
+  }).catch(() => {
+    errorText.innerText = "⚠️ Có lỗi kết nối!";
+    qrContainer.classList.remove("show");
+  });
+}
+
+// Xử lý khi bấm nút "Xem ảnh khách"
+document.getElementById("toggleGuestInput").addEventListener("click", () => {
+  const guestSection = document.getElementById("guestLookupSection");
+  guestSection.style.display = guestSection.style.display === "none" ? "block" : "none";
+});
+
 </script>
 </body>
 </html>
