@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Tạo Mã QR Album</title>
+  <title>Tạo Mãs QR Album</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <style>
     body {
@@ -59,7 +59,7 @@
 </head>
 <body>
 
-  <h1>📸 Mã QR Album</h1>
+  <h1>📸 Mã QsR Album</h1>
   <input type="text" id="nameInput" placeholder="Nhập tên không dấu (vd: duy2002)">
   <button onclick="taoQR()">🎯 Tạo mã QR</button>
 
@@ -69,7 +69,7 @@
     function taoQR() {
       const name = document.getElementById('nameInput').value.trim().toLowerCase();
       const container = document.getElementById('qrCodeContainer');
-      container.innerHTML = ""; // Xoá QR cũ nếu có
+      container.innerHTML = "";
 
       if (!name) {
         alert("⚠️ Vui lòng nhập tên trước!");
@@ -77,16 +77,15 @@
       }
 
       const encodedName = encodeURIComponent(name);
-      const link = `file:///C:/Users/PC/Desktop/New%20folder/index.html?name=${encodedName}`;
+      const link = `https://thanhchan791791.github.io/hihihi/khoanh/?name=${encodedName}`;
 
-      const canvas = document.createElement("canvas");
-      container.appendChild(canvas); // Gắn canvas vào DOM
-
-      QRCode.toCanvas(canvas, link, { width: 220 }, function (error) {
+      QRCode.toCanvas(link, { width: 220 }, function (error, canvas) {
         if (error) {
           console.error(error);
           alert("🚫 Lỗi tạo mã QR!");
+          return;
         }
+        container.appendChild(canvas);
       });
     }
   </script>
