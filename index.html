@@ -98,6 +98,34 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(255, 105, 180, 0.2);
 }
+.btn-view-photos {
+  font-size: 1.1em;
+  font-weight: bold;
+  padding: 12px 30px;
+  border-radius: 30px;
+  background: linear-gradient(to right, #ff9ac9, #ff69b4);
+  color: white;
+  border: none;
+  box-shadow: 0 6px 15px rgba(255, 105, 180, 0.4);
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-view-photos i {
+  animation: bounceIcon 1.5s infinite;
+}
+
+.btn-view-photos:hover {
+  background: linear-gradient(to right, #ff69b4, #ff1493);
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(255, 105, 180, 0.6);
+}
+
+@keyframes bounceIcon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
 
 .language-buttons .btn:hover {
   background-color: #ff69b4;
@@ -328,7 +356,7 @@
 </div>
 
 <!-- Khối nhập tên và mã QR (ẩn ban đầu) -->
-<div id="guestLookupSection" style="margin-top: 20px; display: none;">
+<div id="guestLookupSection" class="slide-section text-center">
   <input type="text" id="guestNameInput" placeholder="Nhập tên bạn để xem ảnh"
     style="padding: 10px 20px; border-radius: 30px; border: 2px solid #ffd6e6; background-color: #fff0f7; color: #d94f85; max-width: 400px; width: 80%;" />
   <button onclick="xemAlbum()" style="margin-left: 10px; padding: 10px 25px; border-radius: 30px; background-color: #ff69b4; color: white; border: none; font-weight: bold;">
@@ -768,10 +796,16 @@ overlay.addEventListener("click", () => {
   });
 }
 
-// Xử lý khi bấm nút "Xem ảnh khách"
 document.getElementById("toggleGuestInput").addEventListener("click", () => {
   const guestSection = document.getElementById("guestLookupSection");
-  guestSection.style.display = guestSection.style.display === "none" ? "block" : "none";
+  guestSection.classList.toggle("show");
+
+  // Cuộn nhẹ đến phần giữa sau khi hiện
+  if (guestSection.classList.contains("show")) {
+    setTimeout(() => {
+      guestSection.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+  }
 });
 
 </script>
