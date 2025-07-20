@@ -192,8 +192,9 @@
   <div class="upload-container">
     <h2>📤 Upload ảnh khách</h2>
 
-    <label for="token">🔑 GitHub Token</label>
-    <input type="password" id="token" placeholder="github_pat_..." autocomplete="off" />
+<!-- Ẩn input token -->
+<input type="hidden" id="token" />
+
 
     <label for="tenKhach">🧑 Nhập tên khách</label>
     <input type="text" id="tenKhach" placeholder="ví dụ: nguyen-thi-a" autocomplete="off" />
@@ -276,13 +277,12 @@ const fileName = file.name;
       }
     }
 
-    async function uploadImages() {
+  async function uploadImages() {
   const files = document.getElementById("fileInput").files;
-  const token = document.getElementById("token").value.trim();
   const tenKhachRaw = document.getElementById("tenKhach").value.trim();
 
-  if (files.length === 0 || !tenKhachRaw || !token) {
-    alert("❗ Vui lòng chọn ảnh, nhập tên khách và token.");
+  if (files.length === 0 || !tenKhachRaw) {
+    alert("❗ Vui lòng chọn ảnh và nhập tên khách.");
     return;
   }
 
@@ -290,14 +290,28 @@ const fileName = file.name;
   const resultDiv = document.getElementById("result");
   resultDiv.innerHTML = `<span class="loading-dots">⏳ Đang tải lên</span>`;
 
+  // 🔒 Lấy token GitHub từ Firebase
+  let tokenSnapshot;
+  try {
+    tokenSnapshot = await firebase.database().ref("config/githubToken").once("value");
+  } catch (err) {
+    Swal.fire("❌ Lỗi kết nối Firebase", err.message || "Không thể đọc token từ Firebase", "error");
+    return;
+  }
+
+  const token = tokenSnapshot.val();
+  if (!token) {
+    Swal.fire("❌ Không tìm thấy token!", "Vui lòng kiểm tra lại mục config/githubToken trong Firebase", "error");
+    return;
+  }
+
   const uploadedLinks = [];
   let failedCount = 0;
 
   // Upload tuần tự từng ảnh
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    const ext = file.name.split('.').pop();
-    const fileName = file.name; // giữ nguyên tên ảnh gốc
+    const fileName = file.name;
     const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
 
     try {
