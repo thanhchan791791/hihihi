@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tạo Mã QR Album</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: #fff0f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #e91e63;
+      margin-bottom: 10px;
+    }
+
+    input {
+      padding: 10px;
+      border-radius: 6px;
+      border: 2px solid #f06292;
+      font-size: 16px;
+      width: 280px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #f06292;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    button:hover {
+      background: #e91e63;
+    }
+
+    #qrCodeContainer {
+      background: white;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📸 Mã QR Album</h1>
+  <input type="text" id="nameInput" placeholder="Nhập tên không dấu (vd: duy2002)">
+  <button onclick="taoQR()">🎯 Tạo mã QR</button>
+
+  <div id="qrCodeContainer"></div>
+
+  <script>
+    function taoQR() {
+      const name = document.getElementById('nameInput').value.trim().toLowerCase();
+      const container = document.getElementById('qrCodeContainer');
+      container.innerHTML = ""; // Xoá QR cũ nếu có
+
+      if (!name) {
+        alert("⚠️ Vui lòng nhập tên trước!");
+        return;
+      }
+
+      const encodedName = encodeURIComponent(name);
+      const link = `file:///C:/Users/PC/Desktop/New%20folder/index.html?name=${encodedName}`;
+
+      const canvas = document.createElement("canvas");
+      container.appendChild(canvas); // Gắn canvas vào DOM
+
+      QRCode.toCanvas(canvas, link, { width: 220 }, function (error) {
+        if (error) {
+          console.error(error);
+          alert("🚫 Lỗi tạo mã QR!");
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
