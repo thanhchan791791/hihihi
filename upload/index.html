@@ -7,15 +7,9 @@
   
   <!-- SweetAlert2 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
-
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
-    /* Reset */
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #fcefee, #ffe6f0);
@@ -26,9 +20,7 @@
       padding: 20px;
       overflow-x: hidden;
       color: #4a3c57;
-      user-select: none;
     }
-
     .upload-container {
       background: #fff;
       border-radius: 24px;
@@ -38,30 +30,18 @@
       width: 100%;
       text-align: center;
       position: relative;
-      overflow: hidden;
       animation: slideInUp 0.8s ease forwards;
     }
-
     @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
     h2 {
       font-weight: 600;
       font-size: 1.9rem;
       color: #d6336c;
       margin-bottom: 24px;
-      letter-spacing: 1.2px;
-      text-shadow: 0 2px 6px rgba(214, 51, 108, 0.5);
     }
-
     label {
       font-weight: 600;
       font-size: 0.9rem;
@@ -69,39 +49,18 @@
       display: block;
       margin-bottom: 6px;
       text-align: left;
-      user-select: text;
     }
-
-    input[type="password"],
-    input[type="text"],
-    input[type="file"] {
+    input[type="text"], input[type="file"] {
       width: 100%;
       padding: 14px 16px;
       border: 2.5px solid #f9a7ca;
       border-radius: 12px;
       font-size: 1rem;
-      color: #7a577a;
       background-color: #fff0f5;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
       margin-bottom: 20px;
       font-weight: 500;
-      outline-offset: 2px;
-      cursor: pointer;
-      user-select: text;
-    }
-
-    input[type="password"]:focus,
-    input[type="text"]:focus,
-    input[type="file"]:focus {
-      border-color: #e83273;
-      box-shadow: 0 0 10px rgba(232, 50, 115, 0.4);
-      background-color: #ffe6f3;
-    }
-
-    input[type="file"] {
       cursor: pointer;
     }
-
     button {
       background: linear-gradient(135deg, #e92a74, #ff5599);
       border: none;
@@ -113,88 +72,42 @@
       border-radius: 18px;
       box-shadow: 0 8px 18px rgba(255, 85, 153, 0.4);
       cursor: pointer;
-      transition: background 0.4s ease, transform 0.25s ease;
-      user-select: none;
-      letter-spacing: 0.8px;
+      margin-top: 10px;
     }
-
     button:hover {
       background: linear-gradient(135deg, #ff3a8a, #ff7ab2);
       transform: translateY(-2px);
-      box-shadow: 0 12px 24px rgba(255, 122, 178, 0.6);
     }
-
-    button:active {
-      transform: translateY(0);
-      box-shadow: 0 6px 14px rgba(255, 85, 153, 0.3);
-    }
-
     #result {
       margin-top: 28px;
       font-size: 1rem;
       font-weight: 600;
       color: #ad1457;
       min-height: 38px;
-      line-height: 1.3;
-      user-select: text;
-      transition: opacity 0.5s ease;
     }
-
     #result a {
       color: #e91e63;
       text-decoration: none;
       font-weight: 700;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.3s ease;
     }
-
-    #result a:hover {
-      border-color: #e91e63;
+    ul {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+      margin-top: 10px;
     }
-
-    /* Loading dots animation */
-    .loading-dots::after {
-      content: '';
-      display: inline-block;
-      animation: dots 1.4s infinite linear;
-      font-weight: 700;
-      font-size: 1.3rem;
-      color: #e91e63;
-      margin-left: 6px;
+    li {
+      margin-bottom: 8px;
     }
-
-    @keyframes dots {
-      0% { content: '.'; }
-      33% { content: '..'; }
-      66% { content: '...'; }
-      100% { content: '.'; }
-    }
-
-    /* Responsive */
-    @media (max-width: 480px) {
-      .upload-container {
-        padding: 30px 20px;
-        max-width: 100%;
-      }
-
-      h2 {
-        font-size: 1.6rem;
-      }
-
-      button {
-        font-size: 1.05rem;
-        padding: 12px 0;
-      }
+    input[type="checkbox"] {
+      margin-right: 6px;
     }
   </style>
 </head>
 <body>
   <div class="upload-container">
     <h2>📤 Upload ảnh khách</h2>
-
-<!-- Ẩn input token -->
-<input type="hidden" id="token" />
-
+    <input type="hidden" id="token" />
 
     <label for="tenKhach">🧑 Nhập tên khách</label>
     <input type="text" id="tenKhach" placeholder="ví dụ: nguyen-thi-a" autocomplete="off" />
@@ -205,8 +118,11 @@
     <button onclick="uploadImages()">📤 Tải ảnh lên</button>
 
     <div id="result"></div>
+    <div id="imageListContainer"></div>
+    <button id="deleteButton" onclick="deleteSelectedImages()" style="display: none;">🗑️ Xóa ảnh đã chọn</button>
   </div>
 
+  <!-- JS Firebase + SweetAlert -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
@@ -241,130 +157,135 @@
       });
     }
 
-    async function uploadSingleImage(file, token, tenKhach, index) {
-      const ext = file.name.split('.').pop();
-      const timestamp = Date.now();
-const fileName = file.name;
-      const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
+    async function uploadImages() {
+      const files = document.getElementById("fileInput").files;
+      const tenKhachRaw = document.getElementById("tenKhach").value.trim();
+      const resultDiv = document.getElementById("result");
+      const imageListContainer = document.getElementById("imageListContainer");
+      const deleteButton = document.getElementById("deleteButton");
 
+      if (files.length === 0 || !tenKhachRaw) {
+        alert("❗ Vui lòng chọn ảnh và nhập tên khách.");
+        return;
+      }
+
+      const tenKhach = tenKhachRaw.toLowerCase().replace(/\s+/g, '-');
+      resultDiv.innerHTML = `⏳ Đang tải ảnh lên...`;
+
+      let tokenSnapshot;
       try {
-        const base64Content = await readFileAsBase64(file);
-        const response = await fetch(apiUrl, {
-          method: "PUT",
+        tokenSnapshot = await firebase.database().ref("config/githubToken").once("value");
+      } catch (err) {
+        Swal.fire("❌ Lỗi kết nối Firebase", err.message, "error");
+        return;
+      }
+
+      const token = tokenSnapshot.val();
+      if (!token) {
+        Swal.fire("❌ Không tìm thấy token!", "Kiểm tra mục config/githubToken trên Firebase", "error");
+        return;
+      }
+
+      const uploadedLinks = [];
+      for (let file of files) {
+        const fileName = file.name;
+        const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
+        try {
+          const base64 = await readFileAsBase64(file);
+          const response = await fetch(apiUrl, {
+            method: "PUT",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: `Upload ${fileName}`,
+              content: base64,
+              branch: BRANCH,
+            }),
+          });
+
+          if (response.ok) {
+            uploadedLinks.push(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`);
+          }
+        } catch (err) {
+          console.warn(`❌ Lỗi khi upload ${fileName}:`, err);
+        }
+      }
+
+      if (uploadedLinks.length > 0) {
+        await db.ref("anhKhach/" + tenKhach).set(uploadedLinks);
+
+        resultDiv.innerHTML = `✅ Đã upload ${uploadedLinks.length} ảnh cho <strong>${tenKhach}</strong>`;
+        imageListContainer.innerHTML = `
+          <p>📸 Danh sách ảnh:</p>
+          <ul>
+            ${uploadedLinks.map(url => {
+              const name = url.split('/').pop();
+              return `<li><label><input type="checkbox" value="${name}" /> <a href="${url}" target="_blank">${name}</a></label></li>`;
+            }).join('')}
+          </ul>
+        `;
+        deleteButton.style.display = "block";
+      } else {
+        resultDiv.innerHTML = "❌ Không có ảnh nào được upload.";
+      }
+    }
+
+    async function deleteSelectedImages() {
+      const checkboxes = document.querySelectorAll('#imageListContainer input[type="checkbox"]:checked');
+      if (checkboxes.length === 0) {
+        Swal.fire("⚠️ Chưa chọn ảnh để xóa.");
+        return;
+      }
+
+      const confirm = await Swal.fire({
+        title: "Bạn chắc chắn?",
+        text: `Bạn muốn xóa ${checkboxes.length} ảnh?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Xóa",
+        cancelButtonText: "Hủy"
+      });
+      if (!confirm.isConfirmed) return;
+
+      const tenKhach = document.getElementById("tenKhach").value.trim().toLowerCase().replace(/\s+/g, '-');
+      const tokenSnapshot = await firebase.database().ref("config/githubToken").once("value");
+      const token = tokenSnapshot.val();
+
+      let deleted = 0;
+      for (let checkbox of checkboxes) {
+        const fileName = checkbox.value;
+        const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
+
+        const shaRes = await fetch(apiUrl, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const shaData = await shaRes.json();
+        const sha = shaData.sha;
+        if (!sha) continue;
+
+        const deleteRes = await fetch(apiUrl, {
+          method: "DELETE",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            message: `Upload ${fileName}`,
-            content: base64Content,
+            message: `Delete ${fileName}`,
+            sha: sha,
             branch: BRANCH,
           }),
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
-          const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
-          return { success: true, url };
-        } else {
-          console.warn(`❌ Upload ảnh ${index + 1} thất bại:`, data.message);
-          return { success: false, error: data.message };
-        }
-      } catch (err) {
-        console.error(`❌ Lỗi upload ảnh ${index + 1}:`, err);
-        return { success: false, error: err };
+        if (deleteRes.ok) deleted++;
       }
+
+      Swal.fire("🗑️ Đã xóa", `${deleted} ảnh đã được xóa.`, "success");
+      document.getElementById("imageListContainer").innerHTML = "";
+      document.getElementById("deleteButton").style.display = "none";
+      document.getElementById("result").innerHTML += `<br>🔁 Vui lòng upload lại nếu muốn xem danh sách mới.`;
     }
-
-  async function uploadImages() {
-  const files = document.getElementById("fileInput").files;
-  const tenKhachRaw = document.getElementById("tenKhach").value.trim();
-
-  if (files.length === 0 || !tenKhachRaw) {
-    alert("❗ Vui lòng chọn ảnh và nhập tên khách.");
-    return;
-  }
-
-  const tenKhach = tenKhachRaw.toLowerCase().replace(/\s+/g, '-');
-  const resultDiv = document.getElementById("result");
-  resultDiv.innerHTML = `<span class="loading-dots">⏳ Đang tải lên</span>`;
-
-  // 🔒 Lấy token GitHub từ Firebase
-  let tokenSnapshot;
-  try {
-    tokenSnapshot = await firebase.database().ref("config/githubToken").once("value");
-  } catch (err) {
-    Swal.fire("❌ Lỗi kết nối Firebase", err.message || "Không thể đọc token từ Firebase", "error");
-    return;
-  }
-
-  const token = tokenSnapshot.val();
-  if (!token) {
-    Swal.fire("❌ Không tìm thấy token!", "Vui lòng kiểm tra lại mục config/githubToken trong Firebase", "error");
-    return;
-  }
-
-  const uploadedLinks = [];
-  let failedCount = 0;
-
-  // Upload tuần tự từng ảnh
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const fileName = file.name;
-    const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
-
-    try {
-      const base64Content = await readFileAsBase64(file);
-      const response = await fetch(apiUrl, {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: `Upload ${fileName}`,
-          content: base64Content,
-          branch: BRANCH,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`;
-        uploadedLinks.push(url);
-      } else {
-        console.warn(`❌ Upload ảnh ${fileName} thất bại:`, data.message);
-        failedCount++;
-      }
-    } catch (err) {
-      console.error(`❌ Lỗi upload ảnh ${file.name}:`, err);
-      failedCount++;
-    }
-  }
-
-  if (uploadedLinks.length > 0) {
-    await db.ref("anhKhach/" + tenKhach).set(uploadedLinks);
-
-    resultDiv.innerHTML = `
-      ✅ Upload thành công <strong>${uploadedLinks.length}</strong> ảnh cho <strong>${tenKhach}</strong>.<br>
-      ${failedCount > 0 ? `⚠️ Có <strong>${failedCount}</strong> ảnh upload thất bại.<br>` : ""}
-      <a href="https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${BRANCH}/${IMAGE_FOLDER}" target="_blank">📁 Xem ảnh trên GitHub</a>
-    `;
-
-    Swal.fire(
-      "✅ Upload hoàn tất!",
-      `Đã lưu ${uploadedLinks.length} ảnh cho ${tenKhach}` + (failedCount > 0 ? `\nCó ${failedCount} ảnh thất bại` : ""),
-      "success"
-    );
-  } else {
-    resultDiv.innerHTML = "❌ Không upload được ảnh nào!";
-    Swal.fire("❌ Upload thất bại", "Không có ảnh nào được tải lên thành công.", "error");
-  }
-}
-
   </script>
 </body>
-
 </html>
