@@ -86,24 +86,6 @@
   gap: 10px;
   margin-bottom: 15px;
 }
-#qrContainer {
-  position: fixed;
-  bottom: -100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #fff0f7;
-  padding: 30px 20px;
-  border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-  z-index: 9999;
-  transition: bottom 0.5s ease;
-  text-align: center;
-}
-
-#qrContainer.show {
-  bottom: 50%;
-  transform: translate(-50%, 50%);
-}
 
 .language-buttons .btn {
   font-size: 1em;
@@ -767,39 +749,22 @@ overlay.addEventListener("click", () => {
  function xemAlbum() {
   const name = document.getElementById("guestNameInput").value.trim().toLowerCase();
   const errorText = document.getElementById("errorText");
-  const qrContainer = document.getElementById("qrContainer");
-  const qrcodeDiv = document.getElementById("qrcode");
 
   if (!name) {
     errorText.innerText = "❗ Vui lòng nhập tên!";
-    qrContainer.classList.remove("show");
     return;
   }
 
   db.ref("anhKhach/" + name).once("value").then(snapshot => {
     const data = snapshot.val();
     if (data) {
-      qrcodeDiv.innerHTML = ""; // Xoá QR cũ nếu có
-
       const url = `https://thanhchan791791.github.io/hihihi/khoanh/?name=${encodeURIComponent(name)}`;
-      new QRCode(qrcodeDiv, {
-        text: url,
-        width: 200,
-        height: 200,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
-      });
-
-      qrContainer.classList.add("show");
-      errorText.innerText = "";
+      window.location.href = url; // 👉 TỰ ĐỘNG CHUYỂN TRANG
     } else {
       errorText.innerText = "❌ Không tìm thấy tên trong hệ thống!";
-      qrContainer.classList.remove("show");
     }
   }).catch(() => {
     errorText.innerText = "⚠️ Có lỗi kết nối!";
-    qrContainer.classList.remove("show");
   });
 }
 
