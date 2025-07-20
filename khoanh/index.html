@@ -104,6 +104,7 @@
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s ease;
+      margin: 6px;
     }
 
     button:hover {
@@ -135,6 +136,7 @@
     </div>
 
     <button onclick="xemAlbum()">📸 Xem Album</button>
+    <button onclick="xemNgauNhien()">📷 Xem album ngẫu nhiên</button>
     <div id="errorText"></div>
     <div id="loading"></div>
     <div class="gallery" id="galleryContainer"></div>
@@ -158,6 +160,159 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+  <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+    authDomain: "dogs-be72b.firebaseapp.com",
+    databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+    projectId: "dogs-be72b",
+    storageBucket: "dogs-be72b.appspot.com",
+    messagingSenderId: "1003873040746",
+    appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  let randomNames = [];
+  let randomIndex = 0;
+
+  function xemAlbum() {
+    const name = document.getElementById("nameInput").value.trim().toLowerCase();
+    if (!name) {
+      document.getElementById("errorText").innerText = "Vui lòng nhập tên!";
+      return;
+    }
+
+    window.location.href = window.location.pathname + "?name=" + encodeURIComponent(name);
+  }
+
+  function xemNgauNhien() {
+    const errorText = document.getElementById("errorText");
+    errorText.innerText = "";
+    const loading = document.getElementById("loading");
+
+    if (randomNames.length === 0 || randomIndex >= randomNames.length) {
+      loading.style.display = "block";
+      db.ref("anhKhach").once("value").then(snapshot => {
+        const data = snapshot.val();
+        if (data) {
+          randomNames = Object.keys(data).sort(() => Math.random() - 0.5);
+          randomIndex = 0;
+          loadRandomAlbum();
+        } else {
+          loading.style.display = "none";
+          errorText.innerText = "❌ Không tìm thấy khách nào!";
+        }
+      }).catch(() => {
+        loading.style.display = "none";
+        errorText.innerText = "⚠️ Lỗi kết nối!";
+      });
+    } else {
+      loadRandomAlbum();
+    }
+  }
+
+  function loadRandomAlbum() {
+    const name = randomNames[randomIndex++];
+    document.getElementById("nameInput").value = name;
+    loadAlbum(name);
+  }
+  function loadAlbum(name) {
+    const gallery = document.getElementById("galleryContainer");
+    const loading = document.getElementById("loading");
+    const thankYou = document.getElementById("thankYou");
+    const errorText = document.getElementById("errorText");
+
+    gallery.innerHTML = "";
+    gallery.style.display = "none";
+    errorText.innerText = "";
+    thankYou.style.display = "none";
+    loading.style.display = "block";
+
+    db.ref("anhKhach/" + name).once("value").then(snapshot => {
+      const urlsData = snapshot.val();
+      const urls = Array.isArray(urlsData) ? urlsData : Object.values(urlsData || {});
+      let loaded = 0;
+
+      if (urls.length > 0) {
+        urls.forEach(url => {
+          const frame = document.createElement("div");
+          frame.className = "photo-frame";
+
+          const img = document.createElement("img");
+          img.src = url;
+          img.alt = "Ảnh khách";
+          img.onclick = () => toggleZoom(url);
+
+          img.onload = () => {
+            loaded++;
+            if (loaded === urls.length) {
+              setTimeout(() => {
+                loading.style.display = "none";
+                gallery.style.display = "grid";
+                document.getElementById("bgm")?.play();
+
+                for (let i = 0; i < 3; i++) {
+                  setTimeout(() => {
+                    confetti({
+                      particleCount: 120,
+                      spread: 90 + i * 10,
+                      origin: { y: 0.6 - i * 0.05 }
+                    });
+                  }, i * 300);
+                }
+
+                setTimeout(() => {
+                  thankYou.style.display = "block";
+                  thankYou.style.animation = "slideFadeIn 1s ease forwards";
+                  setTimeout(() => {
+                    thankYou.style.animation = "fadeOutThankYou 1s ease forwards";
+                    setTimeout(() => {
+                      thankYou.style.display = "none";
+                    }, 1000);
+                  }, 3000);
+                }, 1200);
+              }, 300);
+            }
+          };
+
+          frame.appendChild(img);
+          gallery.appendChild(frame);
+        });
+      } else {
+        loading.style.display = "none";
+        errorText.innerText = "❌ Không tìm thấy ảnh!";
+      }
+    }).catch(() => {
+      loading.style.display = "none";
+      errorText.innerText = "⚠️ Lỗi kết nối!";
+    });
+  }
+
+  function toggleZoom(url) {
+    document.getElementById("fullscreenImg").src = url;
+    document.getElementById("fullscreenOverlay").style.display = "flex";
+  }
+
+  function toggleZoomBack() {
+    document.getElementById("fullscreenOverlay").style.display = "none";
+  }
+
+  function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+
+  window.onload = () => {
+    const nameFromUrl = getQueryParam("name");
+    if (nameFromUrl) {
+      document.getElementById("nameInput").value = nameFromUrl;
+      loadAlbum(nameFromUrl.toLowerCase());
+    }
+  };
+  </script>
 
   <style>
     .gallery {
@@ -258,128 +413,5 @@
       100% { transform: rotate(360deg); }
     }
   </style>
-
-  <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
-    authDomain: "dogs-be72b.firebaseapp.com",
-    databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
-    projectId: "dogs-be72b",
-    storageBucket: "dogs-be72b.appspot.com",
-    messagingSenderId: "1003873040746",
-    appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  function xemAlbum() {
-    const name = document.getElementById("nameInput").value.trim().toLowerCase();
-    if (!name) {
-      document.getElementById("errorText").innerText = "Vui lòng nhập tên!";
-      return;
-    }
-
-    // Thay vì gọi ngay, ta chuyển hướng URL có query
-    window.location.href = window.location.pathname + "?name=" + encodeURIComponent(name);
-  }
-
-  function loadAlbum(name) {
-    const gallery = document.getElementById("galleryContainer");
-    const loading = document.getElementById("loading");
-    const thankYou = document.getElementById("thankYou");
-    const errorText = document.getElementById("errorText");
-
-    gallery.innerHTML = "";
-    gallery.style.display = "none";
-    errorText.innerText = "";
-    thankYou.style.display = "none";
-    loading.style.display = "block";
-
-    db.ref("anhKhach/" + name).once("value").then(snapshot => {
-      const urlsData = snapshot.val();
-      const urls = Array.isArray(urlsData) ? urlsData : Object.values(urlsData || {});
-      let loaded = 0;
-
-      if (urls.length > 0) {
-        urls.forEach(url => {
-          const frame = document.createElement("div");
-          frame.className = "photo-frame";
-
-          const img = document.createElement("img");
-          img.src = url;
-          img.alt = "Ảnh khách";
-          img.onclick = () => toggleZoom(url);
-
-          img.onload = () => {
-            loaded++;
-            if (loaded === urls.length) {
-              setTimeout(() => {
-                loading.style.display = "none";
-                gallery.style.display = "grid";
-                document.getElementById("bgm")?.play();
-
-                for (let i = 0; i < 3; i++) {
-                  setTimeout(() => {
-                    confetti({
-                      particleCount: 120,
-                      spread: 90 + i * 10,
-                      origin: { y: 0.6 - i * 0.05 }
-                    });
-                  }, i * 300);
-                }
-
-                setTimeout(() => {
-                  thankYou.style.display = "block";
-                  thankYou.style.animation = "slideFadeIn 1s ease forwards";
-                  setTimeout(() => {
-                    thankYou.style.animation = "fadeOutThankYou 1s ease forwards";
-                    setTimeout(() => {
-                      thankYou.style.display = "none";
-                    }, 1000);
-                  }, 3000);
-                }, 1200);
-              }, 300);
-            }
-          };
-
-          frame.appendChild(img);
-          gallery.appendChild(frame);
-        });
-      } else {
-        loading.style.display = "none";
-        errorText.innerText = "❌ Không tìm thấy ảnh!";
-      }
-    }).catch(err => {
-      loading.style.display = "none";
-      errorText.innerText = "⚠️ Lỗi kết nối!";
-    });
-  }
-
-  function toggleZoom(url) {
-    document.getElementById("fullscreenImg").src = url;
-    document.getElementById("fullscreenOverlay").style.display = "flex";
-  }
-
-  function toggleZoomBack() {
-    document.getElementById("fullscreenOverlay").style.display = "none";
-  }
-
-  function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-  }
-
-  // Tự động chạy khi có ?name=...
-  window.onload = () => {
-    const nameFromUrl = getQueryParam("name");
-    if (nameFromUrl) {
-      document.getElementById("nameInput").value = nameFromUrl;
-      loadAlbum(nameFromUrl.toLowerCase());
-    }
-  };
-</script>
-
 </body>
 </html>
-  
