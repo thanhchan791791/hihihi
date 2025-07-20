@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Tạo Mãs QR Album</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <title>Tạo Mã QR Album</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
       font-family: 'Quicksand', sans-serif;
@@ -59,7 +59,7 @@
 </head>
 <body>
 
-  <h1>📸 Mã QsR Album</h1>
+  <h1>📸 Mã QR Album</h1>
   <input type="text" id="nameInput" placeholder="Nhập tên không dấu (vd: duy2002)">
   <button onclick="taoQR()">🎯 Tạo mã QR</button>
 
@@ -79,13 +79,13 @@
       const encodedName = encodeURIComponent(name);
       const link = `https://thanhchan791791.github.io/hihihi/khoanh/?name=${encodedName}`;
 
-      QRCode.toCanvas(link, { width: 220 }, function (error, canvas) {
-        if (error) {
-          console.error(error);
-          alert("🚫 Lỗi tạo mã QR!");
-          return;
-        }
-        container.appendChild(canvas);
+      new QRCode(container, {
+        text: link,
+        width: 220,
+        height: 220,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
       });
     }
   </script>
