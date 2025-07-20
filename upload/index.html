@@ -2,290 +2,778 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>📤 Upload Ảnh Khách - Cherry Pet Coffee</title>
-  
-  <!-- SweetAlert2 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chọn chó chụp ảnh</title>
+
+  <!-- Bootstrap + FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #fcefee, #ffe6f0);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      overflow-x: hidden;
-      color: #4a3c57;
-    }
-    .upload-container {
-      background: #fff;
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(255, 102, 180, 0.25);
-      padding: 40px 50px;
-      max-width: 500px;
-      width: 100%;
-      text-align: center;
-      position: relative;
-      animation: slideInUp 0.8s ease forwards;
-    }
-    @keyframes slideInUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    h2 {
-      font-weight: 600;
-      font-size: 1.9rem;
-      color: #d6336c;
-      margin-bottom: 24px;
-    }
-    label {
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #c72c66;
-      display: block;
-      margin-bottom: 6px;
-      text-align: left;
-    }
-    input[type="text"], input[type="file"] {
-      width: 100%;
-      padding: 14px 16px;
-      border: 2.5px solid #f9a7ca;
-      border-radius: 12px;
-      font-size: 1rem;
-      background-color: #fff0f5;
-      margin-bottom: 20px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-    button {
-      background: linear-gradient(135deg, #e92a74, #ff5599);
-      border: none;
-      color: white;
-      font-weight: 600;
-      font-size: 1.15rem;
-      padding: 14px 0;
-      width: 100%;
-      border-radius: 18px;
-      box-shadow: 0 8px 18px rgba(255, 85, 153, 0.4);
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      background: linear-gradient(135deg, #ff3a8a, #ff7ab2);
-      transform: translateY(-2px);
-    }
-    #result {
-      margin-top: 28px;
-      font-size: 1rem;
-      font-weight: 600;
-      color: #ad1457;
-      min-height: 38px;
-    }
-    #result a {
-      color: #e91e63;
-      text-decoration: none;
-      font-weight: 700;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      text-align: left;
-      margin-top: 10px;
-    }
-    li {
-      margin-bottom: 8px;
-    }
-    input[type="checkbox"] {
-      margin-right: 6px;
-    }
-  </style>
+  body {
+    font-family: 'Comic Sans MS', cursive;
+    background: linear-gradient(to bottom, #fffafc, #ffeef5);
+    margin: 0;
+    padding: 20px 20px 100px;
+    text-align: center;
+  }
+.language-buttons .btn.active {
+  background-color: #ff69b4;
+  color: white;
+}
+
+  h1 {
+    font-size: 2em;
+    color: #ff69b4;
+    margin-bottom: 10px;
+  }
+#view-photos-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 25px;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 30px;
+  background-color: #fff0f7;
+  color: #d94f85;
+  border: 2px solid #ff69b4;
+  box-shadow: 0 4px 10px rgba(255, 105, 180, 0.2);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+#view-photos-btn:hover {
+  background-color: #ff69b4;
+  color: white;
+  transform: scale(1.05);
+}
+
+  #search-input {
+    width: 90%;
+    max-width: 400px;
+    padding: 12px 20px;
+    font-size: 1em;
+    border-radius: 30px;
+    border: 2px solid #ffd6e6;
+    background-color: #fff0f7;
+    color: #d94f85;
+  }
+
+  #seat-info {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #d94f85;
+    font-size: 1.1em;
+  }
+
+  #dog-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .dog-card {
+    background: #fff0f5;
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    position: relative;
+  }
+.language-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.language-buttons .btn {
+  font-size: 1em;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: 2px solid #ff69b4;
+  background-color: #fff0f7;
+  color: #d94f85;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(255, 105, 180, 0.2);
+}
+
+.language-buttons .btn:hover {
+  background-color: #ff69b4;
+  color: white;
+}
+
+  .dog-card img {
+    width: 100%;
+    height: 60vh;
+    object-fit: cover;
+    border-radius: 15px;
+  }
+
+  .dog-card h3 {
+    margin: 5px 0;
+    color: #d94f85;
+  }
+.slide-section {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease, padding 0.5s ease;
+  padding: 0;
+}
+
+.slide-section.show {
+  max-height: 300px;
+  padding: 20px 0;
+}
+
+  .dog-card p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #555;
+  }
+
+  .dog-card.selected {
+    border: 3px solid #ff69b4;
+  }
+
+  .dog-card.sleeping {
+    opacity: 0.8;
+    filter: grayscale(10%) blur(0.5px);
+    transition: 0.3s ease;
+  }
+
+  .dog-card.sleeping::before {
+    content: "💤 Khò khò";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.4em;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px 15px;
+    border-radius: 20px;
+    color: #d94f85;
+    font-family: 'Comic Sans MS', cursive;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 3;
+    display: block;
+  }
+
+  .dog-card.sleeping.selected::before {
+    display: none;
+  }
+
+  .dog-image-wrapper {
+    position: relative;
+  }
+
+  .selected-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: rgba(255, 245, 250, 0.9);
+    color: #d94f85;
+    padding: 10px 22px;
+    border-radius: 25px;
+    font-size: 1.1em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Comic Sans MS', cursive;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    transition: all 0.35s ease-in-out;
+    z-index: 2;
+    backdrop-filter: blur(2px);
+  }
+
+  .dog-card.selected .selected-overlay {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .selected-overlay i {
+    color: #e084b3;
+    font-size: 1.3em;
+    margin-right: 8px;
+  }
+
+  #submit-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ff69b4;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  #submit-btn:hover {
+    background-color: #ff1493;
+  }
+
+  #selected-count {
+    position: fixed;
+    top: 20px;
+    right: 50%;
+    transform: translateX(50%);
+    background: #ffecf4;
+    color: #d94f85;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: bold;
+    display: none;
+  }
+
+  #alert-box-container {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    transition: top 0.5s ease, opacity 0.3s ease;
+    opacity: 0;
+  }
+
+  #alert-box-container.show {
+    top: 30px;
+    opacity: 1;
+    transform: translateX(-50%) scale(1.05);
+  }
+
+  #alert-box {
+    background: #fff0f5;
+    border: 2px solid #ffa8c5;
+    color: #d94f85;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 25px;
+    padding: 12px 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  #photoOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #photoOverlay img {
+    height: 80vh;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  }
+
+  .carousel-inner {
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  #tapOverlayText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2em;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+    opacity: 0.85;
+    z-index: 100001;
+    animation: pulseText 1.5s infinite;
+    pointer-events: none;
+    font-family: 'Comic Sans MS', cursive;
+  }
+
+  @keyframes pulseText {
+    0%, 100% { opacity: 0.85; }
+    50% { opacity: 0.4; }
+  }
+</style>
 </head>
 <body>
-  <div class="upload-container">
-    <h2>📤 Upload ảnh khách</h2>
-    <input type="hidden" id="token" />
-
-    <label for="tenKhach">🧑 Nhập tên khách</label>
-    <input type="text" id="tenKhach" placeholder="ví dụ: nguyen-thi-a" autocomplete="off" />
-
-    <label for="fileInput">📂 Chọn ảnh (nhiều ảnh)</label>
-    <input type="file" id="fileInput" accept="image/*" multiple />
-
-    <button onclick="uploadImages()">📤 Tải ảnh lên</button>
-
-    <div id="result"></div>
-    <div id="imageListContainer"></div>
-    <button id="deleteButton" onclick="deleteSelectedImages()" style="display: none;">🗑️ Xóa ảnh đã chọn</button>
+<!-- Overlay slider ảnh chụp thật -->
+<div id="photoOverlay">
+  <div id="carouselPhotos" class="carousel slide w-100" style="max-width: 900px;" data-bs-ride="carousel" data-bs-interval="2500" data-bs-wrap="true">
+    <div class="carousel-inner"></div>
   </div>
+  <!-- DÒNG CHỮ CHẠM VÀO MÀN HÌNH -->
+  <div id="tapOverlayText" data-i18n="tap_screen">Chạm vào màn hình để tiếp tục</div>
+</div>
 
-  <!-- JS Firebase + SweetAlert -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<h1 data-i18n="title">📸 Chọn các bé iu để chụp ảnh</h1>
+<!-- Nút xem ảnh khách -->
+<div style="margin-top: 10px;">
+  <button id="toggleGuestInput" class="btn btn-view-photos">
+    <i class="fa-solid fa-image me-2"></i> Xem ảnh khách
+  </button>
+</div>
 
-  <script>
-    const REPO_OWNER = 'thanhchan791791';
-    const REPO_NAME = 'hihihi';
-    const BRANCH = 'main';
-    const IMAGE_FOLDER = 'ImagesKhach';
+<!-- Khối nhập tên và mã QR (ẩn ban đầu) -->
+<div id="guestLookupSection" style="margin-top: 20px; display: none;">
+  <input type="text" id="guestNameInput" placeholder="Nhập tên bạn để xem ảnh"
+    style="padding: 10px 20px; border-radius: 30px; border: 2px solid #ffd6e6; background-color: #fff0f7; color: #d94f85; max-width: 400px; width: 80%;" />
+  <button onclick="xemAlbum()" style="margin-left: 10px; padding: 10px 25px; border-radius: 30px; background-color: #ff69b4; color: white; border: none; font-weight: bold;">
+    🔍 Tìm ảnh
+  </button>
+  <p id="errorText" style="color: red; margin-top: 10px;"></p>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
-      authDomain: "dogs-be72b.firebaseapp.com",
-      databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
-      projectId: "dogs-be72b",
-      storageBucket: "dogs-be72b.appspot.com",
-      messagingSenderId: "1003873040746",
-      appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+ <div id="qrContainer" class="slide-section">
 
-    function readFileAsBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64Data = reader.result.split(',')[1];
-          resolve(base64Data);
-        };
-        reader.onerror = () => reject("Lỗi đọc ảnh");
-        reader.readAsDataURL(file);
-      });
-    }
+    <p>Mã QR dẫn tới album của bạn:</p>
+    <div id="qrcode"></div>
+  </div>
+</div>
 
-    async function uploadImages() {
-      const files = document.getElementById("fileInput").files;
-      const tenKhachRaw = document.getElementById("tenKhach").value.trim();
-      const resultDiv = document.getElementById("result");
-      const imageListContainer = document.getElementById("imageListContainer");
-      const deleteButton = document.getElementById("deleteButton");
 
-      if (files.length === 0 || !tenKhachRaw) {
-        alert("❗ Vui lòng chọn ảnh và nhập tên khách.");
+<div class="language-buttons">
+  <button id="lang-vi" class="btn">🇻🇳 Tiếng Việt</button>
+  <button id="lang-en" class="btn">🇺🇸 English</button>
+</div>
+
+<div>
+  <input type="text" id="search-input" placeholder="Nhập tên, giống hoặc tính cách bé cún..." data-i18n-placeholder="search_placeholder" />
+</div>
+
+<ul id="suggestion-list" style="list-style: none; padding-left: 0; margin-top: 10px; text-align: left; max-width: 400px; margin-inline: auto;"></ul>
+
+<div id="seat-info" data-i18n="seat_loading">Vị trí đang tải...</div>
+
+<div style="margin: 30px auto 20px; font-size: 1.1em; color: #d94f85; font-weight: bold;" data-i18n="dog_list_intro">
+  Dưới đây là danh sách các bé cún đang chờ được chọn nè!
+</div>
+
+<div id="dog-list"></div>
+
+<!-- Alert -->
+<div id="alert-box-container">
+  <div id="alert-box" class="alert alert-success" role="alert">
+    <i class="fa-solid fa-circle-check me-2"></i>
+    <span id="alert-message">Đã gửi yêu cầu!</span>
+  </div>
+</div>
+
+<!-- Nút chốt -->
+<button id="submit-btn">
+  <i class="fa-solid fa-dog me-2"></i>
+  <span data-i18n="submit_button">Chốt các bé iu 💖</span>
+</button>
+
+<div id="selected-count">Đã chọn: 0 bé</div>
+
+<!-- Modal xác nhận chọn bé đang ngủ -->
+<div class="modal fade" id="sleepModal" tabindex="-1" aria-labelledby="sleepModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 20px;">
+      <div class="modal-header bg-warning-subtle">
+        <h5 class="modal-title" id="sleepModalLabel">💤 Bé đang ngủ</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body text-start" id="sleepModalBody">
+        <!-- Nội dung modal sẽ được thay đổi động -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="modal_cancel">Thôi để bé nghỉ</button>
+        <button type="button" class="btn btn-pink" id="confirmSleepBtn" style="background-color: #ff69b4; color: white;" data-i18n="modal_confirm">Vẫn chọn bé</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<!-- SCRIPT QUẢN LÝ NGÔN NGỮ -->
+<script>
+const LANGS = {
+  vi: {
+    title: "📸 Chọn các bé iu để chụp ảnh",
+    tap_screen: "Chạm vào màn hình để tiếp tục",
+    search_placeholder: "Nhập tên, giống hoặc tính cách bé cún...",
+    seat_loading: "Vị trí đang tải...",
+    dog_list_intro: "Dưới đây là danh sách các bé cún đang chờ được chọn nè!",
+    submit_button: "Chốt các bé iu 💖",
+    modal_cancel: "Thôi để bé nghỉ",
+    modal_confirm: "Vẫn chọn bé",
+    selected_count: "Đã chọn: {count} bé",
+    selected: "Đã chọn"
+  },
+  en: {
+    title: "📸 Choose your favorite dogs to take pictures",
+    tap_screen: "Tap the screen to continue",
+    search_placeholder: "Enter dog name, breed, or personality...",
+    seat_loading: "Loading seat info...",
+    dog_list_intro: "Below is the list of dogs waiting to be selected!",
+    submit_button: "Confirm selected dogs 💖",
+    modal_cancel: "Let the dog sleep",
+    modal_confirm: "Still select the dog",
+    selected_count: "Selected: {count} dogs",
+    selected: "Selected"
+  }
+};
+
+
+
+let currentLang = localStorage.getItem("lang");
+
+if (!currentLang) {
+  const browserLang = navigator.language.toLowerCase();
+  currentLang = browserLang.startsWith("vi") ? "vi" : "en";
+  localStorage.setItem("lang", currentLang);
+}
+
+// Dịch nội dung theo key và ngôn ngữ hiện tại
+function t(key) {
+  return LANGS[currentLang]?.[key] || key;
+}
+
+// Gán văn bản cho các phần tử có thuộc tính data-i18n hoặc data-i18n-placeholder
+function applyLanguage() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.innerText = t(el.dataset.i18n);
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+    el.setAttribute("placeholder", t(el.dataset.i18nPlaceholder));
+  });
+}
+function updateActiveLangButton() {
+  document.getElementById("lang-vi").classList.toggle("active", currentLang === "vi");
+  document.getElementById("lang-en").classList.toggle("active", currentLang === "en");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  applyLanguage();
+  updateActiveLangButton(); // ✅ Thêm dòng này
+
+ document.getElementById("lang-en").addEventListener("click", () => {
+  currentLang = "en";
+  localStorage.setItem("lang", "en");
+  applyLanguage();
+    updateActiveLangButton(); // ✅ Thêm dòng này
+
+  renderDogs(searchInput.value); // ✅ Cập nhật lại text "Selected"
+  updateSeatDisplay();           // ✅ Cập nhật lại vị trí theo ngôn ngữ
+});
+
+
+  document.getElementById("lang-vi").addEventListener("click", () => {
+  currentLang = "vi";
+  localStorage.setItem("lang", "vi");
+  applyLanguage();
+  updateActiveLangButton(); // ✅ Thêm dòng này
+
+  renderDogs(searchInput.value); // ✅ Cập nhật lại text "Đã chọn"
+  updateSeatDisplay();           // ✅ Cập nhật lại vị trí theo ngôn ngữ
+});
+
+});
+
+</script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+  authDomain: "dogs-be72b.firebaseapp.com",
+  databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+  projectId: "dogs-be72b",
+  storageBucket: "dogs-be72b.appspot.com",
+  messagingSenderId: "1003873040746",
+  appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const dogList = document.getElementById("dog-list");
+const searchInput = document.getElementById("search-input");
+const submitBtn = document.getElementById("submit-btn");
+const selectedCount = document.getElementById("selected-count");
+const seatInfo = document.getElementById("seat-info");
+const alertMessage = document.getElementById("alert-message");
+
+let selectedDogs = [];
+let allDogs = [];
+
+// Hiển thị cảnh báo Bootstrap
+function showBootstrapAlert(message, type = "success", duration = 3000) {
+  const container = document.getElementById("alert-box-container");
+  const alertBox = document.getElementById("alert-box");
+  alertMessage.textContent = message;
+
+  const colors = {
+    success: ["#fff0f5", "#ffa8c5", "#d94f85"],
+    warning: ["#fff8e1", "#ffc107", "#b66f00"],
+    danger:  ["#ffe0e0", "#ff6b6b", "#c0392b"]
+  };
+
+  const [bg, border, color] = colors[type] || colors.success;
+  alertBox.style.backgroundColor = bg;
+  alertBox.style.borderColor = border;
+  alertBox.style.color = color;
+
+  container.classList.add("show");
+  setTimeout(() => container.classList.remove("show"), duration);
+}
+
+function updateSelectedCount() {
+  selectedCount.style.display = selectedDogs.length > 0 ? "block" : "none";
+  selectedCount.textContent = t("selected_count").replace("{count}", selectedDogs.length);
+}
+
+
+function getSeatFromHash() {
+  const hash = window.location.hash.toLowerCase();
+  const match = hash.match(/^#\/?([lr])(\d)$/);
+  if (match) {
+    const side = match[1] === "r" ? (currentLang === "vi" ? "Bên phải" : "Right") : (currentLang === "vi" ? "Bên trái" : "Left");
+    const table = (currentLang === "vi" ? "Bàn " : "Table ") + match[2];
+    return { side, table };
+  }
+  return null;
+}
+
+function updateSeatDisplay() {
+  const seat = getSeatFromHash();
+  seatInfo.textContent = seat
+    ? `${currentLang === "vi" ? "Vị trí của bạn" : "Your seat"}: ${seat.side} - ${seat.table}`
+    : (currentLang === "vi" ? "Vị trí chưa xác định từ đường link!" : "Seat not determined from URL!");
+}
+
+function renderDogs(filter = "") {
+  dogList.innerHTML = "";
+  const keywords = filter.toLowerCase().split(/\s+/).filter(k => k);
+
+  allDogs.filter(dog => {
+    const text = `${dog.name} ${dog.breed} ${dog.trait || dog.personality || ""}`.toLowerCase();
+    return keywords.every(k => text.includes(k));
+  }).forEach(dog => {
+    const div = document.createElement("div");
+    div.className = "dog-card";
+    div.dataset.name = dog.name;
+    if (selectedDogs.includes(dog.name)) div.classList.add("selected");
+    if (dog.status !== "play") div.classList.add("sleeping");
+
+    div.innerHTML = `
+      <div class="dog-image-wrapper">
+        <img src="${dog.image}" alt="${dog.name}" />
+<div class="selected-overlay"><i class="fa-solid fa-check-circle me-2"></i> ${t("selected")}</div>
+      </div>
+      <h3>${dog.name}</h3>
+      <p>${currentLang === "vi" ? "Giống" : "Breed"}: ${dog.breed}</p>
+      <p>${currentLang === "vi" ? "Tính cách" : "Personality"}: ${dog.trait || dog.personality || (currentLang === "vi" ? "Chưa cập nhật" : "Not updated")}</p>
+    `;
+
+    div.addEventListener("click", () => {
+      const dogName = dog.name;
+      if (selectedDogs.includes(dogName)) {
+        selectedDogs = selectedDogs.filter(n => n !== dogName);
+        div.classList.remove("selected");
+        updateSelectedCount();
         return;
       }
 
-      const tenKhach = tenKhachRaw.toLowerCase().replace(/\s+/g, '-');
-      resultDiv.innerHTML = `⏳ Đang tải ảnh lên...`;
-
-      let tokenSnapshot;
-      try {
-        tokenSnapshot = await firebase.database().ref("config/githubToken").once("value");
-      } catch (err) {
-        Swal.fire("❌ Lỗi kết nối Firebase", err.message, "error");
+      if (selectedDogs.length >= 3) {
+        showBootstrapAlert(currentLang === "vi" ? "🐾 Bạn chỉ được chọn tối đa 3 bé nha!" : "🐾 You can only select up to 3 dogs!", "warning");
         return;
       }
 
-      const token = tokenSnapshot.val();
-      if (!token) {
-        Swal.fire("❌ Không tìm thấy token!", "Kiểm tra mục config/githubToken trên Firebase", "error");
-        return;
-      }
+      if (dog.status !== "play") {
+        const selectedSleepingCount = selectedDogs.filter(name => {
+          const d = allDogs.find(d => d.name === name);
+          return d && d.status !== "play";
+        }).length;
 
-      const uploadedLinks = [];
-      for (let file of files) {
-        const fileName = file.name;
-        const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
-        try {
-          const base64 = await readFileAsBase64(file);
-          const response = await fetch(apiUrl, {
-            method: "PUT",
-            headers: {
-              "Authorization": `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              message: `Upload ${fileName}`,
-              content: base64,
-              branch: BRANCH,
-            }),
-          });
-
-          if (response.ok) {
-            uploadedLinks.push(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${IMAGE_FOLDER}/${fileName}`);
-          }
-        } catch (err) {
-          console.warn(`❌ Lỗi khi upload ${fileName}:`, err);
+        if (selectedSleepingCount >= 1) {
+          showBootstrapAlert(currentLang === "vi" ? "😴 Bạn chỉ được chọn 1 bé đang ngủ thôi nha!" : "😴 You can only select 1 sleeping dog!", "warning");
+          return;
         }
-      }
 
-      if (uploadedLinks.length > 0) {
-        await db.ref("anhKhach/" + tenKhach).set(uploadedLinks);
+        const modalLabel = document.getElementById("sleepModalLabel");
+        const modalBody = document.getElementById("sleepModalBody");
+        const confirmSleepBtn = document.getElementById("confirmSleepBtn");
 
-        resultDiv.innerHTML = `✅ Đã upload ${uploadedLinks.length} ảnh cho <strong>${tenKhach}</strong>`;
-        imageListContainer.innerHTML = `
-          <p>📸 Danh sách ảnh:</p>
-          <ul>
-            ${uploadedLinks.map(url => {
-              const name = url.split('/').pop();
-              return `<li><label><input type="checkbox" value="${name}" /> <a href="${url}" target="_blank">${name}</a></label></li>`;
-            }).join('')}
-          </ul>
-        `;
-        deleteButton.style.display = "block";
-      } else {
-        resultDiv.innerHTML = "❌ Không có ảnh nào được upload.";
-      }
-    }
+        modalLabel.textContent = `💤 ${currentLang === "vi" ? "Bé" : "Dog"} "${dogName}" ${currentLang === "vi" ? "đang ngủ" : "is sleeping"}`;
+        modalBody.innerHTML = `${currentLang === "vi" ? "Bạn vẫn muốn chọn" : "Do you still want to select"} <strong>${dogName}</strong>?`;
 
-    async function deleteSelectedImages() {
-      const checkboxes = document.querySelectorAll('#imageListContainer input[type="checkbox"]:checked');
-      if (checkboxes.length === 0) {
-        Swal.fire("⚠️ Chưa chọn ảnh để xóa.");
+        const bsModal = new bootstrap.Modal(document.getElementById("sleepModal"));
+        bsModal.show();
+
+        confirmSleepBtn.onclick = () => {
+          selectedDogs.push(dogName);
+          div.classList.add("selected");
+          updateSelectedCount();
+          bsModal.hide();
+        };
         return;
       }
 
-      const confirm = await Swal.fire({
-        title: "Bạn chắc chắn?",
-        text: `Bạn muốn xóa ${checkboxes.length} ảnh?`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Xóa",
-        cancelButtonText: "Hủy"
-      });
-      if (!confirm.isConfirmed) return;
+      selectedDogs.push(dogName);
+      div.classList.add("selected");
+      updateSelectedCount();
+    });
 
-      const tenKhach = document.getElementById("tenKhach").value.trim().toLowerCase().replace(/\s+/g, '-');
-      const tokenSnapshot = await firebase.database().ref("config/githubToken").once("value");
-      const token = tokenSnapshot.val();
+    dogList.appendChild(div);
+  });
+}
 
-      let deleted = 0;
-      for (let checkbox of checkboxes) {
-        const fileName = checkbox.value;
-        const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${IMAGE_FOLDER}/${fileName}`;
+// Xử lý khởi động
+db.ref("dogs").on("value", snapshot => {
+  const data = snapshot.val();
+  allDogs = Object.values(data || {}).sort((a, b) => {
+    if (a.status === "play" && b.status !== "play") return -1;
+    if (a.status !== "play" && b.status === "play") return 1;
+    return a.name.localeCompare(b.name);
+  });
+  renderDogs(searchInput.value);
+});
 
-        const shaRes = await fetch(apiUrl, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const shaData = await shaRes.json();
-        const sha = shaData.sha;
-        if (!sha) continue;
+searchInput.addEventListener("input", () => renderDogs(searchInput.value));
+window.addEventListener("hashchange", updateSeatDisplay);
+window.addEventListener("DOMContentLoaded", updateSeatDisplay);
 
-        const deleteRes = await fetch(apiUrl, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: `Delete ${fileName}`,
-            sha: sha,
-            branch: BRANCH,
-          }),
-        });
+// Nút gửi yêu cầu chụp ảnh
+submitBtn.addEventListener("click", () => {
+  const todayStr = new Date().toISOString().split("T")[0];
+  const lastSelectDate = localStorage.getItem("lastSelectDate");
 
-        if (deleteRes.ok) deleted++;
-      }
+  if (lastSelectDate === todayStr) {
+    showBootstrapAlert(currentLang === "vi" ? "📅 Bạn đã chốt rồi trong hôm nay. Hẹn gặp lại bạn vào ngày mai nhé!" : "📅 You've already confirmed today. Come back tomorrow!", "warning", 5000);
+    return;
+  }
 
-      Swal.fire("🗑️ Đã xóa", `${deleted} ảnh đã được xóa.`, "success");
-      document.getElementById("imageListContainer").innerHTML = "";
-      document.getElementById("deleteButton").style.display = "none";
-      document.getElementById("result").innerHTML += `<br>🔁 Vui lòng upload lại nếu muốn xem danh sách mới.`;
+  db.ref("lastSelectTime").once("value").then(snapshot => {
+    const lastTimestamp = snapshot.val();
+    const now = Date.now();
+    if (lastTimestamp && now - lastTimestamp < 1800000) {
+      const wait = 1800 - Math.floor((now - lastTimestamp) / 1000);
+      const min = Math.floor(wait / 60);
+      const sec = wait % 60;
+      const msg = currentLang === "vi"
+        ? `⏳ Vui lòng quay lại sau ${min} phút ${sec} giây nha!`
+        : `⏳ Please come back in ${min} minutes ${sec} seconds!`;
+      showBootstrapAlert(msg, "warning");
+      return;
     }
-  </script>
+
+    const seat = getSeatFromHash() || { side: "?", table: "?" };
+    if (selectedDogs.length === 0) {
+      showBootstrapAlert(currentLang === "vi" ? "❗ Bạn chưa chọn bé cún nào cả!" : "❗ You haven't selected any dogs!", "danger");
+      return;
+    }
+
+    const nowDate = new Date();
+    const timeStr = `${nowDate.getHours()}h${nowDate.getMinutes()}p`;
+    const awake = [], sleep = [];
+
+    selectedDogs.forEach(name => {
+      const dog = allDogs.find(d => d.name === name);
+      if (!dog) return;
+      (dog.status === "play" ? awake : sleep).push(name);
+    });
+
+    let msg = `⏰ ${currentLang === "vi" ? "Thời gian" : "Time"}: ${timeStr}\n📍 ${currentLang === "vi" ? "Vị trí" : "Seat"}: ${seat.side} - ${seat.table}\n`;
+    if (awake.length > 0) msg += `🐶 ${currentLang === "vi" ? "Bé đang chơi" : "Awake"}: ${awake.join(", ")}\n`;
+    if (sleep.length > 0) msg += `😴 ${currentLang === "vi" ? "Bé đang ngủ (khách vẫn muốn order)" : "Sleeping dogs (still selected)"}: ${sleep.join(", ")}`;
+
+    db.ref("photoRequests").push({ selectedDogs, time: timeStr, seat })
+      .then(() => {
+        db.ref("lastSelectTime").set(firebase.database.ServerValue.TIMESTAMP);
+        localStorage.setItem("lastSelectDate", todayStr);
+
+        showBootstrapAlert(`${currentLang === "vi" ? "🎉 Bạn đã chốt" : "🎉 Confirmed"}: ${selectedDogs.join(", ")}`, "success", 5000);
+        selectedDogs = [];
+        renderDogs(searchInput.value);
+        updateSelectedCount();
+
+        const encodedMsg = encodeURIComponent(msg);
+        fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`);
+      });
+  });
+});
+
+// Hiển thị slider ảnh nền ban đầu
+const photoUrls = [
+  "image/slide9.jpg",
+  "image/slide6.jpg",
+  "image/slide2.jpg",
+  "image/slide3.jpg",
+  "image/slide4.jpg",
+  "image/slide5.jpg"
+];
+const carouselInner = document.querySelector("#carouselPhotos .carousel-inner");
+const overlay = document.getElementById("photoOverlay");
+
+photoUrls.forEach((url, idx) => {
+  const div = document.createElement("div");
+  div.className = "carousel-item" + (idx === 0 ? " active" : "");
+  div.innerHTML = `<img src="${url}" class="d-block w-100" alt="Ảnh chụp">`;
+  carouselInner.appendChild(div);
+});
+
+overlay.addEventListener("click", () => {
+  document.getElementById("tapOverlayText")?.remove();
+  overlay.classList.add("fade");
+  setTimeout(() => overlay.remove(), 500);
+});
+   const isMaintenance = true; // ✅ Chuyển thành true khi muốn bật bảo trì
+
+  if (isMaintenance) {
+    document.write(`
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#fff0f5;text-align:center;font-family:'Comic Sans MS', cursive;">
+        <div>
+          <h1 style="color:#ff69b4;font-size:2em;">🚧 Trang đang bảo trì</h1>
+          <p style="color:#d94f85;">Cherry Pet Coffee đang cập nhật để phục vụ bạn tốt hơn.<br>Vui lòng quay lại sau nhé! 🐶💕</p>
+        </div>
+      </div>
+    `);
+  }
+ function xemAlbum() {
+  const name = document.getElementById("guestNameInput").value.trim().toLowerCase();
+  const errorText = document.getElementById("errorText");
+
+  if (!name) {
+    errorText.innerText = "❗ Vui lòng nhập tên!";
+    return;
+  }
+
+  db.ref("anhKhach/" + name).once("value").then(snapshot => {
+    const data = snapshot.val();
+    if (data) {
+      const url = `https://thanhchan791791.github.io/hihihi/khoanh/?name=${encodeURIComponent(name)}`;
+      window.location.href = url; // 👉 TỰ ĐỘNG CHUYỂN TRANG
+    } else {
+      errorText.innerText = "❌ Không tìm thấy tên trong hệ thống!";
+    }
+  }).catch(() => {
+    errorText.innerText = "⚠️ Có lỗi kết nối!";
+  });
+}
+
+// Xử lý khi bấm nút "Xem ảnh khách"
+document.getElementById("toggleGuestInput").addEventListener("click", () => {
+  const guestSection = document.getElementById("guestLookupSection");
+  guestSection.style.display = guestSection.style.display === "none" ? "block" : "none";
+});
+
+</script>
 </body>
 </html>
