@@ -355,6 +355,10 @@
     <i class="fa-solid fa-image me-2"></i> Xem ảnh khách
   </button>
 </div>
+<button id="randomAlbumBtn" class="btn btn-view-photos" style="display: none; background: linear-gradient(to right, #ffb3d9, #ff66a3);">
+  <i class="fa-solid fa-shuffle me-2"></i> Xem album ngẫu nhiên
+</button>
+
 
 <!-- Khối nhập tên và mã QR (ẩn ban đầu) -->
 <div id="guestLookupSection" class="slide-section text-center">
@@ -799,7 +803,10 @@ overlay.addEventListener("click", () => {
 
 document.getElementById("toggleGuestInput").addEventListener("click", () => {
   const guestSection = document.getElementById("guestLookupSection");
+  const randomBtn = document.getElementById("randomAlbumBtn");
+
   guestSection.classList.toggle("show");
+  randomBtn.style.display = guestSection.classList.contains("show") ? "inline-block" : "none";
 
   // Cuộn nhẹ đến phần giữa sau khi hiện
   if (guestSection.classList.contains("show")) {
@@ -807,6 +814,24 @@ document.getElementById("toggleGuestInput").addEventListener("click", () => {
       guestSection.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 300);
   }
+});
+
+// Nút xem album ảnh khách ngẫu nhiên
+document.getElementById("randomAlbumBtn").addEventListener("click", () => {
+  db.ref("anhKhach").once("value").then(snapshot => {
+    const data = snapshot.val();
+    const names = Object.keys(data || {});
+    if (names.length === 0) {
+      showBootstrapAlert("❌ Không có ảnh khách nào!", "warning");
+      return;
+    }
+
+    const randomName = names[Math.floor(Math.random() * names.length)];
+    const url = `https://thanhchan791791.github.io/hihihi/khoanh/?name=${encodeURIComponent(randomName)}`;
+    window.location.href = url;
+  }).catch(() => {
+    showBootstrapAlert("⚠️ Có lỗi khi tải dữ liệu ảnh khách!", "danger");
+  });
 });
 
 </script>
