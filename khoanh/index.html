@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>📸 Album Ảnh Khách - Cherry Pet Coffee</title>
 
+  <!-- Font và icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet"/>
 
   <style>
     * {
@@ -40,6 +41,8 @@
       box-shadow: 0 12px 28px rgba(0,0,0,0.1);
       text-align: center;
       animation: slideIn 1s ease-in-out;
+      position: relative;
+      z-index: 1;
     }
 
     @keyframes slideIn {
@@ -60,20 +63,36 @@
       margin-bottom: 20px;
     }
 
+    .input-group {
+      position: relative;
+      max-width: 360px;
+      margin: 0 auto 14px;
+    }
+
+    .input-group i {
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      transform: translateY(-50%);
+      color: #f06292;
+    }
+
     input {
-      padding: 12px 16px;
+      padding: 12px 16px 12px 42px;
       border: 2px solid #f06292;
       border-radius: 30px;
       outline: none;
       width: 100%;
-      max-width: 360px;
       font-size: 1rem;
-      margin-bottom: 14px;
-      transition: border 0.3s ease;
+      box-shadow: 0 4px 12px rgba(240,98,146,0.2);
+      background: #fff5f8;
+      transition: all 0.3s ease;
     }
 
     input:focus {
       border-color: #e91e63;
+      background: #fff0f5;
+      box-shadow: 0 6px 14px rgba(233,30,99,0.3);
     }
 
     button {
@@ -98,23 +117,49 @@
       font-size: 0.9rem;
     }
 
-    /* Loading spinner */
-    #loading {
-      display: none;
-      margin: 30px auto 0;
-      width: 48px;
-      height: 48px;
-      border: 5px solid #f8bbd0;
-      border-top: 5px solid #e91e63;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+    footer {
+      margin-top: 40px;
+      font-size: 0.85rem;
+      color: #aaa;
     }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎀 Album Ảnh Cherry Pet</h1>
+    <p>Nhập tên viết liền không dấu để xem album ảnh của bạn</p>
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    <div class="input-group">
+      <i class="fas fa-user"></i>
+      <input id="nameInput" type="text" placeholder="vd: nguyenvana2002">
+    </div>
 
+    <button onclick="xemAlbum()">📸 Xem Album</button>
+    <div id="errorText"></div>
+    <div id="loading"></div>
+    <div class="gallery" id="galleryContainer"></div>
+
+    <footer>© 2025 Cherry Pet Coffee</footer>
+  </div>
+  <!-- Zoom ảnh toàn màn -->
+  <div class="fullscreen" id="fullscreenOverlay" onclick="toggleZoomBack()">
+    <img id="fullscreenImg" src="">
+  </div>
+
+  <!-- 🎉 Lời cảm ơn giữa màn hình -->
+  <div id="thankYou">🎉 Cảm ơn bạn đã ghé thăm Cherry Pet Coffee!</div>
+
+  <!-- Nhạc nền -->
+  <audio autoplay loop id="bgm">
+    <source src="https://cdn.pixabay.com/audio/2023/03/06/audio_b1b7e2042c.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Firebase + Confetti -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+  <style>
     .gallery {
       display: none;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -150,25 +195,33 @@
 
     #thankYou {
       display: none;
-      background: #ffe6f0;
-      color: #c2185b;
-      padding: 14px 18px;
-      margin-top: 30px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      animation: popIn 0.6s ease forwards;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: linear-gradient(135deg, #ffe3ec, #f8bbd0);
+      color: #880e4f;
+      padding: 20px 40px;
+      border-radius: 24px;
+      font-size: 2.2rem;
+      font-family: 'Pacifico', cursive;
+      text-align: center;
+      opacity: 0;
+      z-index: 999;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+      animation: slideFadeIn 1s ease forwards;
+      border: 2px solid #f06292;
+      text-shadow: 1px 1px 2px #f8bbd0;
     }
 
-    @keyframes popIn {
-      0% { transform: scale(0.9); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
+    @keyframes slideFadeIn {
+      from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
 
-    footer {
-      margin-top: 40px;
-      font-size: 0.85rem;
-      color: #aaa;
+    @keyframes fadeOutThankYou {
+      from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      to { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
     }
 
     .fullscreen {
@@ -188,127 +241,145 @@
       border-radius: 12px;
       box-shadow: 0 0 30px #000;
     }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>🎀 Album Ảnh Cherry Pet</h1>
-    <p>Nhập tên viết liền không dấu để xem album ảnh của bạn</p>
-    <input id="nameInput" type="text" placeholder="vd: nguyenvana2002">
-    <br>
-    <button onclick="xemAlbum()">📸 Xem Album</button>
-    <div id="errorText"></div>
-    <div id="loading"></div>
-    <div class="gallery" id="galleryContainer"></div>
-    <div id="thankYou">🎉 Cảm ơn bạn đã ghé thăm Cherry Pet Coffee!</div>
-    <footer>© 2025 Cherry Pet Coffee</footer>
-  </div>
-  <div class="fullscreen" id="fullscreenOverlay" onclick="toggleZoomBack()">
-    <img id="fullscreenImg" src="">
-  </div>
-  <!-- Nhạc nền -->
-  <audio autoplay loop id="bgm">
-    <source src="https://cdn.pixabay.com/audio/2023/03/06/audio_b1b7e2042c.mp3" type="audio/mpeg">
-  </audio>
 
-  <!-- Firebase + Confetti -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    #loading {
+      display: none;
+      margin: 30px auto 0;
+      width: 48px;
+      height: 48px;
+      border: 5px solid #f8bbd0;
+      border-top: 5px solid #e91e63;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 
   <script>
-    // Cấu hình Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
-      authDomain: "dogs-be72b.firebaseapp.com",
-      databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
-      projectId: "dogs-be72b",
-      storageBucket: "dogs-be72b.appspot.com",
-      messagingSenderId: "1003873040746",
-      appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+    authDomain: "dogs-be72b.firebaseapp.com",
+    databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+    projectId: "dogs-be72b",
+    storageBucket: "dogs-be72b.appspot.com",
+    messagingSenderId: "1003873040746",
+    appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
+  };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-    function xemAlbum() {
-      const name = document.getElementById("nameInput").value.trim().toLowerCase();
-      const gallery = document.getElementById("galleryContainer");
-      const loading = document.getElementById("loading");
-      const thankYou = document.getElementById("thankYou");
-      const errorText = document.getElementById("errorText");
+  function xemAlbum() {
+    const name = document.getElementById("nameInput").value.trim().toLowerCase();
+    if (!name) {
+      document.getElementById("errorText").innerText = "Vui lòng nhập tên!";
+      return;
+    }
 
-      gallery.innerHTML = "";
-      gallery.style.display = "none";
-      thankYou.style.display = "none";
-      errorText.innerText = "";
-      loading.style.display = "block";
+    // Thay vì gọi ngay, ta chuyển hướng URL có query
+    window.location.href = window.location.pathname + "?name=" + encodeURIComponent(name);
+  }
 
-      if (!name) {
-        errorText.innerText = "Vui lòng nhập tên!";
-        loading.style.display = "none";
-        return;
-      }
+  function loadAlbum(name) {
+    const gallery = document.getElementById("galleryContainer");
+    const loading = document.getElementById("loading");
+    const thankYou = document.getElementById("thankYou");
+    const errorText = document.getElementById("errorText");
 
-      db.ref("anhKhach/" + name).once("value").then(snapshot => {
-        const urlsData = snapshot.val();
-        const urls = Array.isArray(urlsData) ? urlsData : Object.values(urlsData || {});
-        let loaded = 0;
+    gallery.innerHTML = "";
+    gallery.style.display = "none";
+    errorText.innerText = "";
+    thankYou.style.display = "none";
+    loading.style.display = "block";
 
-        if (urls.length > 0) {
-          urls.forEach(url => {
-            const frame = document.createElement("div");
-            frame.className = "photo-frame";
+    db.ref("anhKhach/" + name).once("value").then(snapshot => {
+      const urlsData = snapshot.val();
+      const urls = Array.isArray(urlsData) ? urlsData : Object.values(urlsData || {});
+      let loaded = 0;
 
-            const img = document.createElement("img");
-            img.src = url;
-            img.alt = "Ảnh khách";
-            img.onclick = () => toggleZoom(url);
+      if (urls.length > 0) {
+        urls.forEach(url => {
+          const frame = document.createElement("div");
+          frame.className = "photo-frame";
 
-            img.onload = () => {
-              loaded++;
-              if (loaded === urls.length) {
+          const img = document.createElement("img");
+          img.src = url;
+          img.alt = "Ảnh khách";
+          img.onclick = () => toggleZoom(url);
+
+          img.onload = () => {
+            loaded++;
+            if (loaded === urls.length) {
+              setTimeout(() => {
+                loading.style.display = "none";
+                gallery.style.display = "grid";
+                document.getElementById("bgm")?.play();
+
+                for (let i = 0; i < 3; i++) {
+                  setTimeout(() => {
+                    confetti({
+                      particleCount: 120,
+                      spread: 90 + i * 10,
+                      origin: { y: 0.6 - i * 0.05 }
+                    });
+                  }, i * 300);
+                }
+
                 setTimeout(() => {
-                  loading.style.display = "none";
-                  gallery.style.display = "grid";
                   thankYou.style.display = "block";
-                  document.getElementById("bgm")?.play();
-
-                  // Bắn pháo hoa
-                  for (let i = 0; i < 3; i++) {
+                  thankYou.style.animation = "slideFadeIn 1s ease forwards";
+                  setTimeout(() => {
+                    thankYou.style.animation = "fadeOutThankYou 1s ease forwards";
                     setTimeout(() => {
-                      confetti({
-                        particleCount: 100,
-                        spread: 80 + i * 10,
-                        origin: { y: 0.6 - i * 0.05 }
-                      });
-                    }, i * 300);
-                  }
-                }, 300);
-              }
-            };
+                      thankYou.style.display = "none";
+                    }, 1000);
+                  }, 3000);
+                }, 1200);
+              }, 300);
+            }
+          };
 
-            frame.appendChild(img);
-            gallery.appendChild(frame);
-          });
-        } else {
-          loading.style.display = "none";
-          errorText.innerText = "❌ Không tìm thấy ảnh!";
-        }
-      }).catch(err => {
+          frame.appendChild(img);
+          gallery.appendChild(frame);
+        });
+      } else {
         loading.style.display = "none";
-        errorText.innerText = "⚠️ Lỗi kết nối!";
-      });
-    }
+        errorText.innerText = "❌ Không tìm thấy ảnh!";
+      }
+    }).catch(err => {
+      loading.style.display = "none";
+      errorText.innerText = "⚠️ Lỗi kết nối!";
+    });
+  }
 
-    function toggleZoom(url) {
-      document.getElementById("fullscreenImg").src = url;
-      document.getElementById("fullscreenOverlay").style.display = "flex";
-    }
+  function toggleZoom(url) {
+    document.getElementById("fullscreenImg").src = url;
+    document.getElementById("fullscreenOverlay").style.display = "flex";
+  }
 
-    function toggleZoomBack() {
-      document.getElementById("fullscreenOverlay").style.display = "none";
+  function toggleZoomBack() {
+    document.getElementById("fullscreenOverlay").style.display = "none";
+  }
+
+  function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+
+  // Tự động chạy khi có ?name=...
+  window.onload = () => {
+    const nameFromUrl = getQueryParam("name");
+    if (nameFromUrl) {
+      document.getElementById("nameInput").value = nameFromUrl;
+      loadAlbum(nameFromUrl.toLowerCase());
     }
-  </script>
+  };
+</script>
+
 </body>
 </html>
+  
