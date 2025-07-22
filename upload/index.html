@@ -41,34 +41,35 @@
       from { opacity: 0; transform: translateY(40px); }
       to { opacity: 1; transform: translateY(0); }
     }
-.fixed-delete-button {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 600px;
-  z-index: 999;
-  padding: 0 10px;
-}
 
-.fixed-delete-button button {
-  background: linear-gradient(135deg, #ff4d6d, #ff7ab2);
-  color: #fff;
-  font-weight: 600;
-  font-size: 1.05rem;
-  padding: 14px;
-  width: 100%;
-  border: none;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(255, 77, 109, 0.4);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+    .fixed-delete-button {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 600px;
+      z-index: 999;
+      padding: 0 10px;
+    }
 
-.fixed-delete-button button:hover {
-  transform: translateY(-2px);
-}
+    .fixed-delete-button button {
+      background: linear-gradient(135deg, #ff4d6d, #ff7ab2);
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.05rem;
+      padding: 14px;
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(255, 77, 109, 0.4);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .fixed-delete-button button:hover {
+      transform: translateY(-2px);
+    }
 
     h2 {
       font-weight: 600;
@@ -197,7 +198,7 @@
     <h2>📤 Upload ảnh khách</h2>
 
     <label for="tenKhach">🧑 Nhập tên khách</label>
-    <input type="text" id="tenKhach" placeholder="ví dụ: nguyen-thi-a" autocomplete="off" />
+    <input type="text" id="tenKhach" placeholder="ví dụ: thảo my 2307" autocomplete="off" />
 
     <label for="fileInput">📂 Chọn ảnh (nhiều ảnh)</label>
     <input type="file" id="fileInput" accept="image/*" multiple />
@@ -207,11 +208,11 @@
 
     <div id="result"></div>
   </div>
-<!-- Đặt ngoài upload-container -->
-<div class="fixed-delete-button">
-  <button onclick="deleteSelectedImages()">🗑️ Xoá ảnh đã chọn</button>
-</div>
 
+  <!-- Đặt ngoài upload-container -->
+  <div class="fixed-delete-button">
+    <button onclick="deleteSelectedImages()">🗑️ Xoá ảnh đã chọn</button>
+  </div>
   <!-- Script Firebase + SweetAlert -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -234,7 +235,17 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-     function readFileAsBase64(file) {
+
+   function removeVietnameseTones(str) {
+  str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // bỏ dấu
+  str = str.replace(/đ/g, "d").replace(/Đ/g, "d");             // thay đ
+  str = str.toLowerCase();                                     // viết thường
+  str = str.replace(/[^a-z0-9]/g, "");                         // bỏ toàn bộ ký tự không phải chữ và số
+  return str;
+}
+
+
+    function readFileAsBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -253,7 +264,8 @@
 
     async function uploadImages() {
       const files = document.getElementById("fileInput").files;
-      const tenKhach = document.getElementById("tenKhach").value.trim().toLowerCase().replace(/\s+/g, '-');
+      const inputName = document.getElementById("tenKhach").value.trim();
+      const tenKhach = removeVietnameseTones(inputName);
       const resultDiv = document.getElementById("result");
 
       if (files.length === 0 || !tenKhach) {
