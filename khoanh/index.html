@@ -129,12 +129,6 @@
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 16px;
       margin-top: 30px;
-      animation: fadeInGallery 0.6s ease-in-out;
-    }
-
-    @keyframes fadeInGallery {
-      from { opacity: 0; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1); }
     }
 
     .photo-frame {
@@ -144,6 +138,33 @@
       border-radius: 16px;
       position: relative;
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+      opacity: 0;
+      transform: scale(0.95);
+      animation: photoPop 0.6s ease forwards;
+    }
+
+    @keyframes photoPop {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .photo-frame::after {
+      content: "";
+      position: absolute;
+      top: -4px; left: -4px; right: -4px; bottom: -4px;
+      border-radius: 20px;
+      background: linear-gradient(120deg, #f8bbd0 0%, #f06292 50%, #f8bbd0 100%);
+      opacity: 0;
+      animation: glowBorder 1.5s ease-in-out forwards;
+      z-index: -1;
+    }
+
+    @keyframes glowBorder {
+      0% { opacity: 0; filter: blur(4px); }
+      50% { opacity: 1; filter: blur(8px); }
+      100% { opacity: 0; filter: blur(4px); }
     }
 
     .photo-frame img {
@@ -257,20 +278,16 @@
     <footer>© 2025 Cherry Pet Coffee</footer>
   </div>
 
-  <!-- Zoom ảnh toàn màn -->
   <div class="fullscreen" id="fullscreenOverlay" onclick="toggleZoomBack()">
     <img id="fullscreenImg" src="">
   </div>
 
-  <!-- 🎉 Lời cảm ơn giữa màn hình -->
   <div id="thankYou">🎉 Cảm ơn bạn đã ghé thăm Cherry Pet Coffee!</div>
 
-  <!-- Nhạc nền -->
   <audio autoplay loop id="bgm">
     <source src="https://cdn.pixabay.com/audio/2023/03/06/audio_b1b7e2042c.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Firebase + Confetti -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
@@ -285,7 +302,6 @@
       messagingSenderId: "1003873040746",
       appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -299,6 +315,7 @@
       str = str.replace(/[^a-z0-9]/g, "");
       return str;
     }
+
     function xemAlbum() {
       const rawInput = document.getElementById("nameInput").value.trim();
       const name = removeVietnameseTones(rawInput);
@@ -306,7 +323,6 @@
         document.getElementById("errorText").innerText = "Vui lòng nhập tên!";
         return;
       }
-
       window.location.href = window.location.pathname + "?name=" + encodeURIComponent(name);
     }
 
@@ -365,6 +381,7 @@
           urls.forEach((url, index) => {
             const frame = document.createElement("div");
             frame.className = "photo-frame";
+            frame.style.animationDelay = `${index * 0.15}s`;
 
             const img = document.createElement("img");
             img.src = url;
@@ -384,8 +401,8 @@
                     setTimeout(() => {
                       confetti({
                         particleCount: 120,
-                        spread: 90 + i * 10,
-                        origin: { y: 0.6 - i * 0.05 }
+                        spread: 100 + i * 10,
+                        origin: { y: 0.5 - i * 0.05 }
                       });
                     }, i * 300);
                   }
@@ -399,7 +416,7 @@
                         thankYou.style.display = "none";
                       }, 1000);
                     }, 3000);
-                  }, 1200);
+                  }, 1000);
                 }, 300);
               }
             };
