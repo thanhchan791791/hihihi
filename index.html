@@ -785,7 +785,8 @@ overlay.addEventListener("click", () => {
     `);
   }
  function xemAlbum() {
-  const name = document.getElementById("guestNameInput").value.trim().toLowerCase();
+const rawName = document.getElementById("guestNameInput").value;
+const name = normalizeName(rawName);
   const errorText = document.getElementById("errorText");
 
   if (!name) {
@@ -804,6 +805,13 @@ overlay.addEventListener("click", () => {
   }).catch(() => {
     errorText.innerText = "⚠️ Có lỗi kết nối!";
   });
+}
+function normalizeName(str) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")                    // Tách dấu tiếng Việt
+    .replace(/[\u0300-\u036f]/g, "")    // Loại bỏ dấu
+    .replace(/[^a-z0-9]/g, "");         // Loại bỏ tất cả ký tự không phải chữ/số
 }
 
 document.getElementById("toggleGuestInput").addEventListener("click", () => {
