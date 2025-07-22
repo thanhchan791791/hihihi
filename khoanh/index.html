@@ -177,9 +177,17 @@
 
   let randomNames = [];
   let randomIndex = 0;
+function removeVietnameseTones(str) {
+  str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // bỏ dấu tiếng Việt
+  str = str.replace(/đ/g, "d").replace(/Đ/g, "d");             // chuyển đ -> d
+  str = str.toLowerCase();                                     // viết thường
+  str = str.replace(/[^a-z0-9]/g, "");                         // bỏ hết ký tự đặc biệt, khoảng trắng
+  return str;
+}
 
   function xemAlbum() {
-    const name = document.getElementById("nameInput").value.trim().toLowerCase();
+const rawInput = document.getElementById("nameInput").value.trim();
+const name = removeVietnameseTones(rawInput);
     if (!name) {
       document.getElementById("errorText").innerText = "Vui lòng nhập tên!";
       return;
@@ -309,7 +317,7 @@
     const nameFromUrl = getQueryParam("name");
     if (nameFromUrl) {
       document.getElementById("nameInput").value = nameFromUrl;
-      loadAlbum(nameFromUrl.toLowerCase());
+loadAlbum(removeVietnameseTones(nameFromUrl));
     }
   };
   </script>
