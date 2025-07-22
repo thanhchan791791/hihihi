@@ -784,8 +784,17 @@ overlay.addEventListener("click", () => {
       </div>
     `);
   }
+  function normalizeName(input) {
+  return input
+    .normalize("NFD")                         // tách dấu ra
+    .replace(/[\u0300-\u036f]/g, "")         // xóa dấu
+    .replace(/[^a-zA-Z0-9]/g, "")            // xóa ký tự đặc biệt, khoảng trắng, dấu -
+    .toLowerCase();                          // chuyển về chữ thường
+}
+
  function xemAlbum() {
-  const name = document.getElementById("guestNameInput").value.trim().toLowerCase();
+const rawInput = document.getElementById("guestNameInput").value;
+const name = normalizeName(rawInput);
   const errorText = document.getElementById("errorText");
 
   if (!name) {
