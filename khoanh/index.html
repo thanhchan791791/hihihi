@@ -123,206 +123,7 @@
       font-size: 0.85rem;
       color: #aaa;
     }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>🎀 Album Ảnh Cherry Pet</h1>
-    <p>Nhập tên viết liền không dấu để xem album ảnh của bạn</p>
 
-    <div class="input-group">
-      <i class="fas fa-user"></i>
-      <input id="nameInput" type="text" placeholder="vd: nguyenvana2002">
-    </div>
-
-    <button onclick="xemAlbum()">📸 Xem Album</button>
-    <button onclick="xemNgauNhien()">📷 Xem album ngẫu nhiên</button>
-    <div id="errorText"></div>
-    <div id="loading"></div>
-    <div class="gallery" id="galleryContainer"></div>
-
-    <footer>© 2025 Cherry Pet Coffee</footer>
-  </div>
-  <!-- Zoom ảnh toàn màn -->
-  <div class="fullscreen" id="fullscreenOverlay" onclick="toggleZoomBack()">
-    <img id="fullscreenImg" src="">
-  </div>
-
-  <!-- 🎉 Lời cảm ơn giữa màn hình -->
-  <div id="thankYou">🎉 Cảm ơn bạn đã ghé thăm Cherry Pet Coffee!</div>
-
-  <!-- Nhạc nền -->
-  <audio autoplay loop id="bgm">
-    <source src="https://cdn.pixabay.com/audio/2023/03/06/audio_b1b7e2042c.mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- Firebase + Confetti -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-
-  <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
-    authDomain: "dogs-be72b.firebaseapp.com",
-    databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
-    projectId: "dogs-be72b",
-    storageBucket: "dogs-be72b.appspot.com",
-    messagingSenderId: "1003873040746",
-    appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  let randomNames = [];
-  let randomIndex = 0;
-function removeVietnameseTones(str) {
-  str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // bỏ dấu tiếng Việt
-  str = str.replace(/đ/g, "d").replace(/Đ/g, "d");             // chuyển đ -> d
-  str = str.toLowerCase();                                     // viết thường
-  str = str.replace(/[^a-z0-9]/g, "");                         // bỏ hết ký tự đặc biệt, khoảng trắng
-  return str;
-}
-
-  function xemAlbum() {
-const rawInput = document.getElementById("nameInput").value.trim();
-const name = removeVietnameseTones(rawInput);
-    if (!name) {
-      document.getElementById("errorText").innerText = "Vui lòng nhập tên!";
-      return;
-    }
-
-    window.location.href = window.location.pathname + "?name=" + encodeURIComponent(name);
-  }
-
-  function xemNgauNhien() {
-    const errorText = document.getElementById("errorText");
-    errorText.innerText = "";
-    const loading = document.getElementById("loading");
-
-    if (randomNames.length === 0 || randomIndex >= randomNames.length) {
-      loading.style.display = "block";
-      db.ref("anhKhach").once("value").then(snapshot => {
-        const data = snapshot.val();
-        if (data) {
-          randomNames = Object.keys(data).sort(() => Math.random() - 0.5);
-          randomIndex = 0;
-          loadRandomAlbum();
-        } else {
-          loading.style.display = "none";
-          errorText.innerText = "❌ Không tìm thấy khách nào!";
-        }
-      }).catch(() => {
-        loading.style.display = "none";
-        errorText.innerText = "⚠️ Lỗi kết nối!";
-      });
-    } else {
-      loadRandomAlbum();
-    }
-  }
-
-  function loadRandomAlbum() {
-    const name = randomNames[randomIndex++];
-    document.getElementById("nameInput").value = name;
-    loadAlbum(name);
-  }
-  function loadAlbum(name) {
-    const gallery = document.getElementById("galleryContainer");
-    const loading = document.getElementById("loading");
-    const thankYou = document.getElementById("thankYou");
-    const errorText = document.getElementById("errorText");
-
-    gallery.innerHTML = "";
-    gallery.style.display = "none";
-    errorText.innerText = "";
-    thankYou.style.display = "none";
-    loading.style.display = "block";
-
-    db.ref("anhKhach/" + name).once("value").then(snapshot => {
-      const urlsData = snapshot.val();
-      const urls = Array.isArray(urlsData) ? urlsData : Object.values(urlsData || {});
-      let loaded = 0;
-
-      if (urls.length > 0) {
-        urls.forEach(url => {
-          const frame = document.createElement("div");
-          frame.className = "photo-frame";
-
-          const img = document.createElement("img");
-          img.src = url;
-          img.alt = "Ảnh khách";
-          img.onclick = () => toggleZoom(url);
-
-          img.onload = () => {
-            loaded++;
-            if (loaded === urls.length) {
-              setTimeout(() => {
-                loading.style.display = "none";
-                gallery.style.display = "grid";
-                document.getElementById("bgm")?.play();
-
-                for (let i = 0; i < 3; i++) {
-                  setTimeout(() => {
-                    confetti({
-                      particleCount: 120,
-                      spread: 90 + i * 10,
-                      origin: { y: 0.6 - i * 0.05 }
-                    });
-                  }, i * 300);
-                }
-
-                setTimeout(() => {
-                  thankYou.style.display = "block";
-                  thankYou.style.animation = "slideFadeIn 1s ease forwards";
-                  setTimeout(() => {
-                    thankYou.style.animation = "fadeOutThankYou 1s ease forwards";
-                    setTimeout(() => {
-                      thankYou.style.display = "none";
-                    }, 1000);
-                  }, 3000);
-                }, 1200);
-              }, 300);
-            }
-          };
-
-          frame.appendChild(img);
-          gallery.appendChild(frame);
-        });
-      } else {
-        loading.style.display = "none";
-        errorText.innerText = "❌ Không tìm thấy ảnh!";
-      }
-    }).catch(() => {
-      loading.style.display = "none";
-      errorText.innerText = "⚠️ Lỗi kết nối!";
-    });
-  }
-
-  function toggleZoom(url) {
-    document.getElementById("fullscreenImg").src = url;
-    document.getElementById("fullscreenOverlay").style.display = "flex";
-  }
-
-  function toggleZoomBack() {
-    document.getElementById("fullscreenOverlay").style.display = "none";
-  }
-
-  function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-  }
-
-  window.onload = () => {
-    const nameFromUrl = getQueryParam("name");
-    if (nameFromUrl) {
-      document.getElementById("nameInput").value = nameFromUrl;
-loadAlbum(removeVietnameseTones(nameFromUrl));
-    }
-  };
-  </script>
-
-  <style>
     .gallery {
       display: none;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -408,12 +209,26 @@ loadAlbum(removeVietnameseTones(nameFromUrl));
     #loading {
       display: none;
       margin: 30px auto 0;
+      text-align: center;
+    }
+
+    #loading::before {
+      content: "";
+      display: block;
       width: 48px;
       height: 48px;
+      margin: 0 auto;
       border: 5px solid #f8bbd0;
       border-top: 5px solid #e91e63;
       border-radius: 50%;
       animation: spin 1s linear infinite;
+    }
+
+    #loadingText {
+      margin-top: 12px;
+      font-size: 1rem;
+      color: #e91e63;
+      font-weight: 500;
     }
 
     @keyframes spin {
@@ -421,5 +236,208 @@ loadAlbum(removeVietnameseTones(nameFromUrl));
       100% { transform: rotate(360deg); }
     }
   </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🎀 Album Ảnh Cherry Pet</h1>
+    <p>Nhập tên viết liền không dấu để xem album ảnh của bạn</p>
+
+    <div class="input-group">
+      <i class="fas fa-user"></i>
+      <input id="nameInput" type="text" placeholder="vd: nguyenvana2002">
+    </div>
+
+    <button onclick="xemAlbum()">📸 Xem Album</button>
+    <button onclick="xemNgauNhien()">📷 Xem album ngẫu nhiên</button>
+    <div id="errorText"></div>
+    <div id="loading"><div id="loadingText">Đang tải ảnh... Vui lòng chờ nhé!</div></div>
+    <div class="gallery" id="galleryContainer"></div>
+
+    <footer>© 2025 Cherry Pet Coffee</footer>
+  </div>
+
+  <!-- Zoom ảnh toàn màn -->
+  <div class="fullscreen" id="fullscreenOverlay" onclick="toggleZoomBack()">
+    <img id="fullscreenImg" src="">
+  </div>
+
+  <!-- 🎉 Lời cảm ơn giữa màn hình -->
+  <div id="thankYou">🎉 Cảm ơn bạn đã ghé thăm Cherry Pet Coffee!</div>
+
+  <!-- Nhạc nền -->
+  <audio autoplay loop id="bgm">
+    <source src="https://cdn.pixabay.com/audio/2023/03/06/audio_b1b7e2042c.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Firebase + Confetti -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+      authDomain: "dogs-be72b.firebaseapp.com",
+      databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+      projectId: "dogs-be72b",
+      storageBucket: "dogs-be72b.appspot.com",
+      messagingSenderId: "1003873040746",
+      appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let randomNames = [];
+    let randomIndex = 0;
+
+    function removeVietnameseTones(str) {
+      str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      str = str.replace(/đ/g, "d").replace(/Đ/g, "d");
+      str = str.toLowerCase();
+      str = str.replace(/[^a-z0-9]/g, "");
+      return str;
+    }
+    function xemAlbum() {
+      const rawInput = document.getElementById("nameInput").value.trim();
+      const name = removeVietnameseTones(rawInput);
+      if (!name) {
+        document.getElementById("errorText").innerText = "Vui lòng nhập tên!";
+        return;
+      }
+
+      window.location.href = window.location.pathname + "?name=" + encodeURIComponent(name);
+    }
+
+    function xemNgauNhien() {
+      const errorText = document.getElementById("errorText");
+      errorText.innerText = "";
+      const loading = document.getElementById("loading");
+
+      if (randomNames.length === 0 || randomIndex >= randomNames.length) {
+        loading.style.display = "block";
+        db.ref("anhKhach").once("value").then(snapshot => {
+          const data = snapshot.val();
+          if (data) {
+            randomNames = Object.keys(data).sort(() => Math.random() - 0.5);
+            randomIndex = 0;
+            loadRandomAlbum();
+          } else {
+            loading.style.display = "none";
+            errorText.innerText = "❌ Không tìm thấy khách nào!";
+          }
+        }).catch(() => {
+          loading.style.display = "none";
+          errorText.innerText = "⚠️ Lỗi kết nối!";
+        });
+      } else {
+        loadRandomAlbum();
+      }
+    }
+
+    function loadRandomAlbum() {
+      const name = randomNames[randomIndex++];
+      document.getElementById("nameInput").value = name;
+      loadAlbum(name);
+    }
+
+    function loadAlbum(name) {
+      const gallery = document.getElementById("galleryContainer");
+      const loading = document.getElementById("loading");
+      const loadingText = document.getElementById("loadingText");
+      const thankYou = document.getElementById("thankYou");
+      const errorText = document.getElementById("errorText");
+
+      gallery.innerHTML = "";
+      gallery.style.display = "none";
+      errorText.innerText = "";
+      thankYou.style.display = "none";
+      loading.style.display = "block";
+      loadingText.innerText = "Đang tải ảnh...";
+
+      db.ref("anhKhach/" + name).once("value").then(snapshot => {
+        const urlsData = snapshot.val();
+        const urls = Array.isArray(urlsData) ? urlsData : Object.values(urlsData || {});
+        let loaded = 0;
+
+        if (urls.length > 0) {
+          urls.forEach((url, index) => {
+            const frame = document.createElement("div");
+            frame.className = "photo-frame";
+
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = "Ảnh khách";
+            img.onclick = () => toggleZoom(url);
+
+            img.onload = () => {
+              loaded++;
+              loadingText.innerText = `Đang tải ảnh... (${loaded}/${urls.length})`;
+              if (loaded === urls.length) {
+                setTimeout(() => {
+                  loading.style.display = "none";
+                  gallery.style.display = "grid";
+                  document.getElementById("bgm")?.play();
+
+                  for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                      confetti({
+                        particleCount: 120,
+                        spread: 90 + i * 10,
+                        origin: { y: 0.6 - i * 0.05 }
+                      });
+                    }, i * 300);
+                  }
+
+                  setTimeout(() => {
+                    thankYou.style.display = "block";
+                    thankYou.style.animation = "slideFadeIn 1s ease forwards";
+                    setTimeout(() => {
+                      thankYou.style.animation = "fadeOutThankYou 1s ease forwards";
+                      setTimeout(() => {
+                        thankYou.style.display = "none";
+                      }, 1000);
+                    }, 3000);
+                  }, 1200);
+                }, 300);
+              }
+            };
+
+            frame.appendChild(img);
+            gallery.appendChild(frame);
+          });
+        } else {
+          loading.style.display = "none";
+          errorText.innerText = "❌ Không tìm thấy ảnh!";
+        }
+      }).catch(() => {
+        loading.style.display = "none";
+        errorText.innerText = "⚠️ Lỗi kết nối!";
+      });
+    }
+
+    function toggleZoom(url) {
+      document.getElementById("fullscreenImg").src = url;
+      document.getElementById("fullscreenOverlay").style.display = "flex";
+    }
+
+    function toggleZoomBack() {
+      document.getElementById("fullscreenOverlay").style.display = "none";
+    }
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    window.onload = () => {
+      const nameFromUrl = getQueryParam("name");
+      if (nameFromUrl) {
+        document.getElementById("nameInput").value = nameFromUrl;
+        loadAlbum(removeVietnameseTones(nameFromUrl));
+      }
+    };
+  </script>
 </body>
 </html>
