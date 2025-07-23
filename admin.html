@@ -180,6 +180,12 @@
     <button class="btn btn-success" onclick="openForm()">➕ Thêm chó mới</button>
     <button class="btn btn-warning" onclick="setAllToRest()">🌙 Cho tất cả nghỉ</button>
   </div>
+  <!-- Nhập tên để thả chó hàng loạt -->
+<div class="input-group mb-3" style="max-width:600px; margin:auto;">
+  <input type="text" id="bulkPlayInput" class="form-control" placeholder="Nhập tên các bé, cách nhau bằng dấu phẩy (,)">
+  <button class="btn btn-outline-success" onclick="bulkPlayDogs()">☀️ Thả các bé</button>
+</div>
+
 <!-- Nút hiện/ẩn form upload -->
 <div class="text-center mb-3">
   <button class="btn btn-outline-primary" onclick="toggleUploadPanel()">📸 Upload ảnh khách</button>
@@ -491,6 +497,40 @@ function toggleUploadPanel() {
         : "📥 Không có thông tin hợp lệ để hiển thị.";
     });
   }
+  function bulkPlayDogs() {
+  const input = document.getElementById("bulkPlayInput").value;
+  if (!input.trim()) return Swal.fire("⚠️ Chưa nhập tên nào!");
+
+  const names = input.split(",").map(n => n.trim().toLowerCase());
+  let updates = {};
+  let matched = 0;
+
+  for (const [id, dog] of Object.entries(allDogs)) {
+    if (names.includes(dog.name.toLowerCase())) {
+      updates[`dogs/${id}/status`] = "play";
+      matched++;
+    }
+  }
+
+  if (matched === 0) {
+    Swal.fire("😕 Không tìm thấy bé nào trùng tên.");
+    return;
+  }
+
+  firebase.database().ref().update(updates)
+    .then(() => {
+      Swal.fire({
+        icon: 'success',
+        title: `☀️ Đã thả ${matched} bé xuống chơi!`,
+        timer: 2000,
+        showConfirmButton: false
+      });
+    })
+    .catch(err => {
+      Swal.fire("❌ Lỗi", err.message, "error");
+    });
+}
+
  async function uploadImages() {
     const files = document.getElementById("fileInput").files;
     const ten = document.getElementById("tenAnh").value.trim().toLowerCase();
