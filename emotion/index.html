@@ -162,7 +162,7 @@
 
         list.forEach(dog => {
           const img = document.createElement("img");
-          img.src = `../image/${dog.image}`;
+          img.src = `../${dog.image}`; // ✅ ĐÃ SỬA CHỖ NÀY
           img.className = "dog-img";
 
           const name = document.createElement("div");
@@ -182,7 +182,6 @@
           container.appendChild(msg);
           container.appendChild(support);
 
-          // Gửi tin nhắn Telegram
           sendTelegramNotification(emotion, dog.name);
         });
       });
