@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>🐾 Chọn Chó Theo Cảm Xúc</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(to bottom right, #fff7f0, #ffe8e8);
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      margin-top: 20px;
+      color: #ff6f61;
+    }
+
+    .emotion-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 10px 18px;
+      background: #ff8fa3;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #f85775;
+    }
+
+    #loading {
+      display: none;
+    }
+
+    .dog-img {
+      width: 300px;
+      border-radius: 20px;
+      margin-top: 20px;
+      animation: fadeIn 1s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .dog-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #333;
+    }
+
+    .healing-message {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #d62828;
+      background: #fff0f3;
+      padding: 20px 24px;
+      border-radius: 20px;
+      margin: 20px auto 10px;
+      width: fit-content;
+      max-width: 90%;
+      animation: slideUpFadeOut 7s ease forwards;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+
+    .support-message {
+      font-size: 1rem;
+      color: #555;
+      margin-top: 6px;
+      opacity: 0.8;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    @keyframes slideUpFadeOut {
+      0% { opacity: 0; transform: translateY(40px); }
+      15% { opacity: 1; transform: translateY(0); }
+      85% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🐶 Bạn Đang Cảm Thấy Thế Nào?</h1>
+  <div class="emotion-buttons">
+    <button onclick="loadDogs('Vui')">Vui</button>
+    <button onclick="loadDogs('Mệt mỏi')">Mệt mỏi</button>
+    <button onclick="loadDogs('Buồn nhẹ')">Buồn nhẹ</button>
+    <button onclick="loadDogs('Cô đơn')">Cô đơn</button>
+  </div>
+
+  <div id="loading">Đang tìm bé phù hợp...</div>
+  <div id="dogContainer"></div>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+      authDomain: "dogs-be72b.firebaseapp.com",
+      databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+      projectId: "dogs-be72b",
+      storageBucket: "dogs-be72b.appspot.com",
+      messagingSenderId: "1003873040746",
+      appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const healingTexts = {
+      "Vui": name => `❤️ ${name} cũng đang vui như bạn! Niềm vui được nhân đôi rồi nhé.`,
+      "Mệt mỏi": name => `❤️ ${name} sẽ cùng bạn nghỉ ngơi một chút. Mọi điều rồi sẽ tốt hơn.`,
+      "Buồn nhẹ": name => `❤️ ${name} sẽ ngồi bên bạn và cùng bạn nghe lòng mình.`,
+      "Cô đơn": name => `❤️ ${name} đã đợi bạn cả ngày. Giờ thì bạn không còn một mình nữa!`
+    };
+
+    const telegramBotToken = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
+    const telegramChatId = "-4831972836";
+
+    function sendTelegramNotification(emotion, dogName) {
+      const message = `Khách đang cảm thấy "${emotion}". Hãy ship ngay "${dogName}" đến cho khách nhé! 🐾`;
+
+      fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: telegramChatId,
+          text: message,
+        })
+      }).then(res => res.json())
+        .then(data => console.log("Đã gửi Telegram:", data))
+        .catch(err => console.error("Lỗi gửi Telegram:", err));
+    }
+
+    function loadDogs(emotion) {
+      document.getElementById("dogContainer").innerHTML = "";
+      document.getElementById("loading").style.display = "block";
+
+      firebase.database().ref("dogs").once("value", snapshot => {
+        const data = snapshot.val();
+        const list = Object.values(data).filter(dog => dog.emotion === emotion);
+
+        document.getElementById("loading").style.display = "none";
+        const container = document.getElementById("dogContainer");
+
+        list.forEach(dog => {
+          const img = document.createElement("img");
+          img.src = dog.image;
+          img.className = "dog-img";
+
+          const name = document.createElement("div");
+          name.className = "dog-name";
+          name.innerText = dog.name;
+
+          const msg = document.createElement("div");
+          msg.className = "healing-message";
+          msg.innerText = healingTexts[emotion](dog.name);
+
+          const support = document.createElement("div");
+          support.className = "support-message";
+          support.innerText = "💬 Nhân viên sẽ hỗ trợ bạn ngay sau vài phút nhé!";
+
+          container.appendChild(img);
+          container.appendChild(name);
+          container.appendChild(msg);
+          container.appendChild(support);
+
+          // Gửi Telegram mỗi lần chọn được chó
+          sendTelegramNotification(emotion, dog.name);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
