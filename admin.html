@@ -241,7 +241,10 @@
         <th>Tên</th>
         <th>Giống</th>
         <th>Tính cách</th>
+
         <th>Trạng thái</th>
+                      <th>cảm xúc</th>
+
         <th>Lượt chọn</th>
         <th>Hành động</th>
       </tr>
@@ -257,13 +260,15 @@
           <h5 class="modal-title" id="form-title">Thêm chó</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
-          <input type="hidden" id="dog-id">
-          <input type="text" id="dog-name" class="form-control mb-2" placeholder="Tên">
-          <input type="text" id="dog-breed" class="form-control mb-2" placeholder="Giống">
-          <input type="text" id="dog-trait" class="form-control mb-2" placeholder="Tính cách">
-          <input type="text" id="dog-image" class="form-control mb-2" placeholder="Link ảnh">
-        </div>
+       <div class="modal-body">
+  <input type="hidden" id="dog-id">
+  <input type="text" id="dog-name" class="form-control mb-2" placeholder="Tên">
+  <input type="text" id="dog-breed" class="form-control mb-2" placeholder="Giống">
+  <input type="text" id="dog-trait" class="form-control mb-2" placeholder="Tính cách">
+  <input type="text" id="dog-image" class="form-control mb-2" placeholder="Link ảnh">
+  <input type="text" id="dog-emotion" class="form-control mb-2" placeholder="Cảm xúc hôm nay">
+</div>
+
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
           <button type="button" class="btn btn-primary" onclick="submitDog()">Lưu</button>
@@ -328,47 +333,48 @@
     });
   }
 
-  function renderFilteredDogs() {
-    const keyword = searchInput.value.toLowerCase().trim();
-    tableBody.innerHTML = "";
+ function renderFilteredDogs() {
+  const keyword = searchInput.value.toLowerCase().trim();
+  tableBody.innerHTML = "";
 
-    const dogList = Object.entries(allDogs)
-      .filter(([_, dog]) => {
-        const combined = `${dog.name} ${dog.breed || ''} ${dog.trait || ''}`.toLowerCase();
-        return combined.includes(keyword);
-      })
-      .sort(([_, a], [__, b]) => {
-        if (a.status === 'play' && b.status !== 'play') return -1;
-        if (a.status !== 'play' && b.status === 'play') return 1;
-        return 0;
-      });
+  const dogList = Object.entries(allDogs)
+    .filter(([_, dog]) => {
+      const combined = `${dog.name} ${dog.breed || ''} ${dog.trait || ''} ${dog.emotion || ''}`.toLowerCase();
+      return combined.includes(keyword);
+    })
+    .sort(([_, a], [__, b]) => {
+      if (a.status === 'play' && b.status !== 'play') return -1;
+      if (a.status !== 'play' && b.status === 'play') return 1;
+      return 0;
+    });
 
-       let total = Object.keys(allDogs).length;
-    let playing = Object.values(allDogs).filter(d => d.status === 'play').length;
+  let total = Object.keys(allDogs).length;
+  let playing = Object.values(allDogs).filter(d => d.status === 'play').length;
 
-    for (const [id, dog] of dogList) {
-      const count = dogCounts[dog.name] || 0;
+  for (const [id, dog] of dogList) {
+    const count = dogCounts[dog.name] || 0;
 
-      tableBody.innerHTML += `
-        <tr>
-          <td data-label="Ảnh"><img src="${dog.image || '#'}" alt="${dog.name}"></td>
-          <td data-label="Tên">${dog.name}</td>
-          <td data-label="Giống">${dog.breed || 'Không rõ'}</td>
-          <td data-label="Tính cách">${dog.trait || 'Hiền lành'}</td>
-          <td data-label="Trạng thái">${dog.status === 'play' ? '☀️ Đang chơi' : '🌙 Nghỉ ngơi'}</td>
-          <td data-label="Lượt chọn">${count}</td>
-          <td data-label="Hành động">
-            <button class="btn btn-sm ${dog.status === 'play' ? 'btn-secondary' : 'btn-success'}" onclick="toggleStatus('${id}', '${dog.status}')">
-              ${dog.status === 'play' ? '🌙 Cho nghỉ' : '☀️ Xuống chơi'}
-            </button>
-            <button class="btn btn-sm btn-warning" onclick="openForm('${id}')">✏️</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteDog('${id}')">🗑️</button>
-          </td>
-        </tr>`;
-    }
-
-    statusDisplay.innerHTML = `🐾 Đang thả <strong>${playing}</strong> / Tổng <strong>${total}</strong> bé`;
+    tableBody.innerHTML += `
+      <tr>
+        <td data-label="Ảnh"><img src="${dog.image || '#'}" alt="${dog.name}"></td>
+        <td data-label="Tên">${dog.name}</td>
+        <td data-label="Giống">${dog.breed || 'Không rõ'}</td>
+        <td data-label="Tính cách">${dog.trait || 'Hiền lành'}</td>
+        <td data-label="Trạng thái">${dog.status === 'play' ? '☀️ Đang chơi' : '🌙 Nghỉ ngơi'}</td>
+        <td data-label="Cảm xúc">${dog.emotion || '😐 Bình thường'}</td>
+        <td data-label="Lượt chọn">${count}</td>
+        <td data-label="Hành động">
+          <button class="btn btn-sm ${dog.status === 'play' ? 'btn-secondary' : 'btn-success'}" onclick="toggleStatus('${id}', '${dog.status}')">
+            ${dog.status === 'play' ? '🌙 Cho nghỉ' : '☀️ Xuống chơi'}
+          </button>
+          <button class="btn btn-sm btn-warning" onclick="openForm('${id}')">✏️</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteDog('${id}')">🗑️</button>
+        </td>
+      </tr>`;
   }
+
+  statusDisplay.innerHTML = `🐾 Đang thả <strong>${playing}</strong> / Tổng <strong>${total}</strong> bé`;
+}
 
   function toggleStatus(id, status) {
     const newStatus = status === "play" ? "rest" : "play";
@@ -384,12 +390,16 @@
       document.getElementById("dog-breed").value = d.breed;
       document.getElementById("dog-trait").value = d.trait || "";
       document.getElementById("dog-image").value = d.image;
+      document.getElementById("dog-emotion").value = d.emotion || "";
+
     } else {
       document.getElementById("form-title").innerText = "Thêm chó mới";
       document.getElementById("dog-name").value = "";
       document.getElementById("dog-breed").value = "";
       document.getElementById("dog-trait").value = "";
       document.getElementById("dog-image").value = "";
+      document.getElementById("dog-emotion").value = "";
+
     }
     dogModal.show();
   }
@@ -400,7 +410,8 @@
     const breed = document.getElementById("dog-breed").value;
     const trait = document.getElementById("dog-trait").value;
     const image = document.getElementById("dog-image").value;
-    const data = { name, breed, trait, image, status: "rest" };
+const emotion = document.getElementById("dog-emotion").value;
+const data = { name, breed, trait, image, emotion, status: "rest" };
     if (id) db.ref("dogs/" + id).update(data);
     else db.ref("dogs").push(data);
     dogModal.hide();
