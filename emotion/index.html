@@ -99,7 +99,7 @@
   </style>
 </head>
 <body>
-  <h1>🐶 Bạn Đang Cảm Thấy Thế Nào?</h1>
+  <h1> Bạn Đang Cảm Thấy Thế Nào ạ?</h1>
   <div class="emotion-buttons">
     <button onclick="loadDogs('Vui')">Vui</button>
     <button onclick="loadDogs('Mệt mỏi')">Mệt mỏi</button>
@@ -135,7 +135,7 @@
     const telegramChatId = "-4831972836";
 
     function sendTelegramNotification(emotion, dogName) {
-      const message = `Khách đang cảm thấy "${emotion}". Hãy ship ngay "${dogName}" đến cho khách nhé! 🐾`;
+      const message = `📢 KHÁCH đang cảm thấy "${emotion}". Hãy ship ngay 🐶 "${dogName}" đến với khách để chữa lành nhé! 💖`;
 
       fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
         method: "POST",
@@ -162,7 +162,7 @@
 
         list.forEach(dog => {
           const img = document.createElement("img");
-          img.src = dog.image;
+          img.src = `../image/${dog.image}`;
           img.className = "dog-img";
 
           const name = document.createElement("div");
@@ -182,7 +182,7 @@
           container.appendChild(msg);
           container.appendChild(support);
 
-          // Gửi Telegram mỗi lần chọn được chó
+          // Gửi tin nhắn Telegram
           sendTelegramNotification(emotion, dog.name);
         });
       });
