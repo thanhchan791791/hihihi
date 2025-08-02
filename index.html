@@ -99,6 +99,7 @@
   box-shadow: 0 4px 10px rgba(255, 105, 180, 0.2);
 }
 .btn-view-photos {
+  margin-bottom: 10px;
   font-size: 1.3em;
   font-weight: bold;
   padding: 14px 32px;
@@ -364,6 +365,9 @@
   </button>
 </div>
 
+<button onclick="goToEmotion()" class="btn btn-view-photos">
+  <i class="fa-solid fa-heart me-2"></i> Gợi ý đào theo cảm xúc
+</button>
 
 <!-- Khối nhập tên và mã QR (ẩn ban đầu) -->
 <div id="guestLookupSection" class="slide-section text-center">
@@ -382,10 +386,7 @@
 </div>
 
 
-<div class="language-buttons section-spacing">
-  <button id="lang-vi" class="btn">🇻🇳 Tiếng Việt</button>
-  <button id="lang-en" class="btn">🇺🇸 English</button>
-</div>
+
 
 <div>
   <input type="text" id="search-input" placeholder="Nhập tên, giống hoặc tính cách bé cún..." data-i18n-placeholder="search_placeholder" />
@@ -847,7 +848,11 @@ document.getElementById("randomAlbumBtn").addEventListener("click", () => {
     showBootstrapAlert("⚠️ Có lỗi khi tải dữ liệu ảnh khách!", "danger");
   });
 });
-
+ function goToEmotion() {
+    const hash = window.location.hash; // Lấy đoạn #r1 từ URL hiện tại
+    const targetUrl = `https://thanhchan791791.github.io/hihihi/emotion/${hash}`;
+    window.location.href = targetUrl;
+  }
 </script>
 </body>
 </html>
