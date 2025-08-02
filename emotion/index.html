@@ -246,8 +246,12 @@
   const telegramBotToken = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
   const telegramChatId = "-4831972836";
 
+  // Lấy vị trí từ hash URL, ví dụ: #l2 -> "l2"
+  const customerPosition = (window.location.hash || "").replace("#", "");
+
   function sendTelegramNotification(emotion, dogName) {
-    const message = `KHÁCH đang cảm thấy \"${emotion}\". Hãy ship ngay  \"${dogName}\" đến với khách để chữa lành nhé! 💖`;
+    const posText = customerPosition ? ` (vị trí: ${customerPosition})` : "";
+    const message = `KHÁCH đang cảm thấy "${emotion}"${posText}. Hãy ship ngay "${dogName}" đến với khách để chữa lành nhé! 💖`;
 
     fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
       method: "POST",
@@ -338,10 +342,12 @@
       dogBox.appendChild(name);
       container.appendChild(dogBox);
 
+      // Gửi thông báo Telegram (đã bao gồm vị trí)
       sendTelegramNotification(emotion, dog.name);
     });
   }
 </script>
+
 
 
 </body>
