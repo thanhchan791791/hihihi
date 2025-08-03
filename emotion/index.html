@@ -245,8 +245,6 @@
 
   const telegramBotToken = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
   const telegramChatId = "-4831972836";
-
-  // Lấy vị trí từ hash URL, ví dụ: #l2 -> "l2"
   const customerPosition = (window.location.hash || "").replace("#", "");
 
   function sendTelegramNotification(emotion, dogName) {
@@ -256,14 +254,11 @@
     fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: telegramChatId,
-        text: message,
-      })
+      body: JSON.stringify({ chat_id: telegramChatId, text: message })
     })
-    .then(res => res.json())
-    .then(data => console.log("Đã gửi Telegram:", data))
-    .catch(err => console.error("Lỗi gửi Telegram:", err));
+      .then(res => res.json())
+      .then(data => console.log("Đã gửi Telegram:", data))
+      .catch(err => console.error("Lỗi gửi Telegram:", err));
   }
 
   function showConfetti() {
@@ -282,7 +277,49 @@
     }, 250);
   }
 
+  // GIỚI HẠN 30 PHÚT + THÔNG BÁO THỜI GIAN CÒN LẠI
+  function canSelectEmotion() {
+    const lastTime = localStorage.getItem("lastEmotionTime");
+    if (!lastTime) return { allowed: true };
+
+    const now = Date.now();
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+    const timePassed = now - parseInt(lastTime);
+
+    if (timePassed >= THIRTY_MINUTES) return { allowed: true };
+
+    const remaining = THIRTY_MINUTES - timePassed;
+    const minutes = Math.floor(remaining / 60000);
+    const seconds = Math.floor((remaining % 60000) / 1000);
+
+    return {
+      allowed: false,
+      remainingText: `${minutes} phút ${seconds < 10 ? '0' : ''}${seconds} giây`
+    };
+  }
+
+  function showCooldownMessage(remainingText) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "healing-message-wrapper";
+
+    const msg = document.createElement("div");
+    msg.className = "healing-message";
+    msg.innerText = `⏳ Bạn vui lòng quay lại sau ${remainingText} nhé!`;
+
+    wrapper.appendChild(msg);
+    document.body.appendChild(wrapper);
+
+    setTimeout(() => wrapper.remove(), 5000);
+  }
+
   function loadDogs(emotion) {
+    const check = canSelectEmotion();
+    if (!check.allowed) {
+      showCooldownMessage(check.remainingText);
+      return;
+    }
+    localStorage.setItem("lastEmotionTime", Date.now().toString());
+
     document.querySelector(".emotion-buttons").style.display = "none";
     document.querySelector("h1").style.display = "none";
     document.getElementById("dogContainer").innerHTML = "";
@@ -304,7 +341,6 @@
 
       const dog = list[Math.floor(Math.random() * list.length)];
 
-      // Hiển thị hiệu ứng chữa lành
       const wrapper = document.createElement("div");
       wrapper.className = "healing-message-wrapper animate-slide-in";
 
@@ -320,13 +356,11 @@
       wrapper.appendChild(support);
       document.body.appendChild(wrapper);
 
-      // Tự động mờ dần sau 3 giây rồi bắn pháo giấy
       setTimeout(() => {
         wrapper.classList.add("fade-out");
         showConfetti();
       }, 3000);
 
-      // Hiển thị hình + tên
       const dogBox = document.createElement("div");
       dogBox.className = "dog-box animate-dog";
 
@@ -342,11 +376,12 @@
       dogBox.appendChild(name);
       container.appendChild(dogBox);
 
-      // Gửi thông báo Telegram (đã bao gồm vị trí)
       sendTelegramNotification(emotion, dog.name);
     });
   }
 </script>
+
+
 
 
 
