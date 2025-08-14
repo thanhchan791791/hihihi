@@ -17,17 +17,17 @@
     margin: 0;
     padding: 20px 20px 100px;
     text-align: center;
-  }
+}
 .language-buttons .btn.active {
   background-color: #ff69b4;
   color: white;
 }
 
-  h1 {
+h1 {
     font-size: 2em;
     color: #ff69b4;
     margin-bottom: 10px;
-  }
+}
 #view-photos-btn {
   display: inline-block;
   margin-top: 10px;
@@ -49,7 +49,7 @@
   transform: scale(1.05);
 }
 
-  #search-input {
+#search-input {
     width: 90%;
     max-width: 400px;
     padding: 12px 20px;
@@ -58,28 +58,28 @@
     border: 2px solid #ffd6e6;
     background-color: #fff0f7;
     color: #d94f85;
-  }
+}
 
-  #seat-info {
+#seat-info {
     margin-top: 10px;
     font-weight: bold;
     color: #d94f85;
     font-size: 1.1em;
-  }
+}
 
-  #dog-list {
+#dog-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
-  }
+}
 
-  .dog-card {
+.dog-card {
     background: #fff0f5;
     padding: 10px;
     border-radius: 20px;
     box-shadow: 0 0 8px rgba(0,0,0,0.1);
     position: relative;
-  }
+}
 .language-buttons {
   display: flex;
   justify-content: center;
@@ -109,8 +109,8 @@
   box-shadow: 0 6px 15px rgba(255, 105, 180, 0.5);
   transition: all 0.3s ease;
   letter-spacing: 0.5px;
-  text-transform: none; /* ✅ chữ thường */
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.3); /* dễ đọc hơn */
+  text-transform: none;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
 }
 
 .btn-view-photos i {
@@ -133,17 +133,17 @@
   color: white;
 }
 
-  .dog-card img {
+.dog-card img {
     width: 100%;
-    height: 60vh;
-    object-fit: cover;
+    height: auto;
+    object-fit: contain; /* sửa để không cắt mất chữ */
     border-radius: 15px;
-  }
+}
 
-  .dog-card h3 {
+.dog-card h3 {
     margin: 5px 0;
     color: #d94f85;
-  }
+}
 .slide-section {
   max-height: 0;
   overflow: hidden;
@@ -156,23 +156,23 @@
   padding: 20px 0;
 }
 
-  .dog-card p {
+.dog-card p {
     margin: 0;
     font-size: 0.85em;
     color: #555;
-  }
+}
 
-  .dog-card.selected {
+.dog-card.selected {
     border: 3px solid #ff69b4;
-  }
+}
 
-  .dog-card.sleeping {
+.dog-card.sleeping {
     opacity: 0.8;
     filter: grayscale(10%) blur(0.5px);
     transition: 0.3s ease;
-  }
+}
 
-  .dog-card.sleeping::before {
+.dog-card.sleeping::before {
     content: "💤 Khò khò";
     position: absolute;
     top: 50%;
@@ -188,19 +188,20 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     z-index: 3;
     display: block;
-  }
-
-  .dog-card.sleeping.selected::before {
-    display: none;
-  }
-
-.dog-image-wrapper {
-  background-size: contain; /* Hiển thị toàn bộ ảnh */
-  background-repeat: no-repeat;
-  background-position: center;
 }
 
-  .selected-overlay {
+.dog-card.sleeping.selected::before {
+    display: none;
+}
+
+.dog-image-wrapper {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  overflow: visible; /* tránh cắt chữ */
+}
+
+.selected-overlay {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -220,20 +221,20 @@
     transition: all 0.35s ease-in-out;
     z-index: 2;
     backdrop-filter: blur(2px);
-  }
+}
 
-  .dog-card.selected .selected-overlay {
+.dog-card.selected .selected-overlay {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
-  }
+}
 
-  .selected-overlay i {
+.selected-overlay i {
     color: #e084b3;
     font-size: 1.3em;
     margin-right: 8px;
-  }
+}
 
-  #submit-btn {
+#submit-btn {
     position: fixed;
     bottom: 20px;
     left: 50%;
@@ -246,13 +247,13 @@
     font-size: 1.2em;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  }
+}
 
-  #submit-btn:hover {
+#submit-btn:hover {
     background-color: #ff1493;
-  }
+}
 
-  #selected-count {
+#selected-count {
     position: fixed;
     top: 20px;
     right: 50%;
@@ -263,9 +264,9 @@
     border-radius: 30px;
     font-weight: bold;
     display: none;
-  }
+}
 
-  #alert-box-container {
+#alert-box-container {
     position: fixed;
     top: -100px;
     left: 50%;
@@ -276,15 +277,15 @@
     text-align: center;
     transition: top 0.5s ease, opacity 0.3s ease;
     opacity: 0;
-  }
+}
 
-  #alert-box-container.show {
+#alert-box-container.show {
     top: 30px;
     opacity: 1;
     transform: translateX(-50%) scale(1.05);
-  }
+}
 
-  #alert-box {
+#alert-box {
     background: #fff0f5;
     border: 2px solid #ffa8c5;
     color: #d94f85;
@@ -293,9 +294,9 @@
     border-radius: 25px;
     padding: 12px 20px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
+}
 
-  #photoOverlay {
+#photoOverlay {
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
@@ -304,24 +305,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  #photoOverlay img {
-    height: 80vh;
-    object-fit: cover;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-  }
-
-  .carousel-inner {
-    border-radius: 20px;
-    overflow: hidden;
-  }
-.section-spacing {
-  margin-bottom: 30px; /* 👈 bạn có thể đổi số này nếu muốn gần/hơi xa */
 }
 
-  #tapOverlayText {
+#photoOverlay img {
+    height: 80vh;
+    object-fit: contain;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.carousel-inner {
+    border-radius: 20px;
+    overflow: hidden;
+}
+.section-spacing {
+  margin-bottom: 30px;
+}
+
+#tapOverlayText {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -335,12 +336,13 @@
     animation: pulseText 1.5s infinite;
     pointer-events: none;
     font-family: 'Comic Sans MS', cursive;
-  }
+}
 
-  @keyframes pulseText {
+@keyframes pulseText {
     0%, 100% { opacity: 0.85; }
     50% { opacity: 0.4; }
-  }
+}
+
 </style>
 </head>
 <body>
