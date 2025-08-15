@@ -10,380 +10,174 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
- <style>
-  * {
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: 'Quicksand', sans-serif;
-    background: linear-gradient(to bottom right, #fff7f0, #ffe8e8);
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    overflow-x: hidden;
-  }
-
-  h1 {
-    color: #ff6f61;
-    font-size: 2.4rem;
-    margin: 30px 0 20px;
-    animation: fadeIn 1.2s ease;
-  }
-
-  .emotion-buttons {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 20px;
-    width: 100%;
-    max-width: 550px;
-    padding: 0 20px;
-  }
-
-  .emotion-card {
-    background: #ff8fa3;
-    color: white;
-    padding: 24px 18px;
-    border-radius: 28px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    animation: floatBox 3.5s ease-in-out infinite;
-    transition: transform 0.3s ease, background 0.3s ease;
-  }
-
-  .emotion-card:hover {
-    transform: scale(1.1) rotate(1.5deg);
-    background: #f85775;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  }
-
-  .emotion-icon {
-    font-size: 2.2rem;
-    margin-bottom: 8px;
-  }
-
-  #loading {
-    display: none;
-    font-size: 1.2rem;
-    color: #777;
-    margin-top: 20px;
-  }
-
-  #dogContainer {
-    text-align: center;
-    margin-top: 40px;
-    animation: fadeIn 1s ease;
-  }
-
-  .dog-img {
-    width: 100%;
-    max-width: 320px;
-    border-radius: 24px;
-    margin-top: 20px;
-    animation: fadeInScale 1s ease;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15);
-    transition: transform 0.4s ease;
-  }
-
-  .dog-img:hover {
-    transform: scale(1.05);
-  }
-
-  .dog-name {
-    font-size: 1.6rem;
-    font-weight: bold;
-    margin-top: 14px;
-    color: #d62828;
-    overflow: hidden;
-    border-right: 2px solid #d62828;
-    white-space: nowrap;
-    width: 0;
-    animation: typeWriter 2s steps(30, end) forwards;
-  }
-
-  .dog-frame {
-    border: 6px solid;
-    border-image: linear-gradient(45deg, #ffa8a8, #fff0f5) 1;
-    border-radius: 28px;
-    max-width: 360px;
-    margin: 30px auto 12px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-    overflow: hidden;
-    animation: dogEnter 0.8s ease-out;
-  }
-
-  .healing-message-wrapper {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 999;
-    opacity: 1;
-    animation: slideIn 0.8s ease, fadeOut 5.5s ease forwards;
-  }
-
-  .healing-message {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #d62828;
-    background: #fff0f3;
-    padding: 22px 28px;
-    border-radius: 26px;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
-    max-width: 90vw;
-  }
-
-  .support-message {
-    font-size: 1rem;
-    color: #555;
-    margin-top: 12px;
-    background-color: #ffffffcc;
-    padding: 8px 14px;
-    border-radius: 14px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-    display: inline-block;
-    max-width: 80%;
-  }
-
-  /* Animations */
-  @keyframes floatBox {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes fadeInScale {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  @keyframes dogEnter {
-    0% { opacity: 0; transform: translateY(60px) scale(0.9); }
-    100% { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  @keyframes typeWriter {
-    from { width: 0; }
-    to { width: 100%; }
-  }
-
-  @keyframes slideIn {
-    from { opacity: 0; transform: translate(-50%, -20%); }
-    to { opacity: 1; transform: translate(-50%, -50%); }
-  }
-
-  @keyframes fadeOut {
-    0%, 70% { opacity: 1; }
-    100% { opacity: 0; }
-  }
-</style>
-
-
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(to bottom right, #fff7f0, #ffe8e8);
+      margin:0; padding:0;
+      min-height:100vh;
+      display:flex; flex-direction:column;
+      justify-content:center; align-items:center;
+      text-align:center; overflow-x:hidden;
+    }
+    h1 { color:#ff6f61; font-size:2.4rem; margin:30px 0 20px; animation: fadeIn 1.2s ease; }
+    .emotion-buttons {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+      gap:20px; width:100%; max-width:550px; padding:0 20px;
+    }
+    .emotion-card {
+      background:#ff8fa3; color:white; padding:24px 18px; border-radius:28px;
+      font-size:1.2rem; font-weight:bold; cursor:pointer;
+      box-shadow:0 8px 24px rgba(0,0,0,0.12);
+      display:flex; flex-direction:column; align-items:center;
+      animation: floatBox 3.5s ease-in-out infinite;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .emotion-card:hover { transform: scale(1.1) rotate(1.5deg); background:#f85775; box-shadow:0 10px 30px rgba(0,0,0,0.15); }
+    .emotion-icon { font-size:2.2rem; margin-bottom:8px; }
+    #loading { display:none; font-size:1.2rem; color:#777; margin-top:20px; }
+    #dogContainer { text-align:center; margin-top:40px; animation:fadeIn 1s ease; }
+    .dog-img { width:100%; max-width:320px; border-radius:24px; margin-top:20px; animation:fadeInScale 1s ease; box-shadow:0 10px 28px rgba(0,0,0,0.15); transition: transform 0.4s ease; }
+    .dog-img:hover { transform: scale(1.05); }
+    .dog-name {
+      font-size:2.4rem; font-weight:800; margin-top:14px;
+      background:linear-gradient(90deg,#ff6f61,#ffcc33);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      text-shadow:0 0 8px rgba(255,111,97,0.7),0 0 12px rgba(255,204,51,0.5);
+      white-space:nowrap; overflow:hidden; border-right:2px solid #d62828; width:0;
+      animation:typeWriter 2s steps(30,end) forwards, popUp 0.6s ease forwards 2s;
+    }
+    .healing-message-wrapper { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:999; opacity:1; animation: slideIn 0.8s ease, fadeOut 6s ease forwards; }
+    .healing-message { font-size:1.4rem; font-weight:600; color:#d62828; background:#fff0f3; padding:22px 28px; border-radius:26px; box-shadow:0 10px 28px rgba(0,0,0,0.12); max-width:90vw; }
+    .support-message { font-size:1rem; color:#555; margin-top:12px; background-color:#ffffffcc; padding:8px 14px; border-radius:14px; box-shadow:0 6px 16px rgba(0,0,0,0.1); display:inline-block; max-width:80%; }
+    @keyframes floatBox {0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);} }
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+    @keyframes fadeInScale { from{opacity:0;transform:scale(0.9);} to{opacity:1;transform:scale(1);} }
+    @keyframes popUp {0%{transform:scale(0.8);opacity:0;}50%{transform:scale(1.2);opacity:1;}100%{transform:scale(1);opacity:1;} }
+    @keyframes typeWriter { from{width:0;} to{width:100%;} }
+    @keyframes slideIn { from{opacity:0; transform:translate(-50%,-20%);} to{opacity:1; transform:translate(-50%,-50%);} }
+    @keyframes fadeOut { 0%,70%{opacity:1;} 100%{opacity:0;} }
+  </style>
 </head>
 <body>
   <h1>Bạn Đang Cảm Thấy Thế Nào ạ?</h1>
-
- <div class="emotion-buttons">
-  <div class="emotion-card" onclick="loadDogs('Vui')">
-    <div class="emotion-icon">😊</div>Vui
+  <div class="emotion-buttons">
+    <div class="emotion-card" onclick="loadDogs('Vui')"><div class="emotion-icon">😊</div>Vui</div>
+    <div class="emotion-card" onclick="loadDogs('Mệt mỏi')"><div class="emotion-icon">😩</div>Mệt mỏi</div>
+    <div class="emotion-card" onclick="loadDogs('Buồn nhẹ')"><div class="emotion-icon">😔</div>Buồn nhẹ</div>
+    <div class="emotion-card" onclick="loadDogs('Cô đơn')"><div class="emotion-icon">😢</div>Cô đơn</div>
+    <div class="emotion-card" onclick="loadDogs('Bực mình')"><div class="emotion-icon">😠</div>Bực mình</div>
+    <div class="emotion-card" onclick="loadDogs('Cần được yêu thương')"><div class="emotion-icon">🥺</div>Cần được yêu thương</div>
   </div>
-  <div class="emotion-card" onclick="loadDogs('Mệt mỏi')">
-    <div class="emotion-icon">😩</div>Mệt mỏi
-  </div>
-  <div class="emotion-card" onclick="loadDogs('Buồn nhẹ')">
-    <div class="emotion-icon">😔</div>Buồn nhẹ
-  </div>
-  <div class="emotion-card" onclick="loadDogs('Cô đơn')">
-    <div class="emotion-icon">😢</div>Cô đơn
-  </div>
-  <div class="emotion-card" onclick="loadDogs('Bực mình')">
-    <div class="emotion-icon">😠</div>Bực mình
-  </div>
-  <div class="emotion-card" onclick="loadDogs('Cần được yêu thương')">
-    <div class="emotion-icon">🥺</div>Cần được yêu thương
-  </div>
-</div>
-
-
   <div id="loading">Đang tìm bé phù hợp...</div>
   <div id="dogContainer"></div>
 
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
-    authDomain: "dogs-be72b.firebaseapp.com",
-    databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
-    projectId: "dogs-be72b",
-    storageBucket: "dogs-be72b.appspot.com",
-    messagingSenderId: "1003873040746",
-    appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
-  };
-  firebase.initializeApp(firebaseConfig);
+const firebaseConfig = {
+  apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+  authDomain: "dogs-be72b.firebaseapp.com",
+  databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+  projectId: "dogs-be72b",
+  storageBucket: "dogs-be72b.appspot.com",
+  messagingSenderId: "1003873040746",
+  appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
+};
+firebase.initializeApp(firebaseConfig);
 
-  const healingTexts = {
-    "Vui": name => `❤️ ${name} cũng đang vui như bạn! Niềm vui được nhân đôi rồi nhé.`,
-    "Mệt mỏi": name => `❤️ ${name} sẽ cùng bạn nghỉ ngơi một chút. Mọi điều rồi sẽ tốt hơn.`,
-    "Buồn nhẹ": name => `❤️ ${name} sẽ ngồi bên bạn và cùng bạn nghe lòng mình.`,
-    "Cô đơn": name => `❤️ ${name} đã đợi bạn cả ngày. Giờ thì bạn không còn một mình nữa!`,
-    "Bực mình": name => `❤️ ${name} hiểu bạn đang không vui. Hít thở một chút, ${name} sẽ cùng bạn bình tĩnh lại.`,
-    "Cần được yêu thương": name => `❤️ ${name} sẽ ôm bạn thật chặt. Bạn xứng đáng được yêu thương mỗi ngày!`
-  };
+const healingTexts = {
+  "Vui":[name=>`❤️ ${name} cũng đang vui như bạn!`, name=>`🌟 ${name} muốn cùng bạn cười to!`, name=>`😄 ${name} vui quá muốn gói bạn vào niềm hạnh phúc!`],
+  "Mệt mỏi":[name=>`💤 ${name} sẽ cùng bạn nghỉ ngơi.`, name=>`☕ ${name} ngồi bên bạn thư giãn.`, name=>`😌 ${name} hiểu bạn mệt mỏi, hít thở sâu nhé!`],
+  "Buồn nhẹ":[name=>`💖 ${name} sẽ ngồi bên bạn và lắng nghe.`, name=>`😢 ${name} hiểu nỗi buồn nhỏ này.`, name=>`🌈 ${name} mang ánh sáng dịu dàng đến trái tim bạn.`],
+  "Cô đơn":[name=>`🤗 ${name} đã đợi bạn cả ngày.`, name=>`🐾 ${name} đến cùng bạn đi dạo.`, name=>`💌 ${name} ôm bạn từ xa, ấm áp tràn về.`],
+  "Bực mình":[name=>`😤 ${name} hiểu bạn đang không vui.`, name=>`💨 ${name} cùng bạn xả stress.`, name=>`🌿 ${name} mang năng lượng nhẹ nhàng giúp bạn bình tĩnh.`],
+  "Cần được yêu thương":[name=>`❤️ ${name} sẽ ôm bạn thật chặt.`, name=>`💌 ${name} nhắc bạn bạn quan trọng và được yêu thương.`, name=>`🌸 ${name} muốn bạn cảm nhận ấm áp và an toàn.`]
+};
 
-  const telegramBotToken = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
-  const telegramChatId = "-4831972836";
-  const customerPosition = (window.location.hash || "").replace("#", "");
+const telegramBotToken="7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
+const telegramChatId="-4831972836";
+const customerPosition=(window.location.hash||"").replace("#","");
 
-  function sendTelegramNotification(emotion, dogName) {
-    const posText = customerPosition ? ` (vị trí: ${customerPosition})` : "";
-    const message = `KHÁCH đang cảm thấy "${emotion}"${posText}. Hãy ship ngay "${dogName}" đến với khách để chữa lành nhé! 💖`;
+function sendTelegramNotification(emotion,dogName){
+  const posText = customerPosition?` (vị trí: ${customerPosition})`:"";
+  const message=`KHÁCH cảm thấy "${emotion}"${posText}. Hãy ship ngay "${dogName}" đến khách 💖`;
+  fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({chat_id:telegramChatId,text:message})
+  }).then(res=>res.json()).then(data=>console.log("Telegram sent:",data))
+  .catch(err=>console.error("Telegram error:",err));
+}
 
-    fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: telegramChatId, text: message })
-    })
-      .then(res => res.json())
-      .then(data => console.log("Đã gửi Telegram:", data))
-      .catch(err => console.error("Lỗi gửi Telegram:", err));
-  }
+function showConfetti(){
+  const duration=3000; const animationEnd=Date.now()+duration;
+  const defaults={startVelocity:30, spread:360, ticks:60, zIndex:9999};
+  const interval=setInterval(()=>{
+    const timeLeft=animationEnd-Date.now();
+    if(timeLeft<=0) return clearInterval(interval);
+    const particleCount=50*(timeLeft/duration);
+    confetti(Object.assign({},defaults,{particleCount,origin:{x:Math.random(),y:Math.random()-0.2}}));
+  },250);
+}
 
-  function showConfetti() {
-    const duration = 3000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+function showCooldownMessage(remainingText){
+  const wrapper=document.createElement("div"); wrapper.className="healing-message-wrapper";
+  const msg=document.createElement("div"); msg.className="healing-message";
+  msg.innerText=`⏳ Bạn vui lòng quay lại sau ${remainingText} nhé!`;
+  wrapper.appendChild(msg); document.body.appendChild(wrapper);
+  setTimeout(()=>wrapper.remove(),5000);
+}
 
-    const interval = setInterval(() => {
-      const timeLeft = animationEnd - Date.now();
-      if (timeLeft <= 0) return clearInterval(interval);
-      const particleCount = 50 * (timeLeft / duration);
-      confetti(Object.assign({}, defaults, {
-        particleCount,
-        origin: { x: Math.random(), y: Math.random() - 0.2 }
-      }));
-    }, 250);
-  }
+function canSelectEmotion(){
+  const lastTime=localStorage.getItem("lastEmotionTime");
+  if(!lastTime) return { allowed:true };
+  const now=Date.now();
+  const THIRTY_MINUTES=30*60*1000;
+  const timePassed=now-parseInt(lastTime);
+  if(timePassed>=THIRTY_MINUTES) return { allowed:true };
+  const remaining=THIRTY_MINUTES-timePassed;
+  const minutes=Math.floor(remaining/60000);
+  const seconds=Math.floor((remaining%60000)/1000);
+  return { allowed:false, remainingText:`${minutes} phút ${seconds<10?'0':''}${seconds} giây` };
+}
 
-  // GIỚI HẠN 30 PHÚT + THÔNG BÁO THỜI GIAN CÒN LẠI
-  function canSelectEmotion() {
-    const lastTime = localStorage.getItem("lastEmotionTime");
-    if (!lastTime) return { allowed: true };
+function loadDogs(emotion){
+  const check=canSelectEmotion();
+  if(!check.allowed){ showCooldownMessage(check.remainingText); return; }
+  localStorage.setItem("lastEmotionTime",Date.now().toString());
 
-    const now = Date.now();
-    const THIRTY_MINUTES = 30 * 60 * 1000;
-    const timePassed = now - parseInt(lastTime);
+  document.querySelector(".emotion-buttons").style.display="none";
+  document.querySelector("h1").style.display="none";
+  document.getElementById("dogContainer").innerHTML="";
+  document.getElementById("loading").style.display="block";
 
-    if (timePassed >= THIRTY_MINUTES) return { allowed: true };
+  firebase.database().ref("dogs").once("value",snapshot=>{
+    const data=snapshot.val();
+    const list=Object.values(data).filter(dog=>dog.emotion && dog.emotion.toLowerCase().includes(emotion.toLowerCase()));
+    document.getElementById("loading").style.display="none";
+    const container=document.getElementById("dogContainer");
 
-    const remaining = THIRTY_MINUTES - timePassed;
-    const minutes = Math.floor(remaining / 60000);
-    const seconds = Math.floor((remaining % 60000) / 1000);
+    if(list.length===0){ container.innerHTML="<p>Không tìm thấy bé nào phù hợp cảm xúc này 🐶</p>"; return; }
 
-    return {
-      allowed: false,
-      remainingText: `${minutes} phút ${seconds < 10 ? '0' : ''}${seconds} giây`
-    };
-  }
+    const dog=list[Math.floor(Math.random()*list.length)];
+    const texts = healingTexts[emotion];
+    const text = texts[Math.floor(Math.random()*texts.length)](dog.name);
 
-  function showCooldownMessage(remainingText) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "healing-message-wrapper";
+    const wrapper=document.createElement("div"); wrapper.className="healing-message-wrapper";
+    const msg=document.createElement("div"); msg.className="healing-message"; msg.innerText=text;
+    const support=document.createElement("div"); support.className="support-message"; support.innerText="💬 Nhân viên sẽ hỗ trợ bạn sau vài phút nhé!";
+    wrapper.appendChild(msg); wrapper.appendChild(support); document.body.appendChild(wrapper);
 
-    const msg = document.createElement("div");
-    msg.className = "healing-message";
-    msg.innerText = `⏳ Bạn vui lòng quay lại sau ${remainingText} nhé!`;
+    setTimeout(()=>{ wrapper.classList.add("fade-out"); showConfetti(); },7000);
 
-    wrapper.appendChild(msg);
-    document.body.appendChild(wrapper);
+    const dogBox=document.createElement("div"); dogBox.className="dog-box";
+    const img=document.createElement("img"); img.src=`../${dog.image}`; img.className="dog-img";
+    const name=document.createElement("div"); name.className="dog-name"; name.innerText=dog.name;
+    dogBox.appendChild(img); dogBox.appendChild(name); container.appendChild(dogBox);
 
-    setTimeout(() => wrapper.remove(), 5000);
-  }
-
-  function loadDogs(emotion) {
-    const check = canSelectEmotion();
-    if (!check.allowed) {
-      showCooldownMessage(check.remainingText);
-      return;
-    }
-    localStorage.setItem("lastEmotionTime", Date.now().toString());
-
-    document.querySelector(".emotion-buttons").style.display = "none";
-    document.querySelector("h1").style.display = "none";
-    document.getElementById("dogContainer").innerHTML = "";
-    document.getElementById("loading").style.display = "block";
-
-    firebase.database().ref("dogs").once("value", snapshot => {
-      const data = snapshot.val();
-      const list = Object.values(data).filter(dog => {
-        return dog.emotion && dog.emotion.toLowerCase().includes(emotion.toLowerCase());
-      });
-
-      document.getElementById("loading").style.display = "none";
-      const container = document.getElementById("dogContainer");
-
-      if (list.length === 0) {
-        container.innerHTML = "<p>Không tìm thấy bé nào phù hợp cảm xúc này 🐶</p>";
-        return;
-      }
-
-      const dog = list[Math.floor(Math.random() * list.length)];
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "healing-message-wrapper animate-slide-in";
-
-      const msg = document.createElement("div");
-      msg.className = "healing-message";
-      msg.innerText = healingTexts[emotion](dog.name);
-
-      const support = document.createElement("div");
-      support.className = "support-message";
-      support.innerText = "💬 Nhân viên sẽ hỗ trợ bạn sau vài phút nhé!";
-
-      wrapper.appendChild(msg);
-      wrapper.appendChild(support);
-      document.body.appendChild(wrapper);
-
-      setTimeout(() => {
-        wrapper.classList.add("fade-out");
-        showConfetti();
-      }, 3000);
-
-      const dogBox = document.createElement("div");
-      dogBox.className = "dog-box animate-dog";
-
-      const img = document.createElement("img");
-      img.src = `../${dog.image}`;
-      img.className = "dog-img";
-
-      const name = document.createElement("div");
-      name.className = "dog-name typing";
-      name.innerText = dog.name;
-
-      dogBox.appendChild(img);
-      dogBox.appendChild(name);
-      container.appendChild(dogBox);
-
-      sendTelegramNotification(emotion, dog.name);
-    });
-  }
+    sendTelegramNotification(emotion,dog.name);
+  });
+}
 </script>
-
-
-
-
-
 </body>
 </html>
