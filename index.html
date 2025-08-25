@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chọn chó chụp ảnh</title>
 
-  <!-- Bootstrap + FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -343,21 +342,109 @@ h1 {
     50% { opacity: 0.4; }
 }
 
-</style>
+/* New Chat Bubble CSS */
+.chat-bubble {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #ff69b4;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1000;
+    transition: transform 0.2s ease-in-out;
+    animation: popInOut 2s infinite;
+}
+.chat-bubble:hover {
+    transform: scale(1.1);
+}
+@keyframes popInOut {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Chat Modal Custom Style */
+#chatModal .modal-content {
+    border-radius: 15px;
+    background-color: #fff0f5;
+    border: none;
+    font-family: 'Comic Sans MS', cursive;
+}
+#chatModal .modal-header {
+    background-color: #ff69b4;
+    color: white;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom: none;
+}
+#chatModal .modal-body {
+    padding: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.chat-message {
+    padding: 8px 12px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+.chat-message.system {
+    background-color: #f7e6f0;
+    color: #d94f85;
+    align-self: flex-start;
+    text-align: left;
+}
+.chat-message.user {
+    background-color: #ffe6f5;
+    color: #5d4037;
+    margin-left: auto;
+    text-align: right;
+}
+.chat-input-group {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #ffc0cb;
+    padding-top: 10px;
+}
+.chat-input-group input {
+    flex-grow: 1;
+    border-radius: 20px;
+    border: 2px solid #ff69b4;
+    padding: 8px 15px;
+    font-family: 'Comic Sans MS', cursive;
+    background-color: #fffafc;
+}
+.chat-input-group button {
+    margin-left: 10px;
+    border: none;
+    background-color: #ff69b4;
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+    </style>
 </head>
 <body>
-<!-- Overlay slider ảnh chụp thật -->
 <div id="photoOverlay">
   <div id="carouselPhotos" class="carousel slide w-100" style="max-width: 900px;" data-bs-ride="carousel" data-bs-interval="2500" data-bs-wrap="true">
     <div class="carousel-inner"></div>
   </div>
-  <!-- DÒNG CHỮ CHẠM VÀO MÀN HÌNH -->
   <div id="tapOverlayText" data-i18n="tap_screen">Chạm vào màn hình để tiếp tục</div>
 </div>
 
 <h1 data-i18n="title">📸 Chọn các bé iu để chụp ảnh</h1>
-<!-- Nút xem ảnh khách -->
-<!-- Nhóm 2 nút xem ảnh khách -->
 <div class="d-flex justify-content-center gap-3 section-spacing">
   <button id="toggleGuestInput" class="btn btn-view-photos">
     <i class="fa-solid fa-image me-2"></i> Xem ảnh khách
@@ -369,7 +456,6 @@ h1 {
 </div>
 
 
-<!-- Khối nhập tên và mã QR (ẩn ban đầu) -->
 <div id="guestLookupSection" class="slide-section text-center">
   <input type="text" id="guestNameInput" placeholder="Nhập tên bạn để xem ảnh"
     style="padding: 10px 20px; border-radius: 30px; border: 2px solid #ffd6e6; background-color: #fff0f7; color: #d94f85; max-width: 400px; width: 80%;" />
@@ -405,7 +491,6 @@ h1 {
 
 <div id="dog-list"></div>
 
-<!-- Alert -->
 <div id="alert-box-container">
   <div id="alert-box" class="alert alert-success" role="alert">
     <i class="fa-solid fa-circle-check me-2"></i>
@@ -413,7 +498,6 @@ h1 {
   </div>
 </div>
 
-<!-- Nút chốt -->
 <button id="submit-btn">
   <i class="fa-solid fa-dog me-2"></i>
   <span data-i18n="submit_button">Chốt các bé iu 💖</span>
@@ -421,7 +505,6 @@ h1 {
 
 <div id="selected-count">Đã chọn: 0 bé</div>
 
-<!-- Modal xác nhận chọn bé đang ngủ -->
 <div class="modal fade" id="sleepModal" tabindex="-1" aria-labelledby="sleepModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius: 20px;">
@@ -430,8 +513,7 @@ h1 {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
       </div>
       <div class="modal-body text-start" id="sleepModalBody">
-        <!-- Nội dung modal sẽ được thay đổi động -->
-      </div>
+        </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="modal_cancel">Thôi để bé nghỉ</button>
         <button type="button" class="btn btn-pink" id="confirmSleepBtn" style="background-color: #ff69b4; color: white;" data-i18n="modal_confirm">Vẫn chọn bé</button>
@@ -440,12 +522,34 @@ h1 {
   </div>
 </div>
 
-<!-- Firebase SDK -->
+<div id="chatBubble" class="chat-bubble">
+    <i class="fa-solid fa-comment-dots"></i>
+</div>
+
+<div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="chatModalLabel">Chat với Cherry Pet Coffee</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body d-flex flex-column">
+        <div class="chat-message system">
+            Chào bạn, mình là trợ lý ảo của Cherry Pet Coffee. 🥰 Bạn cần hỏi về bé cún nào không?
+        </div>
+      </div>
+      <div class="modal-footer chat-input-group">
+        <input type="text" id="chatInput" placeholder="Nhập tên bé cún...">
+        <button id="chatSendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
-<!-- SCRIPT QUẢN LÝ NGÔN NGỮ -->
 <script>
 const LANGS = {
   vi: {
@@ -852,7 +956,62 @@ document.getElementById("randomAlbumBtn").addEventListener("click", () => {
   });
 });
 
+// New Chat Functionality
+const chatBubble = document.getElementById("chatBubble");
+const chatModalElement = document.getElementById("chatModal");
+const chatModal = new bootstrap.Modal(chatModalElement);
+const chatInput = document.getElementById("chatInput");
+const chatSendBtn = document.getElementById("chatSendBtn");
+const chatBody = document.querySelector("#chatModal .modal-body");
+
+chatBubble.addEventListener("click", () => {
+    chatModal.show();
+});
+
+function addChatMessage(message, sender) {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `chat-message ${sender}`;
+    messageDiv.textContent = message;
+    chatBody.appendChild(messageDiv);
+    chatBody.scrollTop = chatBody.scrollHeight; // Auto-scroll to the latest message
+}
+
+function processChatRequest(query) {
+    const normalizedQuery = normalizeName(query);
+    const foundDog = allDogs.find(dog => normalizeName(dog.name).includes(normalizedQuery));
+
+    if (foundDog) {
+        addChatMessage(`Ah, bé ${foundDog.name} hiện tại đang ${foundDog.status === 'play' ? 'chơi đùa rất vui vẻ! 🥰' : 'ngủ một giấc thật ngon! 😴'}`, 'system');
+    } else {
+        addChatMessage(`Mình không tìm thấy bé nào có tên "${query}" cả. Bạn thử lại tên khác nhé!`, 'system');
+    }
+
+    // Gửi yêu cầu lên Firebase
+    const seat = getSeatFromHash() || { side: "?", table: "?" };
+    db.ref("chatRequests").push({
+        query: query,
+        time: new Date().toLocaleTimeString(),
+        seat: `${seat.side} - ${seat.table}`
+    });
+}
+
+function handleChatInput() {
+    const query = chatInput.value.trim();
+    if (query) {
+        addChatMessage(query, 'user');
+        chatInput.value = "";
+        processChatRequest(query);
+    }
+}
+
+chatInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        handleChatInput();
+    }
+});
+
+chatSendBtn.addEventListener("click", handleChatInput);
+
 </script>
 </body>
 </html>
-
