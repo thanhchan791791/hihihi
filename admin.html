@@ -1,164 +1,269 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>🐶 Quản lý trạng thái chó</title>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-soft@5/soft.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
+    :root {
+      --primary-color: #ff4d79;
+      --secondary-color: #ffc2d1;
+      --text-color: #6b0033;
+      --bg-color: #fffafc;
+      --light-bg-color: #ffeef5;
+    }
     body {
       font-family: 'Quicksand', sans-serif;
-      background: linear-gradient(to bottom, #fffafc, #ffeef5);
+      background: linear-gradient(to bottom, var(--bg-color), var(--light-bg-color));
       padding: 16px;
-      margin: auto;
-      max-width: 100%;
+      padding-top: 70px;
+      margin: 0 auto;
+      max-width: 100vw;
+      overflow-x: hidden; /* Prevent horizontal scroll */
+      position: relative;
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     #statusDisplay {
       position: sticky;
       top: 0;
       z-index: 1000;
       background: rgba(255, 245, 250, 0.95);
-      backdrop-filter: blur(3px);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.5s ease-in-out;
+      border: none;
+      border-radius: 0;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
-
     h1 {
       font-size: 1.8rem;
-      color: #ff4d79;
+      color: var(--primary-color);
       text-shadow: 1px 1px 1px #ffd6e8;
+      margin-top: 0;
+      font-weight: 700;
     }
-
     .status-box {
       background: linear-gradient(to right, #ffb3c6, #ffd6e8);
       border: 2px dashed #ff69b4;
       padding: 12px 20px;
       font-size: 1.2rem;
-      color: #6b0033;
+      color: var(--text-color);
       border-radius: 16px;
       box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
       animation: pulse 2s infinite;
     }
-
     @keyframes pulse {
       0% { box-shadow: 0 0 0 0 rgba(255, 105, 180, 0.5); }
       70% { box-shadow: 0 0 0 10px rgba(255, 105, 180, 0); }
       100% { box-shadow: 0 0 0 0 rgba(255, 105, 180, 0); }
     }
-
     .table {
-      border: 2px solid #ffc2d1;
+      border: 2px solid var(--secondary-color);
       border-radius: 12px;
       background-color: #fff0f5;
       border-collapse: separate;
       border-spacing: 0;
       overflow: hidden;
+      animation: slideUp 0.8s ease-out;
     }
-
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
     .table thead {
       background-color: #ffb3c6;
       color: #fff;
       font-weight: 600;
     }
-
     .table tbody tr {
       background-color: #fff5f7;
-      transition: background 0.3s;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
-
     .table tbody tr:hover {
       background-color: #ffe0ea;
+      transform: scale(1.01);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
-
     .table td, .table th {
       vertical-align: middle;
-      border: 1px solid #ffc2d1;
+      border: 1px solid var(--secondary-color);
     }
-
     table img {
       width: 80px;
       height: 64px;
       object-fit: cover;
       border-radius: 10px;
-      border: 2px solid #ffc2d1;
+      border: 2px solid var(--secondary-color);
+      transition: transform 0.3s ease;
     }
-
+    table img:hover {
+      transform: scale(1.1);
+    }
     .btn {
       border-radius: 20px;
       font-size: 0.9rem;
       padding: 6px 12px;
+      transition: all 0.3s ease;
+      transform-origin: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
+    .btn:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
     .modal-content {
       background-color: #fff0f5;
       border: 2px solid #ffd6e8;
       border-radius: 16px;
+      animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     }
-
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
     .form-control {
       border-radius: 12px;
       border: 1px solid #ffccd5;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
-
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(255, 77, 121, 0.25);
+    }
     .alert-info {
       background-color: #ffeef5;
       border: 1px solid #ffc2d1;
       color: #d63384;
       font-weight: 600;
+      border-radius: 12px;
     }
-
+    .alert-info.hidden {
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        border: none;
+        overflow: hidden;
+        margin-bottom: 0;
+        transition: max-height 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    }
+    .alert-info:not(.hidden) {
+        max-height: 500px;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        transition: max-height 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+    }
     .input-group-text.bg-pink {
-      background-color: #ffc2d1;
+      background-color: var(--secondary-color);
       color: #fff;
-      border: 1px solid #ffc2d1;
+      border: 1px solid var(--secondary-color);
     }
-
     .input-group .form-control::placeholder {
       color: #d63384;
       font-style: italic;
     }
-
     .input-group .form-control {
       font-size: 1.1rem;
       font-weight: 500;
       background-color: #fff5f8;
     }
-
+    /* Menu Dropdown */
+    .menu-container {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 2000;
+    }
+    .menu-icon {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .menu-icon:hover {
+        transform: scale(1.1) rotate(5deg);
+    }
+    .menu-dropdown {
+      display: none;
+      position: absolute;
+      top: 40px;
+      left: 0;
+      background-color: var(--bg-color);
+      border: 1px solid var(--secondary-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      min-width: 200px;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s ease-in-out;
+    }
+    .menu-dropdown.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .menu-dropdown .btn {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .notification-toggle {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 2000;
+        font-size: 1.8rem;
+        color: var(--primary-color);
+        cursor: pointer;
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+    .notification-toggle:hover {
+        transform: scale(1.1) rotate(-5deg);
+        color: #d63384;
+    }
     @media (max-width: 768px) {
+      body {
+        padding-top: 70px;
+      }
       .table thead {
         display: none;
       }
-
       .table tbody tr {
         display: block;
         margin-bottom: 1rem;
-        border: 1px solid #ffc2d1;
+        border: 1px solid var(--secondary-color);
         border-radius: 12px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         background: #fff;
         padding: 10px;
       }
-
       .table td {
         display: flex;
         justify-content: space-between;
         padding: 8px 10px;
         border: none;
-        border-bottom: 1px solid #ffc2d1;
+        border-bottom: 1px solid var(--secondary-color);
       }
-
       .table td:last-child {
         border-bottom: none;
       }
-
       .table td::before {
         content: attr(data-label);
         font-weight: 600;
         color: #d63384;
       }
-
       table img {
         width: 64px;
         height: 50px;
@@ -167,70 +272,67 @@
   </style>
 </head>
 <body>
+  
+  <div class="menu-container">
+    <i class="fas fa-bars menu-icon" onclick="toggleMenu()"></i>
+    <div id="menuDropdown" class="menu-dropdown">
+      <button class="btn btn-success" onclick="openForm(); closeMenu();"><i class="fas fa-plus-circle me-2"></i> Thêm chó mới</button>
+      <button class="btn btn-warning" onclick="setAllToRest(); closeMenu();"><i class="fas fa-moon me-2"></i> Cho tất cả nghỉ</button>
+      <button class="btn btn-danger" onclick="clearNotifications(); closeMenu();"><i class="fas fa-trash-alt me-2"></i> Xóa thông báo</button>
+      <button class="btn btn-outline-primary" onclick="toggleUploadPanel(); closeMenu();"><i class="fas fa-cloud-upload-alt me-2"></i> Upload ảnh</button>
+    </div>
+  </div>
+
+  <i class="fas fa-bell notification-toggle" onclick="toggleNotifications()"></i>
+
   <h1 class="text-center mb-4">🐶 Cập nhật trạng thái chó 🐶</h1>
 
-  <div class="alert alert-info" id="notification">🔔 Đang tải thông báo...</div>
+  <div class="alert alert-info hidden" id="notification">
+    🔔 Đang tải thông báo...
+  </div>
 
   <div class="status-box text-center fw-semibold mb-3" id="statusDisplay">
-    🐾 Đang tải trạng thái...
+    <i class="fas fa-paw me-2"></i> Đang tải trạng thái...
   </div>
 
-  <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
-    <button class="btn btn-danger" onclick="clearNotifications()">🗑️ Xóa tất cả thông báo</button>
-    <button class="btn btn-success" onclick="openForm()">➕ Thêm chó mới</button>
-    <button class="btn btn-warning" onclick="setAllToRest()">🌙 Cho tất cả nghỉ</button>
-  </div>
-  <!-- Nhập tên để thả chó hàng loạt -->
-<div class="input-group mb-3" style="max-width:600px; margin:auto;">
-  <input type="text" id="bulkPlayInput" class="form-control" placeholder="Nhập tên các bé, cách nhau bằng dấu phẩy (,)">
-  <button class="btn btn-outline-success" onclick="bulkPlayDogs()">☀️ Thả các bé</button>
-</div>
-
-<!-- Nút hiện/ẩn form upload -->
-<div class="text-center mb-3">
-  <button class="btn btn-outline-primary" onclick="toggleUploadPanel()">📸 Upload ảnh khách</button>
-</div>
-
-<!-- Form upload ảnh, mặc định ẩn -->
-<div id="uploadPanel" class="p-3 border rounded shadow" style="
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 500px;
-  background-color: #fff0f5;
-  z-index: 9999;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  border: 2px solid #ffc2d1;
-  border-radius: 16px;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.4s ease;
-">
-  <button onclick="toggleUploadPanel()" class="btn-close position-absolute" style="top:10px; right:10px;"></button>
-
-  <h4>📸 Upload nhiều ảnh khách</h4>
-
-  <div class="form-group mb-3">
-    <label for="fileInput">Chọn ảnh:</label>
-    <input type="file" id="fileInput" class="form-control" accept="image/*" multiple>
+  <div class="input-group mb-3" style="max-width:600px; margin:auto;">
+    <input type="text" id="bulkPlayInput" class="form-control" placeholder="Nhập tên các bé, cách nhau bằng dấu phẩy (,)">
+    <button class="btn btn-outline-success" onclick="bulkPlayDogs()"><i class="fas fa-play me-2"></i> Thả các bé</button>
   </div>
 
-  <div class="form-group mb-3">
-    <label for="tenAnh">Tên nhóm ảnh (VD: khach1):</label>
-    <input type="text" id="tenAnh" class="form-control" placeholder="Nhập tên nhóm ảnh">
+  <div id="uploadPanel" class="p-3 border rounded shadow" style="
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    background-color: #fff0f5;
+    z-index: 9999;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border: 2px solid #ffc2d1;
+    border-radius: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s ease;
+  ">
+    <button onclick="toggleUploadPanel()" class="btn-close position-absolute" style="top:10px; right:10px;"></button>
+    <h4><i class="fas fa-camera me-2"></i> Upload nhiều ảnh khách</h4>
+    <div class="form-group mb-3">
+      <label for="fileInput">Chọn ảnh:</label>
+      <input type="file" id="fileInput" class="form-control" accept="image/*" multiple>
+    </div>
+    <div class="form-group mb-3">
+      <label for="tenAnh">Tên nhóm ảnh (VD: khach1):</label>
+      <input type="text" id="tenAnh" class="form-control" placeholder="Nhập tên nhóm ảnh">
+    </div>
+    <button class="btn btn-primary" onclick="uploadImages()"><i class="fas fa-upload me-2"></i> Upload và Lưu</button>
+    <div id="uploadResult" class="mt-4"></div>
   </div>
-
-  <button class="btn btn-primary" onclick="uploadImages()">📤 Upload và Lưu</button>
-
-  <div id="uploadResult" class="mt-4"></div>
-</div>
-
 
   <div class="input-group mb-4 shadow-lg" style="max-width: 500px; margin: auto; font-size: 1.2rem;">
     <span class="input-group-text bg-pink">
-      <i class="fas fa-dog"></i>
+      <i class="fas fa-search"></i>
     </span>
     <input type="text" id="searchInput" class="form-control py-2" placeholder="Tìm theo tên bé cún..." oninput="renderFilteredDogs()">
   </div>
@@ -241,10 +343,8 @@
         <th>Tên</th>
         <th>Giống</th>
         <th>Tính cách</th>
-
         <th>Trạng thái</th>
-                      <th>cảm xúc</th>
-
+        <th>cảm xúc</th>
         <th>Lượt chọn</th>
         <th>Hành động</th>
       </tr>
@@ -252,7 +352,6 @@
     <tbody id="dog-table-body"></tbody>
   </table>
 
-  <!-- Modal -->
   <div class="modal fade" id="dogModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -277,7 +376,6 @@
     </div>
   </div>
 
-  <!-- Firebase + Bootstrap -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -336,7 +434,6 @@
  function renderFilteredDogs() {
   const keyword = searchInput.value.toLowerCase().trim();
   tableBody.innerHTML = "";
-
   const dogList = Object.entries(allDogs)
     .filter(([_, dog]) => {
       const combined = `${dog.name} ${dog.breed || ''} ${dog.trait || ''} ${dog.emotion || ''}`.toLowerCase();
@@ -347,13 +444,10 @@
       if (a.status !== 'play' && b.status === 'play') return 1;
       return 0;
     });
-
   let total = Object.keys(allDogs).length;
   let playing = Object.values(allDogs).filter(d => d.status === 'play').length;
-
   for (const [id, dog] of dogList) {
     const count = dogCounts[dog.name] || 0;
-
     tableBody.innerHTML += `
       <tr>
         <td data-label="Ảnh"><img src="${dog.image || '#'}" alt="${dog.name}"></td>
@@ -365,22 +459,19 @@
         <td data-label="Lượt chọn">${count}</td>
         <td data-label="Hành động">
           <button class="btn btn-sm ${dog.status === 'play' ? 'btn-secondary' : 'btn-success'}" onclick="toggleStatus('${id}', '${dog.status}')">
-            ${dog.status === 'play' ? '🌙 Cho nghỉ' : '☀️ Xuống chơi'}
+            <i class="fas ${dog.status === 'play' ? 'fa-bed' : 'fa-play'} me-2"></i> ${dog.status === 'play' ? 'Cho nghỉ' : 'Xuống chơi'}
           </button>
-          <button class="btn btn-sm btn-warning" onclick="openForm('${id}')">✏️</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteDog('${id}')">🗑️</button>
+          <button class="btn btn-sm btn-warning" onclick="openForm('${id}')"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-sm btn-danger" onclick="deleteDog('${id}')"><i class="fas fa-trash-alt"></i></button>
         </td>
       </tr>`;
   }
-
-  statusDisplay.innerHTML = `🐾 Đang thả <strong>${playing}</strong> / Tổng <strong>${total}</strong> bé`;
+  statusDisplay.innerHTML = `<i class="fas fa-paw me-2"></i> Đang thả <strong>${playing}</strong> / Tổng <strong>${total}</strong> bé`;
 }
-
   function toggleStatus(id, status) {
     const newStatus = status === "play" ? "rest" : "play";
     db.ref("dogs/" + id).update({ status: newStatus });
   }
-
   function openForm(id = "") {
     document.getElementById("dog-id").value = id;
     if (id && allDogs[id]) {
@@ -391,7 +482,6 @@
       document.getElementById("dog-trait").value = d.trait || "";
       document.getElementById("dog-image").value = d.image;
       document.getElementById("dog-emotion").value = d.emotion || "";
-
     } else {
       document.getElementById("form-title").innerText = "Thêm chó mới";
       document.getElementById("dog-name").value = "";
@@ -399,25 +489,22 @@
       document.getElementById("dog-trait").value = "";
       document.getElementById("dog-image").value = "";
       document.getElementById("dog-emotion").value = "";
-
     }
     dogModal.show();
   }
-
   function submitDog() {
     const id = document.getElementById("dog-id").value;
     const name = document.getElementById("dog-name").value;
     const breed = document.getElementById("dog-breed").value;
     const trait = document.getElementById("dog-trait").value;
     const image = document.getElementById("dog-image").value;
-const emotion = document.getElementById("dog-emotion").value;
-const data = { name, breed, trait, image, emotion, status: "rest" };
+    const emotion = document.getElementById("dog-emotion").value;
+    const data = { name, breed, trait, image, emotion, status: "rest" };
     if (id) db.ref("dogs/" + id).update(data);
     else db.ref("dogs").push(data);
     dogModal.hide();
     Swal.fire({ icon: 'success', title: 'Đã lưu thông tin chó!', timer: 1500, showConfirmButton: false });
   }
-
   function deleteDog(id) {
     Swal.fire({
       title: 'Xác nhận xoá?',
@@ -434,11 +521,16 @@ const data = { name, breed, trait, image, emotion, status: "rest" };
       }
     });
   }
-function toggleUploadPanel() {
-  window.location.href = "https://thanhchan791791.github.io/hihihi/upload/";
-}
-
-
+  function toggleUploadPanel() {
+    const uploadPanel = document.getElementById("uploadPanel");
+    if (uploadPanel.style.opacity === "1") {
+      uploadPanel.style.opacity = "0";
+      uploadPanel.style.pointerEvents = "none";
+    } else {
+      uploadPanel.style.opacity = "1";
+      uploadPanel.style.pointerEvents = "auto";
+    }
+  }
   function clearNotifications() {
     Swal.fire({
       title: 'Xác nhận?',
@@ -454,7 +546,6 @@ function toggleUploadPanel() {
       }
     });
   }
-
   function setAllToRest() {
     Swal.fire({
       title: 'Cho tất cả nghỉ?',
@@ -476,7 +567,6 @@ function toggleUploadPanel() {
       }
     });
   }
-
   function formatTime(input) {
     const date = new Date(input);
     if (!isNaN(date.getTime())) {
@@ -489,7 +579,6 @@ function toggleUploadPanel() {
     }
     return input;
   }
-
   function loadNotifications() {
     db.ref("photoRequests").limitToLast(10).on("value", snapshot => {
       const data = snapshot.val();
@@ -509,56 +598,47 @@ function toggleUploadPanel() {
     });
   }
   function bulkPlayDogs() {
-  const input = document.getElementById("bulkPlayInput").value;
-  if (!input.trim()) return Swal.fire("⚠️ Chưa nhập tên nào!");
-
-  const names = input.split(",").map(n => n.trim().toLowerCase());
-  let updates = {};
-  let matched = 0;
-
-  for (const [id, dog] of Object.entries(allDogs)) {
-    if (names.includes(dog.name.toLowerCase())) {
-      updates[`dogs/${id}/status`] = "play";
-      matched++;
+    const input = document.getElementById("bulkPlayInput").value;
+    if (!input.trim()) return Swal.fire("⚠️ Chưa nhập tên nào!");
+    const names = input.split(",").map(n => n.trim().toLowerCase());
+    let updates = {};
+    let matched = 0;
+    for (const [id, dog] of Object.entries(allDogs)) {
+      if (names.includes(dog.name.toLowerCase())) {
+        updates[`dogs/${id}/status`] = "play";
+        matched++;
+      }
     }
-  }
-
-  if (matched === 0) {
-    Swal.fire("😕 Không tìm thấy bé nào trùng tên.");
-    return;
-  }
-
-  firebase.database().ref().update(updates)
-    .then(() => {
-      Swal.fire({
-        icon: 'success',
-        title: `☀️ Đã thả ${matched} bé xuống chơi!`,
-        timer: 2000,
-        showConfirmButton: false
+    if (matched === 0) {
+      Swal.fire("😕 Không tìm thấy bé nào trùng tên.");
+      return;
+    }
+    firebase.database().ref().update(updates)
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: `☀️ Đã thả ${matched} bé xuống chơi!`,
+          timer: 2000,
+          showConfirmButton: false
+        });
+      })
+      .catch(err => {
+        Swal.fire("❌ Lỗi", err.message, "error");
       });
-    })
-    .catch(err => {
-      Swal.fire("❌ Lỗi", err.message, "error");
-    });
-}
-
- async function uploadImages() {
+  }
+  async function uploadImages() {
     const files = document.getElementById("fileInput").files;
     const ten = document.getElementById("tenAnh").value.trim().toLowerCase();
     const apiKey = "b5107933ec7b5e31a4bb280bf121e183"; // imgbb API key
-
     if (files.length === 0 || !ten) {
       alert("Vui lòng chọn ít nhất 1 ảnh và nhập tên nhóm!");
       return;
     }
-
     let uploadedLinks = [];
     document.getElementById("uploadResult").innerHTML = "<p>⏳ Đang tải ảnh lên...</p>";
-
     for (let i = 0; i < files.length; i++) {
       const formData = new FormData();
       formData.append("image", files[i]);
-
       try {
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
           method: "POST",
@@ -574,27 +654,53 @@ function toggleUploadPanel() {
         console.error("Lỗi upload:", error);
       }
     }
-
     if (uploadedLinks.length > 0) {
       await firebase.database().ref("anhKhach/" + ten).set(uploadedLinks);
-
-     Swal.fire({
-  icon: 'success',
-  title: `✅ Đã upload ${uploadedLinks.length} ảnh`,
-  text: `Nhóm ảnh: ${ten}`,
-  showConfirmButton: false,
-  timer: 2000
-});
-toggleUploadPanel(); // Ẩn form sau khi upload
-
+      Swal.fire({
+        icon: 'success',
+        title: `✅ Đã upload ${uploadedLinks.length} ảnh`,
+        text: `Nhóm ảnh: ${ten}`,
+        showConfirmButton: false,
+        timer: 2000
+      });
+      toggleUploadPanel(); // Ẩn form sau khi upload
     } else {
       document.getElementById("uploadResult").innerHTML = "<p style='color:red;'>❌ Không upload được ảnh nào!</p>";
     }
   }
+
+  // New function for menu
+  function toggleMenu() {
+    const menu = document.getElementById('menuDropdown');
+    menu.classList.toggle('show');
+  }
+
+  // Function to close the menu
+  function closeMenu() {
+    const menu = document.getElementById('menuDropdown');
+    menu.classList.remove('show');
+  }
+
+  // New function to toggle notifications
+  function toggleNotifications() {
+      notificationBox.classList.toggle('hidden');
+  }
+
+  // Close menu if clicked outside
+  document.addEventListener('click', function(event) {
+    const menuContainer = document.querySelector('.menu-container');
+    const notificationToggle = document.querySelector('.notification-toggle');
+    const menuDropdown = document.getElementById('menuDropdown');
+
+    // Check if the clicked element is outside the menu and notification bell
+    if (!menuContainer.contains(event.target) && !notificationToggle.contains(event.target) && menuDropdown.classList.contains('show')) {
+      closeMenu();
+    }
+  });
+
   loadDogs();
   loadCounts();
   loadNotifications();
 </script>
-
 </body>
 </html>
