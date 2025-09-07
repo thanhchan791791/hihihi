@@ -1,524 +1,475 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chọn chó chụp ảnh</title>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>Chọn chó chụp ảnh</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-  <style>
-  body {
-    font-family: 'Comic Sans MS', cursive;
-    background: linear-gradient(to bottom, #fffafc, #ffeef5); /* Trắng kem và hồng nhạt */
-    margin: 0;
-    padding: 20px 20px 100px;
-    text-align: center;
-    color: #4a3a41; /* Nâu xám */
-}
+      <style>
+            body {
+                  font-family: 'Comic Sans MS', cursive;
+                  background: linear-gradient(to bottom, #fffafc, #ffeef5); /* Trắng kem và hồng nhạt */
+                  margin: 0;
+                  padding: 20px 20px 100px;
+                  text-align: center;
+                  color: #4a3a41; /* Nâu xám */
+                  overflow-x: hidden;
+            }
+           
+            .main-content > * {
+                  opacity: 0;
+                  transform: translateY(20px);
+                  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            }
 
-h1 {
-    font-size: 2.2em;
-    color: #a36173; /* Hồng đất */
-    margin-bottom: 15px;
-    font-weight: bold;
-}
+            .main-content.loaded > * {
+                  opacity: 1;
+                  transform: translateY(0);
+            }
 
-#view-photos-btn {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 10px 25px;
-  font-size: 1em;
-  font-weight: bold;
-  border-radius: 30px;
-  background-color: #f7a3b8; /* Hồng nhạt */
-  color: #fff;
-  border: 2px solid #f7a3b8;
-  box-shadow: 0 4px 10px rgba(247, 163, 184, 0.4);
-  transition: all 0.3s ease;
-  text-decoration: none;
-}
+            .main-content.loaded > h1 { transition-delay: 0.1s; }
+            .main-content.loaded > .top-buttons-container { transition-delay: 0.2s; }
+            .main-content.loaded > .d-flex { transition-delay: 0.3s; }
+            .main-content.loaded > div:nth-of-type(1) { transition-delay: 0.4s; }
+            .main-content.loaded > div:nth-of-type(2) { transition-delay: 0.5s; }
+            .main-content.loaded > div:nth-of-type(3) { transition-delay: 0.6s; }
+            .main-content.loaded > #dog-list { transition-delay: 0.7s; }
 
-#view-photos-btn:hover {
-  background-color: #d86c8f; /* Hồng đậm hơn */
-  border-color: #d86c8f;
-  color: white;
-  transform: scale(1.05);
-}
+            h1 {
+                  font-size: 2.2em;
+                  color: #a36173; /* Hồng đất */
+                  margin-bottom: 15px;
+                  font-weight: bold;
+            }
 
-.btn-view-photos {
-  font-size: 1.3em;
-  font-weight: bold;
-  padding: 14px 32px;
-  border-radius: 30px;
-  background: linear-gradient(to right, #d86c8f, #a36173); /* Gradient hồng đậm */
-  color: white;
-  border: none;
-  box-shadow: 0 6px 15px rgba(216, 108, 143, 0.5);
-  transition: all 0.3s ease;
-  letter-spacing: 0.5px;
-  text-transform: none;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-}
+            #view-photos-btn {
+                  display: inline-block;
+                  margin-top: 10px;
+                  padding: 10px 25px;
+                  font-size: 1em;
+                  font-weight: bold;
+                  border-radius: 30px;
+                  background-color: #f7a3b8; /* Hồng nhạt */
+                  color: #fff;
+                  border: 2px solid #f7a3b8;
+                  box-shadow: 0 4px 10px rgba(247, 163, 184, 0.4);
+                  transition: all 0.3s ease;
+                  text-decoration: none;
+            }
 
-.btn-view-photos i {
-  animation: bounceIcon 1.5s infinite;
-}
+            #view-photos-btn:hover {
+                  background-color: #d86c8f; /* Hồng đậm hơn */
+                  border-color: #d86c8f;
+                  color: white;
+                  transform: scale(1.05);
+            }
 
-.btn-view-photos:hover {
-  background: linear-gradient(to right, #a36173, #8a4e61);
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(163, 97, 115, 0.6);
-}
+            .btn-view-photos {
+                  font-size: 1.3em;
+                  font-weight: bold;
+                  padding: 14px 32px;
+                  border-radius: 30px;
+                  background: linear-gradient(to right, #d86c8f, #a36173); /* Gradient hồng đậm */
+                  color: white;
+                  border: none;
+                  box-shadow: 0 6px 15px rgba(216, 108, 143, 0.5);
+                  transition: all 0.3s ease;
+                  letter-spacing: 0.5px;
+                  text-transform: none;
+                  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            }
 
-@keyframes bounceIcon {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
+            .btn-view-photos i {
+                  animation: bounceIcon 1.5s infinite;
+            }
 
-#search-input {
-    width: 90%;
-    max-width: 400px;
-    padding: 12px 20px;
-    font-size: 1em;
-    border-radius: 30px;
-    border: 2px solid #f7d8e2; /* Hồng rất nhạt */
-    background-color: #fff0f7; /* Hồng nhạt */
-    color: #4a3a41;
-}
+            .btn-view-photos:hover {
+                  background: linear-gradient(to right, #a36173, #8a4e61);
+                  transform: scale(1.05);
+                  box-shadow: 0 8px 20px rgba(163, 97, 115, 0.6);
+            }
 
-#seat-info {
-    margin-top: 10px;
-    font-weight: bold;
-    color: #4a3a41;
-    font-size: 1.1em;
-}
+            @keyframes bounceIcon {
+                  0%, 100% { transform: translateY(0); }
+                  50% { transform: translateY(-4px); }
+            }
 
-#dog-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-}
+            #search-input {
+                  width: 90%;
+                  max-width: 400px;
+                  padding: 12px 20px;
+                  font-size: 1em;
+                  border-radius: 30px;
+                  border: 2px solid #f7d8e2; /* Hồng rất nhạt */
+                  background-color: #fff0f7; /* Hồng nhạt */
+                  color: #4a3a41;
+            }
 
-.dog-card {
-    background: #fff8fc; /* Trắng kem */
-    padding: 10px;
-    border-radius: 20px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    position: relative;
-    overflow: hidden;
-}
+            #seat-info {
+                  margin-top: 10px;
+                  font-weight: bold;
+                  color: #4a3a41;
+                  font-size: 1.1em;
+            }
 
-.dog-card img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    border-radius: 15px;
-}
+            #dog-list {
+                  display: grid;
+                  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                  gap: 20px;
+            }
 
-.dog-card h3 {
-    margin: 5px 0;
-    color: #a36173;
-}
-.slide-section {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s ease, padding 0.5s ease;
-  padding: 0;
-}
+            .dog-card {
+                  background: #fff8fc; /* Trắng kem */
+                  padding: 10px;
+                  border-radius: 20px;
+                  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+                  position: relative;
+                  overflow: hidden;
+                  cursor: pointer;
+            }
 
-.slide-section.show {
-  max-height: 300px;
-  padding: 20px 0;
-}
+            .dog-card img {
+                  width: 100%;
+                  height: auto;
+                  object-fit: contain;
+                  border-radius: 15px;
+            }
 
-.dog-card p {
-    margin: 0;
-    font-size: 0.85em;
-    color: #555;
-}
+            .dog-card h3 {
+                  margin: 5px 0;
+                  color: #a36173;
+            }
+            .slide-section {
+                  max-height: 0;
+                  overflow: hidden;
+                  transition: max-height 0.5s ease, padding 0.5s ease;
+                  padding: 0;
+            }
 
-.dog-card.selected {
-    border: 3px solid #d86c8f; /* Hồng đậm hơn */
-}
+            .slide-section.show {
+                  max-height: 300px;
+                  padding: 20px 0;
+            }
 
-.dog-card.sleeping {
-    opacity: 0.8;
-    filter: grayscale(10%) blur(0.5px);
-    transition: 0.3s ease;
-}
+            .dog-card p {
+                  margin: 0;
+                  font-size: 0.85em;
+                  color: #555;
+            }
 
-.dog-card.sleeping::before {
-    content: "💤 Khò khò";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.4em;
-    font-weight: bold;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 8px 15px;
-    border-radius: 20px;
-    color: #a36173;
-    font-family: 'Comic Sans MS', cursive;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    z-index: 3;
-    display: block;
-}
+            .dog-card.selected {
+                  border: 3px solid #d86c8f; /* Hồng đậm hơn */
+            }
 
-.dog-card.sleeping.selected::before {
-    display: none;
-}
+            .dog-card.sleeping {
+                  opacity: 0.8;
+                  filter: grayscale(10%) blur(0.5px);
+                  transition: 0.3s ease;
+                  cursor: not-allowed;
+            }
 
-.dog-image-wrapper {
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  overflow: visible;
-}
+            .dog-card.sleeping::before {
+                  content: "💤 Khò khò";
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  font-size: 1.4em;
+                  font-weight: bold;
+                  background: rgba(255, 255, 255, 0.8);
+                  padding: 8px 15px;
+                  border-radius: 20px;
+                  color: #a36173;
+                  font-family: 'Comic Sans MS', cursive;
+                  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                  z-index: 3;
+                  display: block;
+            }
 
-.selected-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
-    background: rgba(255, 245, 250, 0.9); /* Hồng rất nhạt */
-    color: #a36173;
-    padding: 10px 22px;
-    border-radius: 25px;
-    font-size: 1.1em;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Comic Sans MS', cursive;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-    opacity: 0;
-    transition: all 0.35s ease-in-out;
-    z-index: 2;
-    backdrop-filter: blur(2px);
-}
+            .dog-card.sleeping.selected::before {
+                  display: none;
+            }
 
-.dog-card.selected .selected-overlay {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-}
+            .dog-image-wrapper {
+                  background-size: contain;
+                  background-repeat: no-repeat;
+                  background-position: center;
+                  overflow: visible;
+            }
 
-.selected-overlay i {
-    color: #d86c8f;
-    font-size: 1.3em;
-    margin-right: 8px;
-}
+            .selected-overlay {
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%) scale(0.9);
+                  background: rgba(255, 245, 250, 0.9); /* Hồng rất nhạt */
+                  color: #a36173;
+                  padding: 10px 22px;
+                  border-radius: 25px;
+                  font-size: 1.1em;
+                  font-weight: bold;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-family: 'Comic Sans MS', cursive;
+                  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+                  opacity: 0;
+                  transition: all 0.35s ease-in-out;
+                  z-index: 2;
+                  backdrop-filter: blur(2px);
+            }
 
-#submit-btn {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #d86c8f;
-    color: white;
-    padding: 12px 30px;
-    border: none;
-    border-radius: 30px;
-    font-size: 1.2em;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
+            .dog-card.selected .selected-overlay {
+                  opacity: 1;
+                  transform: translate(-50%, -50%) scale(1);
+            }
 
-#submit-btn:hover {
-    background-color: #a36173;
-}
+            .selected-overlay i {
+                  color: #d86c8f;
+                  font-size: 1.3em;
+                  margin-right: 8px;
+            }
 
-#selected-count {
-    position: fixed;
-    top: 20px;
-    right: 50%;
-    transform: translateX(50%);
-    background: #fff0f7;
-    color: #a36173;
-    padding: 10px 20px;
-    border-radius: 30px;
-    font-weight: bold;
-    display: none;
-}
+            .bottom-buttons-container {
+                  position: fixed;
+                  bottom: 20px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  display: flex;
+                  gap: 15px;
+                  z-index: 1000;
+            }
 
-#alert-box-container {
-    position: fixed;
-    top: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-    transition: top 0.5s ease, opacity 0.3s ease;
-    opacity: 0;
-}
+            #submit-btn {
+                  background-color: #d86c8f;
+                  color: white;
+                  padding: 12px 30px;
+                  border: none;
+                  border-radius: 30px;
+                  font-size: 1.2em;
+                  cursor: pointer;
+                  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                  transition: background-color 0.3s, transform 0.3s;
+                  display: none; /* Ẩn nút ban đầu */
+            }
 
-#alert-box-container.show {
-    top: 30px;
-    opacity: 1;
-    transform: translateX(-50%) scale(1.05);
-}
+            #submit-btn:hover {
+                  background-color: #a36173;
+                  transform: scale(1.05);
+            }
+            
+            #requestStaffBtn {
+                  font-size: 1.2em !important;
+                  font-weight: bold !important;
+                  padding: 12px 30px !important;
+                  border-radius: 30px !important;
+                  background: linear-gradient(to right, #4CAF50, #81C784) !important;
+                  color: white !important;
+                  border: none !important;
+                  box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+                  transition: all 0.3s ease !important;
+                  letter-spacing: 0.5px !important;
+                  text-transform: none !important;
+                  text-shadow: 1px 1px 3px rgba(0,0,0,0.3) !important;
+            }
 
-#alert-box {
-    background: #fff8fc;
-    border: 2px solid #f7a3b8;
-    color: #a36173;
-    font-size: 1em;
-    font-weight: bold;
-    border-radius: 25px;
-    padding: 12px 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
+            #requestStaffBtn:hover {
+                  background: linear-gradient(to right, #388E3C, #66BB6A) !important;
+                  transform: scale(1.05) !important;
+            }
 
-#photoOverlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 99999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+            #selected-count {
+                  position: fixed;
+                  top: 20px;
+                  right: 50%;
+                  transform: translateX(50%);
+                  background: #fff0f7;
+                  color: #a36173;
+                  padding: 10px 20px;
+                  border-radius: 30px;
+                  font-weight: bold;
+                  display: none;
+            }
 
-#photoOverlay img {
-    height: 80vh;
-    object-fit: contain;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-}
+            #alert-box-container {
+                  position: fixed;
+                  top: -100px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  z-index: 9999;
+                  width: 90%;
+                  max-width: 400px;
+                  text-align: center;
+                  transition: top 0.5s ease, opacity 0.3s ease;
+                  opacity: 0;
+            }
 
-.carousel-inner {
-    border-radius: 20px;
-    overflow: hidden;
-}
-.section-spacing {
-  margin-bottom: 30px;
-}
+            #alert-box-container.show {
+                  top: 30px;
+                  opacity: 1;
+                  transform: translateX(-50%) scale(1.05);
+            }
 
-#tapOverlayText {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2em;
-    font-weight: bold;
-    color: white;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
-    opacity: 0.85;
-    z-index: 100001;
-    animation: pulseText 1.5s infinite;
-    pointer-events: none;
-    font-family: 'Comic Sans MS', cursive;
-}
+            #alert-box {
+                  background: #fff8fc;
+                  border: 2px solid #f7a3b8;
+                  color: #a36173;
+                  font-size: 1em;
+                  font-weight: bold;
+                  border-radius: 25px;
+                  padding: 12px 20px;
+                  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
 
-@keyframes pulseText {
-    0%, 100% { opacity: 0.85; }
-    50% { opacity: 0.4; }
-}
+            #photoOverlay {
+                  position: fixed;
+                  top: 0; left: 0;
+                  width: 100vw; height: 100vh;
+                  background: rgba(0, 0, 0, 0.85);
+                  z-index: 99999;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  transition: opacity 0.5s ease;
+                  opacity: 1;
+            }
+            
+            #photoOverlay.fade-out {
+                  opacity: 0;
+                  pointer-events: none;
+            }
 
-/* New Chat Bubble CSS */
-.chat-bubble {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    background-color: #d86c8f;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5em;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    z-index: 1000;
-    transition: transform 0.2s ease-in-out;
-    animation: popInOut 2s infinite;
-}
-.chat-bubble:hover {
-    transform: scale(1.1);
-}
-@keyframes popInOut {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
+            #photoOverlay img {
+                  height: 80vh;
+                  object-fit: contain;
+                  border-radius: 20px;
+                  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            }
 
-/* Chat Modal Custom Style */
-#chatModal .modal-content {
-    border-radius: 15px;
-    background-color: #fff8fc;
-    border: none;
-    font-family: 'Comic Sans MS', cursive;
-}
-#chatModal .modal-header {
-    background-color: #d86c8f;
-    color: white;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    border-bottom: none;
-}
-#chatModal .modal-body {
-    padding: 15px;
-    max-height: 400px;
-    overflow-y: auto;
-}
-.chat-message {
-    padding: 8px 12px;
-    border-radius: 15px;
-    margin-bottom: 10px;
-    max-width: 80%;
-    word-wrap: break-word;
-}
-.chat-message.system {
-    background-color: #f7d8e2;
-    color: #a36173;
-    align-self: flex-start;
-    text-align: left;
-}
-.chat-message.user {
-    background-color: #fff0f7;
-    color: #4a3a41;
-    margin-left: auto;
-    text-align: right;
-}
-.chat-input-group {
-    display: flex;
-    align-items: center;
-    border-top: 1px solid #f7d8e2;
-    padding-top: 10px;
-}
-.chat-input-group input {
-    flex-grow: 1;
-    border-radius: 20px;
-    border: 2px solid #d86c8f;
-    padding: 8px 15px;
-    font-family: 'Comic Sans MS', cursive;
-    background-color: #fffafc;
-    color: #4a3a41;
-}
-.chat-input-group button {
-    margin-left: 10px;
-    border: none;
-    background-color: #d86c8f;
-    color: white;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-    </style>
+            .carousel-inner {
+                  border-radius: 20px;
+                  overflow: hidden;
+            }
+            .section-spacing {
+                  margin-bottom: 30px;
+            }
+
+            #tapOverlayText {
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  font-size: 2em;
+                  font-weight: bold;
+                  color: white;
+                  text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+                  opacity: 0.85;
+                  z-index: 100001;
+                  animation: pulseText 1.5s infinite;
+                  pointer-events: none;
+                  font-family: 'Comic Sans MS', cursive;
+            }
+
+            @keyframes pulseText {
+                  0%, 100% { opacity: 0.85; }
+                  50% { opacity: 0.4; }
+            }
+
+            .top-buttons-container {
+                  margin-bottom: 20px;
+            }
+      </style>
 </head>
 <body>
 <div id="photoOverlay">
-  <div id="carouselPhotos" class="carousel slide w-100" style="max-width: 900px;" data-bs-ride="carousel" data-bs-interval="2500" data-bs-wrap="true">
-    <div class="carousel-inner"></div>
-  </div>
-  <div id="tapOverlayText">Chạm vào màn hình để tiếp tục</div>
+      <div id="carouselPhotos" class="carousel slide w-100" style="max-width: 900px;" data-bs-ride="carousel" data-bs-interval="2500" data-bs-wrap="true">
+            <div class="carousel-inner"></div>
+      </div>
+      <div id="tapOverlayText">Chạm vào màn hình để tiếp tục</div>
 </div>
 
-<h1>Chọn các bé iu để chụp ảnh</h1>
-<div class="d-flex justify-content-center gap-3 section-spacing">
-  <button id="toggleGuestInput" class="btn btn-view-photos">
-    <i class="fa-solid fa-image me-2"></i> Xem ảnh khách
-  </button>
+<div class="main-content">
+      <h1>Chọn các bé iu để chụp ảnh</h1>
+      <div class="top-buttons-container">
+            <button id="requestStaffBtn">
+                  <i class="fa-solid fa-bell me-2"></i>
+                  <span>Gọi nhân viên</span>
+            </button>
+      </div>
 
-  <button id="randomAlbumBtn" class="btn btn-view-photos" style="display: none; background: linear-gradient(to right, #f2c7d5, #d86c8f);">
-    <i class="fa-solid fa-shuffle me-2"></i> Xem album ngẫu nhiên
-  </button>
+      <div class="d-flex justify-content-center gap-3 section-spacing">
+            <button id="toggleGuestInput" class="btn btn-view-photos">
+                  <i class="fa-solid fa-image me-2"></i> Xem ảnh khách
+            </button>
+            <button id="randomAlbumBtn" class="btn btn-view-photos" style="display: none; background: linear-gradient(to right, #f2c7d5, #d86c8f);">
+                  <i class="fa-solid fa-shuffle me-2"></i> Xem album ngẫu nhiên
+            </button>
+      </div>
+
+      <div id="guestLookupSection" class="slide-section text-center">
+            <input type="text" id="guestNameInput" placeholder="Nhập tên bạn để xem ảnh"
+                       style="padding: 10px 20px; border-radius: 30px; border: 2px solid #f7d8e2; background-color: #fff0f7; color: #4a3a41; max-width: 400px; width: 80%;" />
+            <button onclick="xemAlbum()" style="margin-left: 10px; padding: 10px 25px; border-radius: 30px; background-color: #d86c8f; color: white; border: none; font-weight: bold;">
+                  🔍 Tìm ảnh
+            </button>
+            <p id="errorText" style="color: #c0392b; margin-top: 10px;"></p>
+
+            <div id="qrContainer" class="slide-section">
+                  <p>Mã QR dẫn tới album của bạn:</p>
+                  <div id="qrcode"></div>
+            </div>
+      </div>
+
+      <div>
+            <input type="text" id="search-input" placeholder="Nhập tên, giống hoặc tính cách bé cún..." />
+      </div>
+
+      <ul id="suggestion-list" style="list-style: none; padding-left: 0; margin-top: 10px; text-align: left; max-width: 400px; margin-inline: auto;"></ul>
+
+      <div id="seat-info">Vị trí đang tải...</div>
+
+      <div style="margin: 30px auto 20px; font-size: 1.1em; color: #a36173; font-weight: bold;">
+            Dưới đây là danh sách các bé cún đang chờ được chọn nè!
+      </div>
+
+      <div id="dog-list"></div>
+
+      <div id="alert-box-container">
+            <div id="alert-box" class="alert alert-success" role="alert">
+                  <i class="fa-solid fa-circle-check me-2"></i>
+                  <span id="alert-message">Đã gửi yêu cầu!</span>
+            </div>
+      </div>
+
+      <div class="bottom-buttons-container">
+            <button id="submit-btn">
+                  <i class="fa-solid fa-dog me-2"></i>
+                  <span>Chốt các bé iu 💖</span>
+            </button>
+      </div>
 </div>
-
-
-<div id="guestLookupSection" class="slide-section text-center">
-  <input type="text" id="guestNameInput" placeholder="Nhập tên bạn để xem ảnh"
-    style="padding: 10px 20px; border-radius: 30px; border: 2px solid #f7d8e2; background-color: #fff0f7; color: #4a3a41; max-width: 400px; width: 80%;" />
-  <button onclick="xemAlbum()" style="margin-left: 10px; padding: 10px 25px; border-radius: 30px; background-color: #d86c8f; color: white; border: none; font-weight: bold;">
-    🔍 Tìm ảnh
-  </button>
-  <p id="errorText" style="color: #c0392b; margin-top: 10px;"></p>
-
- <div id="qrContainer" class="slide-section">
-
-    <p>Mã QR dẫn tới album của bạn:</p>
-    <div id="qrcode"></div>
-  </div>
-</div>
-
-
-<div>
-  <input type="text" id="search-input" placeholder="Nhập tên, giống hoặc tính cách bé cún..." />
-</div>
-
-<ul id="suggestion-list" style="list-style: none; padding-left: 0; margin-top: 10px; text-align: left; max-width: 400px; margin-inline: auto;"></ul>
-
-<div id="seat-info">Vị trí đang tải...</div>
-
-<div style="margin: 30px auto 20px; font-size: 1.1em; color: #a36173; font-weight: bold;">
-  Dưới đây là danh sách các bé cún đang chờ được chọn nè!
-</div>
-
-<div id="dog-list"></div>
-
-<div id="alert-box-container">
-  <div id="alert-box" class="alert alert-success" role="alert">
-    <i class="fa-solid fa-circle-check me-2"></i>
-    <span id="alert-message">Đã gửi yêu cầu!</span>
-  </div>
-</div>
-
-<button id="submit-btn">
-  <i class="fa-solid fa-dog me-2"></i>
-  <span>Chốt các bé iu 💖</span>
-</button>
 
 <div id="selected-count">Đã chọn: 0 bé</div>
 
 <div class="modal fade" id="sleepModal" tabindex="-1" aria-labelledby="sleepModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="border-radius: 20px;">
-      <div class="modal-header" style="background-color: #f7a3b8;">
-        <h5 class="modal-title" id="sleepModalLabel">💤 Bé đang ngủ</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px;">
+                  <div class="modal-header" style="background-color: #f7a3b8;">
+                        <h5 class="modal-title" id="sleepModalLabel">💤 Bé đang ngủ</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                  </div>
+                  <div class="modal-body text-start" id="sleepModalBody">
+                        </div>
+                  <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thôi để bé nghỉ</button>
+                        <button type="button" class="btn btn-pink" id="confirmSleepBtn" style="background-color: #d86c8f; color: white; display: none;">Vẫn chọn bé</button>
+                  </div>
+            </div>
       </div>
-      <div class="modal-body text-start" id="sleepModalBody">
-        </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thôi để bé nghỉ</button>
-        <button type="button" class="btn btn-pink" id="confirmSleepBtn" style="background-color: #d86c8f; color: white;">Vẫn chọn bé</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="chatBubble" class="chat-bubble">
-    <i class="fa-solid fa-comment-dots"></i>
-</div>
-
-<div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="chatModalLabel">Chat với Cherry Pet Coffee</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
-      </div>
-      <div class="modal-body d-flex flex-column">
-        <div class="chat-message system">
-            Chào bạn, mình là trợ lý ảo của Cherry Pet Coffee. 🥰 Bạn cần hỏi về bé cún nào không?
-        </div>
-      </div>
-      <div class="modal-footer chat-input-group">
-        <input type="text" id="chatInput" placeholder="Nhập tên bé cún...">
-        <button id="chatSendBtn"><i class="fa-solid fa-paper-plane"></i></button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -526,375 +477,330 @@ h1 {
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
-  authDomain: "dogs-be72b.firebaseapp.com",
-  databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
-  projectId: "dogs-be72b",
-  storageBucket: "dogs-be72b.appspot.com",
-  messagingSenderId: "1003873040746",
-  appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+      const firebaseConfig = {
+            apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+            authDomain: "dogs-be72b.firebaseapp.com",
+            databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+            projectId: "dogs-be72b",
+            storageBucket: "dogs-be72b.appspot.com",
+            messagingSenderId: "1003873040746",
+            appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
 
-const dogList = document.getElementById("dog-list");
-const searchInput = document.getElementById("search-input");
-const submitBtn = document.getElementById("submit-btn");
-const selectedCount = document.getElementById("selected-count");
-const seatInfo = document.getElementById("seat-info");
-const alertMessage = document.getElementById("alert-message");
+      const dogList = document.getElementById("dog-list");
+      const searchInput = document.getElementById("search-input");
+      const submitBtn = document.getElementById("submit-btn");
+      const requestStaffBtn = document.getElementById("requestStaffBtn");
+      const selectedCount = document.getElementById("selected-count");
+      const seatInfo = document.getElementById("seat-info");
+      const alertMessage = document.getElementById("alert-message");
+      const mainContent = document.querySelector(".main-content");
+      const photoOverlay = document.getElementById("photoOverlay");
 
-let selectedDogs = [];
-let allDogs = [];
+      let selectedDogs = [];
+      let allDogs = [];
+      let isPageLoaded = false;
 
-// Hiển thị cảnh báo Bootstrap
-function showBootstrapAlert(message, type = "success", duration = 3000) {
-  const container = document.getElementById("alert-box-container");
-  const alertBox = document.getElementById("alert-box");
-  alertMessage.textContent = message;
+      // Hiển thị cảnh báo Bootstrap
+      function showBootstrapAlert(message, type = "success", duration = 3000) {
+            const container = document.getElementById("alert-box-container");
+            const alertBox = document.getElementById("alert-box");
+            alertMessage.textContent = message;
 
-  const colors = {
-    success: ["#fff8fc", "#f7a3b8", "#a36173"],
-    warning: ["#fef8e7", "#ffc107", "#b66f00"],
-    danger:  ["#ffe0e0", "#ff6b6b", "#c0392b"]
-  };
+            const colors = {
+                  success: ["#fff8fc", "#f7a3b8", "#a36173"],
+                  warning: ["#fef8e7", "#ffc107", "#b66f00"],
+                  danger:   ["#ffe0e0", "#ff6b6b", "#c0392b"],
+                  info: ["#e3f2fd", "#2196F3", "#1565C0"]
+            };
 
-  const [bg, border, color] = colors[type] || colors.success;
-  alertBox.style.backgroundColor = bg;
-  alertBox.style.borderColor = border;
-  alertBox.style.color = color;
+            const [bg, border, color] = colors[type] || colors.success;
+            alertBox.style.backgroundColor = bg;
+            alertBox.style.borderColor = border;
+            alertBox.style.color = color;
 
-  container.classList.add("show");
-  setTimeout(() => container.classList.remove("show"), duration);
-}
-
-function updateSelectedCount() {
-  selectedCount.style.display = selectedDogs.length > 0 ? "block" : "none";
-  selectedCount.textContent = `Đã chọn: ${selectedDogs.length} bé`;
-}
-
-
-function getSeatFromHash() {
-  const hash = window.location.hash.toLowerCase();
-  const match = hash.match(/^#\/?([lr])(\d)$/);
-  if (match) {
-    const side = match[1] === "r" ? "Bên phải" : "Bên trái";
-    const table = `Bàn ${match[2]}`;
-    return { side, table };
-  }
-  return null;
-}
-
-function updateSeatDisplay() {
-  const seat = getSeatFromHash();
-  seatInfo.textContent = seat
-    ? `Vị trí của bạn: ${seat.side} - ${seat.table}`
-    : "Vị trí chưa xác định từ đường link!";
-}
-
-function renderDogs(filter = "") {
-  dogList.innerHTML = "";
-  const keywords = filter.toLowerCase().split(/\s+/).filter(k => k);
-
-  allDogs.filter(dog => {
-    const text = `${dog.name} ${dog.breed} ${dog.trait || dog.personality || ""}`.toLowerCase();
-    return keywords.every(k => text.includes(k));
-  }).forEach(dog => {
-    const div = document.createElement("div");
-    div.className = "dog-card";
-    div.dataset.name = dog.name;
-    if (selectedDogs.includes(dog.name)) div.classList.add("selected");
-    if (dog.status !== "play") div.classList.add("sleeping");
-
-    div.innerHTML = `
-      <div class="dog-image-wrapper">
-        <img src="${dog.image}" alt="${dog.name}" />
-<div class="selected-overlay"><i class="fa-solid fa-check-circle me-2"></i> Đã chọn</div>
-      </div>
-      <h3>${dog.name}</h3>
-      <p>Giống: ${dog.breed}</p>
-      <p>Tính cách: ${dog.trait || dog.personality || "Chưa cập nhật"}</p>
-    `;
-
-    div.addEventListener("click", () => {
-      const dogName = dog.name;
-      if (selectedDogs.includes(dogName)) {
-        selectedDogs = selectedDogs.filter(n => n !== dogName);
-        div.classList.remove("selected");
-        updateSelectedCount();
-        return;
+            container.classList.add("show");
+            setTimeout(() => container.classList.remove("show"), duration);
       }
 
-      if (selectedDogs.length >= 3) {
-        showBootstrapAlert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!", "warning");
-        return;
+      function updateSelectedCount() {
+            selectedCount.style.display = selectedDogs.length > 0 ? "block" : "none";
+            selectedCount.textContent = `Đã chọn: ${selectedDogs.length} bé`;
+
+            // Hiển thị/ẩn nút "Chốt các bé iu"
+            submitBtn.style.display = selectedDogs.length > 0 ? "inline-block" : "none";
       }
 
-      if (dog.status !== "play") {
-        const selectedSleepingCount = selectedDogs.filter(name => {
-          const d = allDogs.find(d => d.name === name);
-          return d && d.status !== "play";
-        }).length;
 
-        if (selectedSleepingCount >= 1) {
-          showBootstrapAlert("😴 Bạn chỉ được chọn 1 bé đang ngủ thôi nha!", "warning");
-          return;
-        }
-
-        const modalLabel = document.getElementById("sleepModalLabel");
-        const modalBody = document.getElementById("sleepModalBody");
-        const confirmSleepBtn = document.getElementById("confirmSleepBtn");
-
-        modalLabel.textContent = `💤 Bé "${dogName}" đang ngủ`;
-        modalBody.innerHTML = `Bạn vẫn muốn chọn <strong>${dogName}</strong>?`;
-
-        const bsModal = new bootstrap.Modal(document.getElementById("sleepModal"));
-        bsModal.show();
-
-        confirmSleepBtn.onclick = () => {
-          selectedDogs.push(dogName);
-          div.classList.add("selected");
-          updateSelectedCount();
-          bsModal.hide();
-        };
-        return;
+      function getSeatFromHash() {
+            const hash = window.location.hash.toLowerCase();
+            const match = hash.match(/^#\/?([lr])(\d)$/);
+            if (match) {
+                  const side = match[1] === "r" ? "Bên phải" : "Bên trái";
+                  const table = `Bàn ${match[2]}`;
+                  return { side, table };
+            }
+            return null;
       }
 
-      selectedDogs.push(dogName);
-      div.classList.add("selected");
-      updateSelectedCount();
-    });
+      function updateSeatDisplay() {
+            const seat = getSeatFromHash();
+            seatInfo.textContent = seat
+                  ? `Vị trí của bạn: ${seat.side} - ${seat.table}`
+                  : "Vị trí chưa xác định từ đường link!";
+      }
 
-    dogList.appendChild(div);
-  });
-}
+      function renderDogs(filter = "") {
+            dogList.innerHTML = "";
+            const keywords = filter.toLowerCase().split(/\s+/).filter(k => k);
 
-// Xử lý khởi động
-db.ref("dogs").on("value", snapshot => {
-  const data = snapshot.val();
-  allDogs = Object.values(data || {}).sort((a, b) => {
-    if (a.status === "play" && b.status !== "play") return -1;
-    if (a.status !== "play" && b.status === "play") return 1;
-    return a.name.localeCompare(b.name);
-  });
-  renderDogs(searchInput.value);
-});
+            allDogs.filter(dog => {
+                  const text = `${dog.name} ${dog.breed} ${dog.trait || dog.personality || ""}`.toLowerCase();
+                  return keywords.every(k => text.includes(k));
+            }).forEach(dog => {
+                  const div = document.createElement("div");
+                  div.className = "dog-card";
+                  div.dataset.name = dog.name;
+                  if (selectedDogs.includes(dog.name)) div.classList.add("selected");
+                  if (dog.status !== "play") div.classList.add("sleeping");
 
-searchInput.addEventListener("input", () => renderDogs(searchInput.value));
-window.addEventListener("hashchange", updateSeatDisplay);
-window.addEventListener("DOMContentLoaded", updateSeatDisplay);
+                  div.innerHTML = `
+                        <div class="dog-image-wrapper">
+                              <img src="${dog.image}" alt="${dog.name}" />
+                              <div class="selected-overlay"><i class="fa-solid fa-check-circle me-2"></i> Đã chọn</div>
+                        </div>
+                        <h3>${dog.name}</h3>
+                        <p>Giống: ${dog.breed}</p>
+                        <p>Tính cách: ${dog.trait || dog.personality || "Chưa cập nhật"}</p>
+                  `;
 
-// Nút gửi yêu cầu chụp ảnh
-submitBtn.addEventListener("click", () => {
-  const todayStr = new Date().toISOString().split("T")[0];
-  const lastSelectDate = localStorage.getItem("lastSelectDate");
+                  div.addEventListener("click", () => {
+                        const dogName = dog.name;
 
-  if (lastSelectDate === todayStr) {
-    showBootstrapAlert("📅 Bạn đã chốt rồi trong hôm nay. Hẹn gặp lại bạn vào ngày mai nhé!", "warning", 5000);
-    return;
-  }
+                        // Nếu chó đang ngủ, hiển thị thông báo và không chọn
+                        if (dog.status !== "play") {
+                              showBootstrapAlert(`😴 Bé ${dogName} đang nghỉ ngơi và làm ở ca khác, bạn vui lòng chọn bé đang thức nha!`, "warning");
+                              return;
+                        }
 
-  db.ref("lastSelectTime").once("value").then(snapshot => {
-    const lastTimestamp = snapshot.val();
-    const now = Date.now();
-    if (lastTimestamp && now - lastTimestamp < 1800000) {
-      const wait = 1800 - Math.floor((now - lastTimestamp) / 1000);
-      const min = Math.floor(wait / 60);
-      const sec = wait % 60;
-      const msg = `⏳ Vui lòng quay lại sau ${min} phút ${sec} giây nha!`;
-      showBootstrapAlert(msg, "warning");
-      return;
-    }
+                        if (selectedDogs.includes(dogName)) {
+                              selectedDogs = selectedDogs.filter(n => n !== dogName);
+                              div.classList.remove("selected");
+                              updateSelectedCount();
+                              return;
+                        }
 
-    const seat = getSeatFromHash() || { side: "?", table: "?" };
-    if (selectedDogs.length === 0) {
-      showBootstrapAlert("❗ Bạn chưa chọn bé cún nào cả!", "danger");
-      return;
-    }
+                        if (selectedDogs.length >= 3) {
+                              showBootstrapAlert("🐾 Bạn chỉ được chọn tối đa 3 bé nha!", "warning");
+                              return;
+                        }
 
-    const nowDate = new Date();
-    const timeStr = `${nowDate.getHours()}h${nowDate.getMinutes()}p`;
-    const awake = [], sleep = [];
+                        selectedDogs.push(dogName);
+                        div.classList.add("selected");
+                        updateSelectedCount();
+                  });
 
-    selectedDogs.forEach(name => {
-      const dog = allDogs.find(d => d.name === name);
-      if (!dog) return;
-      (dog.status === "play" ? awake : sleep).push(name);
-    });
+                  dogList.appendChild(div);
+            });
+      }
 
-    let msg = `⏰ Thời gian: ${timeStr}\n📍 Vị trí: ${seat.side} - ${seat.table}\n`;
-    if (awake.length > 0) msg += `🐶 Bé đang chơi: ${awake.join(", ")}\n`;
-    if (sleep.length > 0) msg += `😴 Bé đang ngủ (khách vẫn muốn order): ${sleep.join(", ")}`;
-
-    db.ref("photoRequests").push({ selectedDogs, time: timeStr, seat })
-      .then(() => {
-        db.ref("lastSelectTime").set(firebase.database.ServerValue.TIMESTAMP);
-        localStorage.setItem("lastSelectDate", todayStr);
-
-        showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}`, "success", 5000);
-        selectedDogs = [];
-        renderDogs(searchInput.value);
-        updateSelectedCount();
-
-        const encodedMsg = encodeURIComponent(msg);
-        fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`);
+      // Xử lý khởi động
+      db.ref("dogs").on("value", snapshot => {
+            const data = snapshot.val();
+            allDogs = Object.values(data || {}).sort((a, b) => {
+                  if (a.status === "play" && b.status !== "play") return -1;
+                  if (a.status !== "play" && b.status === "play") return 1;
+                  return a.name.localeCompare(b.name);
+            });
+            renderDogs(searchInput.value);
       });
-  });
-});
 
-// Hiển thị slider ảnh nền ban đầu
-const photoUrls = [
-  "image/slide9.jpg",
-  "image/slide6.jpg",
-  "image/slide2.jpg",
-  "image/slide3.jpg",
-  "image/slide4.jpg",
-  "image/slide5.jpg"
-];
-const carouselInner = document.querySelector("#carouselPhotos .carousel-inner");
-const overlay = document.getElementById("photoOverlay");
+      searchInput.addEventListener("input", () => renderDogs(searchInput.value));
+      window.addEventListener("hashchange", updateSeatDisplay);
+      window.addEventListener("DOMContentLoaded", updateSeatDisplay);
 
-photoUrls.forEach((url, idx) => {
-  const div = document.createElement("div");
-  div.className = "carousel-item" + (idx === 0 ? " active" : "");
-  div.innerHTML = `<img src="${url}" class="d-block w-100" alt="Ảnh chụp">`;
-  carouselInner.appendChild(div);
-});
+      // Nút gửi yêu cầu chụp ảnh
+      submitBtn.addEventListener("click", () => {
+            const todayStr = new Date().toISOString().split("T")[0];
+            const lastSelectDate = localStorage.getItem("lastSelectDate");
 
-overlay.addEventListener("click", () => {
-  document.getElementById("tapOverlayText")?.remove();
-  overlay.classList.add("fade");
-  setTimeout(() => overlay.remove(), 500);
-});
-   const isMaintenance = false; // ✅ Chuyển thành true khi muốn bật bảo trì
+            if (lastSelectDate === todayStr) {
+                  showBootstrapAlert("📅 Bạn đã chốt rồi trong hôm nay. Hẹn gặp lại bạn vào ngày mai nhé!", "warning", 5000);
+                  return;
+            }
 
-  if (isMaintenance) {
-    document.write(`
-      <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#fffafc;text-align:center;font-family:'Comic Sans MS', cursive;">
-        <div>
-          <h1 style="color:#a36173;font-size:2em;">🚧 Trang đang bảo trì</h1>
-          <p style="color:#4a3a41;">Cherry Pet Coffee đang cập nhật để phục vụ bạn tốt hơn.<br>Vui lòng quay lại sau nhé! 🐶💕</p>
-        </div>
-      </div>
-    `);
-  }
-  function normalizeName(input) {
-  return input
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9]/g, "")
-    .toLowerCase();
-}
+            db.ref("lastSelectTime").once("value").then(snapshot => {
+                  const lastTimestamp = snapshot.val();
+                  const now = Date.now();
+                  if (lastTimestamp && now - lastTimestamp < 1800000) {
+                        const wait = 1800 - Math.floor((now - lastTimestamp) / 1000);
+                        const min = Math.floor(wait / 60);
+                        const sec = wait % 60;
+                        const msg = `⏳ Vui lòng quay lại sau ${min} phút ${sec} giây nha!`;
+                        showBootstrapAlert(msg, "warning");
+                        return;
+                  }
 
- function xemAlbum() {
-const rawInput = document.getElementById("guestNameInput").value;
-const name = normalizeName(rawInput);
-  const errorText = document.getElementById("errorText");
+                  const seat = getSeatFromHash() || { side: "?", table: "?" };
+                  if (selectedDogs.length === 0) {
+                        showBootstrapAlert("❗ Bạn chưa chọn bé cún nào cả!", "danger");
+                        return;
+                  }
 
-  if (!name) {
-    errorText.innerText = "❗ Vui lòng nhập tên!";
-    return;
-  }
+                  const nowDate = new Date();
+                  const timeStr = `${nowDate.getHours()}h${nowDate.getMinutes()}p`;
+                  const awake = [], sleep = [];
 
-  db.ref("anhKhach/" + name).once("value").then(snapshot => {
-    const data = snapshot.val();
-    if (data) {
-      const url = `https://thanhchan791791.github.io/hihihi/khoanh/?name=${encodeURIComponent(name)}`;
-      window.location.href = url;
-    } else {
-      errorText.innerText = "❌ Không tìm thấy tên trong hệ thống!";
-    }
-  }).catch(() => {
-    errorText.innerText = "⚠️ Có lỗi kết nối!";
-  });
-}
+                  selectedDogs.forEach(name => {
+                        const dog = allDogs.find(d => d.name === name);
+                        if (!dog) return;
+                        (dog.status === "play" ? awake : sleep).push(name);
+                  });
 
-document.getElementById("toggleGuestInput").addEventListener("click", () => {
-  const guestSection = document.getElementById("guestLookupSection");
-  const randomBtn = document.getElementById("randomAlbumBtn");
+                  let msg = `⏰ Thời gian: ${timeStr}\n📍 Vị trí: ${seat.side} - ${seat.table}\n`;
+                  if (awake.length > 0) msg += `🐶 Bé đang chơi: ${awake.join(", ")}\n`;
+                  if (sleep.length > 0) msg += `😴 Bé đang ngủ (khách vẫn muốn order): ${sleep.join(", ")}`;
 
-  guestSection.classList.toggle("show");
-  randomBtn.style.display = guestSection.classList.contains("show") ? "inline-block" : "none";
+                  db.ref("photoRequests").push({ selectedDogs, time: timeStr, seat })
+                        .then(() => {
+                              db.ref("lastSelectTime").set(firebase.database.ServerValue.TIMESTAMP);
+                              localStorage.setItem("lastSelectDate", todayStr);
 
-  if (guestSection.classList.contains("show")) {
-    setTimeout(() => {
-      guestSection.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 300);
-  }
-});
+                              showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}`, "success", 5000);
+                              selectedDogs = [];
+                              renderDogs(searchInput.value);
+                              updateSelectedCount();
 
-document.getElementById("randomAlbumBtn").addEventListener("click", () => {
-  db.ref("anhKhach").once("value").then(snapshot => {
-    const data = snapshot.val();
-    const names = Object.keys(data || {});
-    if (names.length === 0) {
-      showBootstrapAlert("❌ Không có ảnh khách nào!", "warning");
-      return;
-    }
+                              const encodedMsg = encodeURIComponent(msg);
+                              fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`);
+                        });
+            });
+      });
 
-    const randomName = names[Math.floor(Math.random() * names.length)];
-    const url = `https://thanhchan791791.github.io/hihihi/khoanh/?name=${encodeURIComponent(randomName)}`;
-    window.location.href = url;
-  }).catch(() => {
-    showBootstrapAlert("⚠️ Có lỗi khi tải dữ liệu ảnh khách!", "danger");
-  });
-});
+      // Nút gọi nhân viên
+      requestStaffBtn.addEventListener("click", () => {
+            const seat = getSeatFromHash() || { side: "?", table: "?" };
+            const msg = `🔔🔔🔔 Khách hàng tại vị trí ${seat.side} - ${seat.table} cần hỗ trợ! Vui lòng tới bàn ngay.`;
+            const encodedMsg = encodeURIComponent(msg);
+            
+            // Gửi thông báo tới Telegram
+            fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`)
+                  .then(response => {
+                        if (response.ok) {
+                              showBootstrapAlert("Nhân viên sẽ đến ngay! Vui lòng đợi trong giây lát. 💖", "info", 5000);
+                        } else {
+                              showBootstrapAlert("⚠️ Lỗi: Không gửi được yêu cầu, vui lòng thử lại!", "danger");
+                        }
+                  })
+                  .catch(() => {
+                        showBootstrapAlert("⚠️ Lỗi kết nối, vui lòng thử lại!", "danger");
+                  });
+      });
 
-const chatBubble = document.getElementById("chatBubble");
-const chatModalElement = document.getElementById("chatModal");
-const chatModal = new bootstrap.Modal(chatModalElement);
-const chatInput = document.getElementById("chatInput");
-const chatSendBtn = document.getElementById("chatSendBtn");
-const chatBody = document.querySelector("#chatModal .modal-body");
+      // Hiển thị slider ảnh nền ban đầu
+      const photoUrls = [
+            "image/slide9.jpg",
+            "image/slide6.jpg",
+            "image/slide2.jpg",
+            "image/slide3.jpg",
+            "image/slide4.jpg",
+            "image/slide5.jpg"
+      ];
+      const carouselInner = document.querySelector("#carouselPhotos .carousel-inner");
 
-chatBubble.addEventListener("click", () => {
-    chatModal.show();
-});
+      photoUrls.forEach((url, idx) => {
+            const div = document.createElement("div");
+            div.className = "carousel-item" + (idx === 0 ? " active" : "");
+            div.innerHTML = `<img src="${url}" class="d-block w-100" alt="Ảnh chụp">`;
+            carouselInner.appendChild(div);
+      });
+      
+      photoOverlay.addEventListener("click", () => {
+            if (isPageLoaded) return;
+            document.getElementById("tapOverlayText")?.remove();
+            photoOverlay.classList.add("fade-out");
+            setTimeout(() => {
+                  photoOverlay.style.display = 'none';
+                  mainContent.classList.add('loaded');
+                  isPageLoaded = true;
+            }, 500);
+      });
+      
+      const isMaintenance = false; // ✅ Chuyển thành true khi muốn bật bảo trì
 
-function addChatMessage(message, sender) {
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `chat-message ${sender}`;
-    messageDiv.textContent = message;
-    chatBody.appendChild(messageDiv);
-    chatBody.scrollTop = chatBody.scrollHeight;
-}
+      if (isMaintenance) {
+            document.body.innerHTML = `
+                  <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#fffafc;text-align:center;font-family:'Comic Sans MS', cursive;">
+                        <div>
+                              <h1 style="color:#a36173;font-size:2em;">🚧 Trang đang bảo trì</h1>
+                              <p style="color:#4a3a41;">Cherry Pet Coffee đang cập nhật để phục vụ bạn tốt hơn.<br>Vui lòng quay lại sau nhé! 🐶💕</p>
+                        </div>
+                  </div>
+            `;
+      }
+      function normalizeName(input) {
+      return input
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-zA-Z0-9]/g, "")
+            .toLowerCase();
+      }
 
-function processChatRequest(query) {
-    const normalizedQuery = normalizeName(query);
-    const foundDog = allDogs.find(dog => normalizeName(dog.name).includes(normalizedQuery));
+      function xemAlbum() {
+      const rawInput = document.getElementById("guestNameInput").value;
+      const name = normalizeName(rawInput);
+            const errorText = document.getElementById("errorText");
 
-    if (foundDog) {
-        addChatMessage(`Ah, bé ${foundDog.name} hiện tại đang ${foundDog.status === 'play' ? 'chơi đùa rất vui vẻ! 🥰' : 'ngủ một giấc thật ngon! 😴'}`, 'system');
-    } else {
-        addChatMessage(`Mình không tìm thấy bé nào có tên "${query}" cả. Bạn thử lại tên khác nhé!`, 'system');
-    }
+            if (!name) {
+                  errorText.innerText = "❗ Vui lòng nhập tên!";
+                  return;
+            }
 
-    const seat = getSeatFromHash() || { side: "?", table: "?" };
-    db.ref("chatRequests").push({
-        query: query,
-        time: new Date().toLocaleTimeString(),
-        seat: `${seat.side} - ${seat.table}`
-    });
-}
+            db.ref("anhKhach/" + name).once("value").then(snapshot => {
+                  const data = snapshot.val();
+                  if (data) {
+                        const url = `https://thanhchan791791.github.io/hihihi/khoanh/?name=${encodeURIComponent(name)}`;
+                        window.location.href = url;
+                  } else {
+                        errorText.innerText = "❌ Không tìm thấy tên trong hệ thống!";
+                  }
+            }).catch(() => {
+                  errorText.innerText = "⚠️ Có lỗi kết nối!";
+            });
+      }
 
-function handleChatInput() {
-    const query = chatInput.value.trim();
-    if (query) {
-        addChatMessage(query, 'user');
-        chatInput.value = "";
-        processChatRequest(query);
-    }
-}
+      document.getElementById("toggleGuestInput").addEventListener("click", () => {
+            const guestSection = document.getElementById("guestLookupSection");
+            const randomBtn = document.getElementById("randomAlbumBtn");
 
-chatInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-        handleChatInput();
-    }
-});
+            guestSection.classList.toggle("show");
+            randomBtn.style.display = guestSection.classList.contains("show") ? "inline-block" : "none";
 
-chatSendBtn.addEventListener("click", handleChatInput);
+            if (guestSection.classList.contains("show")) {
+                  setTimeout(() => {
+                        guestSection.scrollIntoView({ behavior: "smooth", block: "center" });
+                  }, 300);
+            }
+      });
 
+      document.getElementById("randomAlbumBtn").addEventListener("click", () => {
+            db.ref("anhKhach").once("value").then(snapshot => {
+                  const data = snapshot.val();
+                  const names = Object.keys(data || {});
+                  if (names.length === 0) {
+                        showBootstrapAlert("❌ Không có ảnh khách nào!", "warning");
+                        return;
+                  }
+
+                  const randomName = names[Math.floor(Math.random() * names.length)];
+                  const url = `https://thanhchan791791.github.io/hihihi/khoanh/?name=${encodeURIComponent(randomName)}`;
+                  window.location.href = url;
+            }).catch(() => {
+                  showBootstrapAlert("⚠️ Có lỗi khi tải dữ liệu ảnh khách!", "danger");
+            });
+      });
 </script>
 </body>
 </html>
