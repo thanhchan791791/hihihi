@@ -68,7 +68,7 @@
                   transform: scale(1.05);
             }
 
-            .btn-view-photos {
+            .btn-view-photos, .btn-suggestion {
                   font-size: 1.3em;
                   font-weight: bold;
                   padding: 14px 32px;
@@ -83,15 +83,24 @@
                   text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
             }
 
-            .btn-view-photos i {
+            .btn-view-photos i, .btn-suggestion i {
                   animation: bounceIcon 1.5s infinite;
             }
 
-            .btn-view-photos:hover {
+            .btn-view-photos:hover, .btn-suggestion:hover {
                   background: linear-gradient(to right, #a36173, #8a4e61);
                   transform: scale(1.05);
                   box-shadow: 0 8px 20px rgba(163, 97, 115, 0.6);
             }
+            .btn-suggestion {
+                  background: linear-gradient(to right, #4CAF50, #81C784);
+                  padding: 10px 20px;
+                  font-size: 1em;
+            }
+            .btn-suggestion:hover {
+                  background: linear-gradient(to right, #388E3C, #66BB6A);
+            }
+
 
             @keyframes bounceIcon {
                   0%, 100% { transform: translateY(0); }
@@ -424,6 +433,16 @@
             </div>
       </div>
 
+      <div class="suggestion-container mt-4 mb-4">
+            <h2 style="font-size: 1.5em; color: #a36173; font-weight: bold; margin-bottom: 15px;">Hoặc bạn thích bé cún nào?</h2>
+            <div class="d-flex justify-content-center flex-wrap gap-2">
+                  <button class="btn btn-suggestion" data-suggestion="chân dài">Chân Dài </button>
+                  <button class="btn btn-suggestion" data-suggestion="trắng trẻo">Trắng Trẻo </button>
+                  <button class="btn btn-suggestion" data-suggestion="múp rụp">Múp Rụp </button>
+                  <button class="btn btn-suggestion" data-suggestion="da ngăm">Da Ngăm </button>
+            </div>
+      </div>
+
       <div>
             <input type="text" id="search-input" placeholder="Nhập tên, giống hoặc tính cách bé cún..." />
       </div>
@@ -697,6 +716,28 @@
                   .catch(() => {
                         showBootstrapAlert("⚠️ Lỗi kết nối, vui lòng thử lại!", "danger");
                   });
+      });
+
+      // Thêm xử lý cho các nút gợi ý
+      document.querySelectorAll('.btn-suggestion').forEach(button => {
+            button.addEventListener('click', () => {
+                  const suggestion = button.dataset.suggestion;
+                  const seat = getSeatFromHash() || { side: "?", table: "?" };
+                  const msg = `📢 Khách hàng tại vị trí ${seat.side} - ${seat.table} muốn tìm bé cún có đặc điểm: ${suggestion}.`;
+                  const encodedMsg = encodeURIComponent(msg);
+
+                  fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`)
+                        .then(response => {
+                              if (response.ok) {
+                                    showBootstrapAlert(`Yêu cầu tìm bé ${suggestion} của bạn đã được gửi.`, "success");
+                              } else {
+                                    showBootstrapAlert("⚠️ Lỗi: Không gửi được yêu cầu, vui lòng thử lại!", "danger");
+                              }
+                        })
+                        .catch(() => {
+                              showBootstrapAlert("⚠️ Lỗi kết nối, vui lòng thử lại!", "danger");
+                        });
+            });
       });
 
       // Hiển thị slider ảnh nền ban đầu
