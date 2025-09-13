@@ -3,248 +3,559 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Công cụ tạo bảng phân công</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <title>Hệ thống phân công nhân sự</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Soft blue-gray background */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
         }
-        .container-shadow {
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Stronger shadow */
+
+        #assignment-form-container {
+            max-width: 1200px;
+            margin: auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        .table-responsive {
-            overflow-x: auto;
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
         }
-        /* Custom scrollbar for better visual */
-        ::-webkit-scrollbar {
-            height: 8px;
+
+        .day-container {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 25px;
+            background-color: #fafafa;
         }
-        ::-webkit-scrollbar-thumb {
-            background-color: #94a3b8; /* Tailwind slate-400 */
+
+        .day-container h2 {
+            margin-top: 0;
+            color: #555;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .shift-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .shift-section {
+            flex: 1 1 45%;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4-px;
+            background-color: #fff;
+        }
+
+        .shift-section h3 {
+            margin-top: 0;
+            color: #777;
+        }
+
+        .job-position {
+            margin-bottom: 10px;
+        }
+
+        .job-position label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .job-position input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
             border-radius: 4px;
+            box-sizing: border-box;
         }
-        ::-webkit-scrollbar-track {
-            background-color: #e2e8f0; /* Tailwind slate-200 */
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
         }
-        .note-cell {
-            white-space: pre-wrap;
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #schedule-table-container {
+            display: none;
+            max-width: 100vw;
+            margin: auto;
+        }
+
+        .schedule-table {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+            margin-bottom: 30px;
+        }
+        
+        .schedule-table th, .schedule-table td {
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-align: center;
+            vertical-align: top;
+            font-size: 10px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .schedule-table th {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .schedule-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .note-row td {
+            font-style: italic;
+            font-weight: bold;
+            padding: 8px 5px;
             text-align: left;
+            background-color: #eaf6ff;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            .schedule-table th, .schedule-table td {
+                font-size: 8px;
+                padding: 3px;
+            }
+
+            .schedule-table td > b {
+                font-size: 10px;
+            }
         }
-        .fade-in {
-            animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        
+        .save-button-container {
+            text-align: center;
+            margin-top: 20px;
         }
-        .day-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        .save-button-container button {
+            width: auto;
+            padding: 10px 20px;
         }
-        .day-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
+
     </style>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
-<body class="p-4 md:p-12">
+<body>
 
-    <div class="max-w-7xl mx-auto bg-white p-6 md:p-12 rounded-3xl container-shadow">
-        <h1 class="text-4xl lg:text-5xl font-extrabold text-center text-gray-800 mb-8 tracking-tight fade-in" style="animation-delay: 0.1s;">Tạo Bảng Phân Công Hàng Tuần</h1>
-        
-        <!-- Khu vực nhập liệu chính -->
-        <div class="space-y-6 mb-8 fade-in" style="animation-delay: 0.3s;">
-            <div id="work-areas" class="bg-gray-100 p-6 rounded-2xl shadow-inner border border-gray-200">
-                <h2 class="text-2xl font-semibold mb-4 text-center text-gray-700">Khu vực làm việc</h2>
-                <input type="text" id="work-areas-input" class="form-input w-full p-3 border border-gray-300 rounded-lg focus:ring-4 focus:ring-blue-300 focus:border-blue-500 transition-all" value="Oder, Trệt, Gấu mèo, Mèo, Pet dog1, Pet dog2, Spa, Capybara" placeholder="Nhập các khu vực, cách nhau bằng dấu phẩy (,)" aria-label="Work Areas Input">
-                <p class="text-sm text-gray-500 mt-2 text-center">Ví dụ: Oder, Trệt, Mèo, Spa...</p>
+<div id="assignment-form-container">
+    <h1>NHẬP LIỆU PHÂN CÔNG TUẦN</h1>
+    <form id="assignmentForm">
+        <div class="day-container" id="day-2">
+            <h2>Thứ 2</h2>
+            <div class="shift-group">
+                <div class="shift-section">
+                    <h3>SÁNG</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t2-sang-oder" value="Bách"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t2-sang-tret" value="Việt"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t2-sang-gaumeo" value="Trung"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t2-sang-phongxe" value="Khoa"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t2-sang-meo" value="My"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t2-sang-petdog1" value="Long"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t2-sang-petdog2" value="Ngân"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t2-sang-spa" value="Hồng"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t2-sang-capybara" value="Anh"></div>
+                </div>
+                <div class="shift-section">
+                    <h3>CHIỀU</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t2-chieu-oder" value="Linh"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t2-chieu-tret" value="Hùng"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t2-chieu-gaumeo" value="Hiếu"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t2-chieu-phongxe" value="An"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t2-chieu-meo" value="Duy"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t2-chieu-petdog1" value="Phú"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t2-chieu-petdog2" value="Nhi"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t2-chieu-spa" value="Thủy"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t2-chieu-capybara" value="Bình"></div>
+                </div>
             </div>
-            <div class="flex justify-center mt-4">
-                <button type="button" id="updateAreasBtn" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">Cập Nhật Khu Vực</button>
-            </div>
+            <div class="job-position"><label>Ghi chú ngày:</label><input type="text" name="t2-note" value="Ca chiều có họp"></div>
         </div>
 
-        <!-- Biểu mẫu để điền thông tin (tự động tạo) -->
-        <form id="scheduleForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 hidden">
-            <!-- Các ô nhập liệu cho từng ngày sẽ được tạo ở đây -->
-        </form>
-        
-        <div class="flex justify-center mt-4">
-            <button type="button" id="generateBtn" class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 hidden">Tạo Bảng Phân Công</button>
+        <div class="day-container" id="day-3">
+            <h2>Thứ 3</h2>
+            <div class="shift-group">
+                <div class="shift-section">
+                    <h3>SÁNG</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t3-sang-oder" value="Việt"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t3-sang-tret" value="Trung"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t3-sang-gaumeo" value="Khoa"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t3-sang-phongxe" value="My"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t3-sang-meo" value="Long"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t3-sang-petdog1" value="Ngân"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t3-sang-petdog2" value="Hồng"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t3-sang-spa" value="Anh"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t3-sang-capybara" value="Bình"></div>
+                </div>
+                <div class="shift-section">
+                    <h3>CHIỀU</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t3-chieu-oder" value="Hùng"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t3-chieu-tret" value="Hiếu"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t3-chieu-gaumeo" value="An"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t3-chieu-phongxe" value="Duy"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t3-chieu-meo" value="Phú"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t3-chieu-petdog1" value="Nhi"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t3-chieu-petdog2" value="Thủy"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t3-chieu-spa" value="Bình"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t3-chieu-capybara" value="Linh"></div>
+                </div>
+            </div>
+            <div class="job-position"><label>Ghi chú ngày:</label><input type="text" name="t3-note" value="Duy đi trễ"></div>
         </div>
 
-        <!-- Kết quả hiển thị bảng phân công -->
-        <div id="scheduleOutput" class="mt-12 hidden fade-in" style="animation-delay: 0.5s;">
-            <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Bảng Phân Công</h2>
-            
-            <div id="fullScheduleContainer" class="space-y-8">
-                <!-- Hai bảng sẽ được tạo bởi JavaScript ở đây -->
+        <div class="day-container" id="day-4">
+            <h2>Thứ 4</h2>
+            <div class="shift-group">
+                <div class="shift-section">
+                    <h3>SÁNG</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t4-sang-oder" value="Trung"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t4-sang-tret" value="Khoa"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t4-sang-gaumeo" value="My"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t4-sang-phongxe" value="Long"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t4-sang-meo" value="Ngân"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t4-sang-petdog1" value="Hồng"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t4-sang-petdog2" value="Anh"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t4-sang-spa" value="Bình"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t4-sang-capybara" value="Linh"></div>
+                </div>
+                <div class="shift-section">
+                    <h3>CHIỀU</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t4-chieu-oder" value="Hiếu"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t4-chieu-tret" value="An"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t4-chieu-gaumeo" value="Duy"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t4-chieu-phongxe" value="Phú"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t4-chieu-meo" value="Nhi"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t4-chieu-petdog1" value="Thủy"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t4-chieu-petdog2" value="Bình"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t4-chieu-spa" value="Linh"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t4-chieu-capybara" value="Hùng"></div>
+                </div>
             </div>
-
-            <div class="flex justify-center mt-8">
-                <button id="captureBtn" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">Chụp và Tải Bảng</button>
-            </div>
+            <div class="job-position"><label>Ghi chú ngày:</label><input type="text" name="t4-note" value="Hùng nghỉ ốm"></div>
         </div>
+
+        <div class="day-container" id="day-5">
+            <h2>Thứ 5</h2>
+            <div class="shift-group">
+                <div class="shift-section">
+                    <h3>SÁNG</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t5-sang-oder" value="Khoa"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t5-sang-tret" value="My"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t5-sang-gaumeo" value="Long"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t5-sang-phongxe" value="Ngân"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t5-sang-meo" value="Hồng"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t5-sang-petdog1" value="Anh"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t5-sang-petdog2" value="Bình"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t5-sang-spa" value="Linh"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t5-sang-capybara" value="Hùng"></div>
+                </div>
+                <div class="shift-section">
+                    <h3>CHIỀU</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t5-chieu-oder" value="An"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t5-chieu-tret" value="Duy"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t5-chieu-gaumeo" value="Phú"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t5-chieu-phongxe" value="Nhi"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t5-chieu-meo" value="Thủy"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t5-chieu-petdog1" value="Bình"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t5-chieu-petdog2" value="Linh"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t5-chieu-spa" value="Hùng"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t5-chieu-capybara" value="Việt"></div>
+                </div>
+            </div>
+            <div class="job-position"><label>Ghi chú ngày:</label><input type="text" name="t5-note" value="Ca sáng đổi ca"></div>
+        </div>
+
+        <div class="day-container" id="day-6">
+            <h2>Thứ 6</h2>
+            <div class="shift-group">
+                <div class="shift-section">
+                    <h3>SÁNG</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t6-sang-oder" value="My"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t6-sang-tret" value="Long"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t6-sang-gaumeo" value="Ngân"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t6-sang-phongxe" value="Hồng"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t6-sang-meo" value="Anh"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t6-sang-petdog1" value="Bình"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t6-sang-petdog2" value="Linh"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t6-sang-spa" value="Hùng"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t6-sang-capybara" value="Việt"></div>
+                </div>
+                <div class="shift-section">
+                    <h3>CHIỀU</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t6-chieu-oder" value="Duy"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t6-chieu-tret" value="Phú"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t6-chieu-gaumeo" value="Nhi"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t6-chieu-phongxe" value="Thủy"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t6-chieu-meo" value="Bình"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t6-chieu-petdog1" value="Linh"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t6-chieu-petdog2" value="Hùng"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t6-chieu-spa" value="Việt"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t6-chieu-capybara" value="An"></div>
+                </div>
+            </div>
+            <div class="job-position"><label>Ghi chú ngày:</label><input type="text" name="t6-note" value="Hủy ca do mưa"></div>
+        </div>
+
+        <div class="day-container" id="day-7">
+            <h2>Thứ 7</h2>
+            <div class="shift-group">
+                <div class="shift-section">
+                    <h3>SÁNG</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t7-sang-oder" value="Long"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t7-sang-tret" value="Ngân"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t7-sang-gaumeo" value="Hồng"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t7-sang-phongxe" value="Anh"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t7-sang-meo" value="Bình"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t7-sang-petdog1" value="Linh"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t7-sang-petdog2" value="Hùng"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t7-sang-spa" value="Việt"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t7-sang-capybara" value="An"></div>
+                </div>
+                <div class="shift-section">
+                    <h3>CHIỀU</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t7-chieu-oder" value="Phú"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t7-chieu-tret" value="Nhi"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t7-chieu-gaumeo" value="Thủy"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="t7-chieu-phongxe" value="Bình"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t7-chieu-meo" value="Linh"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t7-chieu-petdog1" value="Hùng"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t7-chieu-petdog2" value="Việt"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t7-chieu-spa" value="An"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t7-chieu-capybara" value="Duy"></div>
+                </div>
+            </div>
+            <div class="job-position"><label>Ghi chú ngày:</label><input type="text" name="t7-note" value="Duy về sớm"></div>
+        </div>
+
+        <div class="day-container" id="day-cn">
+            <h2>Chủ Nhật</h2>
+            <div class="shift-group">
+                <div class="shift-section">
+                    <h3>SÁNG</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="cn-sang-oder" value="Ngân"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="cn-sang-tret" value="Hồng"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="cn-sang-gaumeo" value="Anh"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="cn-sang-phongxe" value="Bình"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="cn-sang-meo" value="Linh"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="cn-sang-petdog1" value="Hùng"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="cn-sang-petdog2" value="Việt"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="cn-sang-spa" value="An"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="cn-sang-capybara" value="Duy"></div>
+                </div>
+                <div class="shift-section">
+                    <h3>CHIỀU</h3>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="cn-chieu-oder" value="Nhi"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="cn-chieu-tret" value="Thủy"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="cn-chieu-gaumeo" value="Bình"></div>
+                    <div class="job-position"><label>Phòng xe:</label><input type="text" name="cn-chieu-phongxe" value="Linh"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="cn-chieu-meo" value="Hùng"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="cn-chieu-petdog1" value="Việt"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="cn-chieu-petdog2" value="An"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="cn-chieu-spa" value="Duy"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="cn-chieu-capybara" value="Phú"></div>
+                </div>
+            </div>
+            <div class="job-position"><label>Ghi chú ngày:</label><input type="text" name="cn-note" value="Họp đầu tuần vào sáng T2"></div>
+        </div>
+
+        <button type="button" onclick="generateSchedule()">Tạo bảng phân công</button>
+    </form>
+</div>
+
+<div id="schedule-table-container">
+    <h2>Bảng phân công ca SÁNG</h2>
+    <table id="schedule-table-sang" class="schedule-table">
+        <thead>
+            <tr>
+                <th>Vị trí</th>
+                <th>Thứ 2</th>
+                <th>Thứ 3</th>
+                <th>Thứ 4</th>
+                <th>Thứ 5</th>
+                <th>Thứ 6</th>
+                <th>Thứ 7</th>
+                <th>Chủ Nhật</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Bảng phân công ca CHIỀU</h2>
+    <table id="schedule-table-chieu" class="schedule-table">
+        <thead>
+            <tr>
+                <th>Vị trí</th>
+                <th>Thứ 2</th>
+                <th>Thứ 3</th>
+                <th>Thứ 4</th>
+                <th>Thứ 5</th>
+                <th>Thứ 6</th>
+                <th>Thứ 7</th>
+                <th>Chủ Nhật</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Ghi chú</h2>
+    <table id="schedule-table-notes" class="schedule-table">
+        <tbody>
+        </tbody>
+    </table>
+    
+    <div class="save-button-container">
+        <button type="button" onclick="saveAsImage()">Lưu bảng phân công thành ảnh</button>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const updateAreasBtn = document.getElementById('updateAreasBtn');
-            const generateBtn = document.getElementById('generateBtn');
-            const captureBtn = document.getElementById('captureBtn');
-            const scheduleForm = document.getElementById('scheduleForm');
-            const scheduleOutput = document.getElementById('scheduleOutput');
-            const fullScheduleContainer = document.getElementById('fullScheduleContainer');
-            const workAreasInput = document.getElementById('work-areas-input');
+<script>
+    function generateSchedule() {
+        const formContainer = document.getElementById('assignment-form-container');
+        const tableContainer = document.getElementById('schedule-table-container');
+        const tableBodySang = document.querySelector('#schedule-table-sang tbody');
+        const tableBodyChieu = document.querySelector('#schedule-table-chieu tbody');
+        const tableBodyNotes = document.querySelector('#schedule-table-notes tbody');
 
-            const daysOfWeek = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-            const dayNames = {
-                'mon': 'Thứ Hai',
-                'tue': 'Thứ Ba',
-                'wed': 'Thứ Tư',
-                'thu': 'Thứ Năm',
-                'fri': 'Thứ Sáu',
-                'sat': 'Thứ Bảy',
-                'sun': 'Chủ Nhật'
-            };
+        // Ẩn form nhập liệu
+        formContainer.style.display = 'none';
+        // Hiển thị bảng phân công
+        tableContainer.style.display = 'block';
 
-            // Hàm tạo các ô nhập liệu dựa trên khu vực làm việc
-            function updateDailyForms() {
-                const workAreas = workAreasInput.value.split(',').map(area => area.trim()).filter(area => area !== '');
-                if (workAreas.length === 0) {
-                    scheduleForm.classList.add('hidden');
-                    generateBtn.classList.add('hidden');
-                    return;
-                }
+        // Khai báo ngày và vị trí
+        const days = ['t2', 't3', 't4', 't5', 't6', 't7', 'cn'];
+        const positions = [
+            { label: 'Oder', key: 'oder' },
+            { label: 'Trệt', key: 'tret' },
+            { label: 'Gấu mèo', key: 'gaumeo' },
+            { label: 'Phòng xe', key: 'phongxe' },
+            { label: 'Mèo', key: 'meo' },
+            { label: 'Pet dog1', key: 'petdog1' },
+            { label: 'Pet dog2', key: 'petdog2' },
+            { label: 'Spa', key: 'spa' },
+            { label: 'Capybara', key: 'capybara' }
+        ];
 
-                scheduleForm.innerHTML = '';
-                daysOfWeek.forEach((day, index) => {
-                    const dayCard = document.createElement('div');
-                    dayCard.id = day;
-                    dayCard.className = `bg-white p-6 rounded-2xl shadow-lg border border-gray-200 day-card`;
-                    dayCard.style.animationDelay = `${index * 0.1}s`;
+        const data = {};
 
-                    let htmlContent = `<h2 class="text-2xl font-semibold mb-4 text-center text-blue-600">${dayNames[day]}</h2>`;
-                    htmlContent += `<div class="space-y-4">`;
-
-                    // Buổi sáng
-                    htmlContent += `<p class="font-bold text-gray-800 mt-4 mb-2 border-b-2 border-blue-200 pb-1">Buổi sáng</p>`;
-                    workAreas.forEach(area => {
-                        htmlContent += `<label class="block text-sm text-gray-600">${area}:</label>`;
-                        htmlContent += `<input type="text" id="${day}-morning-${area.replace(/\s/g, '-')}" class="form-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Nhân viên">`;
-                    });
-
-                    // Buổi chiều
-                    htmlContent += `<p class="font-bold text-gray-800 mt-4 mb-2 border-b-2 border-blue-200 pb-1">Buổi chiều</p>`;
-                    workAreas.forEach(area => {
-                        htmlContent += `<label class="block text-sm text-gray-600">${area}:</label>`;
-                        htmlContent += `<input type="text" id="${day}-afternoon-${area.replace(/\s/g, '-')}" class="form-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Nhân viên">`;
-                    });
-                    
-                    // Ghi chú
-                    htmlContent += `<label class="block font-bold text-gray-800 mt-4">Ghi chú:</label>`;
-                    htmlContent += `<textarea id="${day}-note" rows="2" class="form-textarea w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Ghi chú thêm..."></textarea>`;
-                    
-                    htmlContent += `</div>`;
-                    dayCard.innerHTML = htmlContent;
-                    scheduleForm.appendChild(dayCard);
-                });
+        days.forEach(day => {
+            data[day] = { sang: {}, chieu: {}, note: '' };
+            positions.forEach(pos => {
+                const sangInput = document.querySelector(`input[name="${day}-sang-${pos.key}"]`);
+                const chieuInput = document.querySelector(`input[name="${day}-chieu-${pos.key}"]`);
                 
-                scheduleForm.classList.remove('hidden');
-                generateBtn.classList.remove('hidden');
-            }
-
-            // Hàm tạo bảng phân công
-            function generateScheduleTable() {
-                const workAreas = workAreasInput.value.split(',').map(area => area.trim()).filter(area => area !== '');
-                if (workAreas.length === 0) return;
-
-                let morningTableHTML = `<h3 class="text-2xl font-bold text-gray-700 text-center mb-4">Bảng Phân Công Buổi Sáng</h3>`;
-                morningTableHTML += `<div class="table-responsive rounded-xl shadow-lg border border-gray-200"><table class="min-w-full divide-y divide-gray-300">`;
-                morningTableHTML += `<thead class="bg-gradient-to-r from-blue-500 to-blue-600 text-white"><tr>`;
-                morningTableHTML += `<th class="px-6 py-3 text-base font-bold text-center sticky left-0 from-blue-500 to-blue-600 bg-gradient-to-r">Ngày</th>`;
-                workAreas.forEach(area => {
-                    morningTableHTML += `<th class="px-6 py-3 text-sm font-medium text-center">${area}</th>`;
-                });
-                morningTableHTML += `<th class="px-6 py-3 text-sm font-medium text-center">Ghi chú</th>`;
-                morningTableHTML += `</tr></thead>`;
-                morningTableHTML += `<tbody class="divide-y divide-gray-200">`;
-                
-                let afternoonTableHTML = `<h3 class="text-2xl font-bold text-gray-700 text-center mb-4 mt-8">Bảng Phân Công Buổi Chiều</h3>`;
-                afternoonTableHTML += `<div class="table-responsive rounded-xl shadow-lg border border-gray-200"><table class="min-w-full divide-y divide-gray-300">`;
-                afternoonTableHTML += `<thead class="bg-gradient-to-r from-blue-500 to-blue-600 text-white"><tr>`;
-                afternoonTableHTML += `<th class="px-6 py-3 text-base font-bold text-center sticky left-0 from-blue-500 to-blue-600 bg-gradient-to-r">Ngày</th>`;
-                workAreas.forEach(area => {
-                    afternoonTableHTML += `<th class="px-6 py-3 text-sm font-medium text-center">${area}</th>`;
-                });
-                afternoonTableHTML += `<th class="px-6 py-3 text-sm font-medium text-center">Ghi chú</th>`;
-                afternoonTableHTML += `</tr></thead>`;
-                afternoonTableHTML += `<tbody class="divide-y divide-gray-200">`;
-                
-                daysOfWeek.forEach((day, index) => {
-                    const noteText = document.getElementById(`${day}-note`).value.trim() || '---';
-
-                    // Buổi sáng
-                    morningTableHTML += `<tr class="bg-white hover:bg-gray-50 transition-colors ${index % 2 === 0 ? '' : 'bg-gray-50'}" style="animation-delay: ${index * 0.1}s;">`;
-                    morningTableHTML += `<td class="px-6 py-4 text-base font-semibold text-gray-900 sticky left-0 bg-white ${index % 2 === 0 ? '' : 'bg-gray-50'}">${dayNames[day]}</td>`;
-                    workAreas.forEach(area => {
-                        const value = document.getElementById(`${day}-morning-${area.replace(/\s/g, '-')}`).value.trim() || '---';
-                        morningTableHTML += `<td class="px-6 py-4 text-sm text-center text-gray-700">${value}</td>`;
-                    });
-                    morningTableHTML += `<td class="px-6 py-4 text-sm text-gray-700 note-cell">${noteText}</td>`;
-                    morningTableHTML += `</tr>`;
-
-                    // Buổi chiều
-                    afternoonTableHTML += `<tr class="bg-white hover:bg-gray-50 transition-colors ${index % 2 === 0 ? '' : 'bg-gray-50'}" style="animation-delay: ${index * 0.1}s;">`;
-                    afternoonTableHTML += `<td class="px-6 py-4 text-base font-semibold text-gray-900 sticky left-0 bg-white ${index % 2 === 0 ? '' : 'bg-gray-50'}">${dayNames[day]}</td>`;
-                    workAreas.forEach(area => {
-                        const value = document.getElementById(`${day}-afternoon-${area.replace(/\s/g, '-')}`).value.trim() || '---';
-                        afternoonTableHTML += `<td class="px-6 py-4 text-sm text-center text-gray-700">${value}</td>`;
-                    });
-                    afternoonTableHTML += `<td class="px-6 py-4 text-sm text-gray-700 note-cell">${noteText}</td>`;
-                    afternoonTableHTML += `</tr>`;
-                });
-
-                morningTableHTML += '</tbody></table></div>';
-                afternoonTableHTML += '</tbody></table></div>';
-
-                fullScheduleContainer.innerHTML = morningTableHTML + afternoonTableHTML;
-                scheduleOutput.classList.remove('hidden');
-            }
-
-            // Xử lý sự kiện khi nhấn nút "Cập Nhật Khu Vực"
-            updateAreasBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                updateDailyForms();
+                if (sangInput) data[day].sang[pos.label] = sangInput.value;
+                if (chieuInput) data[day].chieu[pos.label] = chieuInput.value;
             });
-
-            // Xử lý sự kiện khi nhấn nút "Tạo Bảng Phân Công"
-            generateBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                generateScheduleTable();
-            });
-
-            // Xử lý sự kiện khi nhấn nút "Chụp và Tải Bảng"
-            captureBtn.addEventListener('click', () => {
-                html2canvas(fullScheduleContainer, {
-                    scale: 2,
-                    logging: false,
-                    scrollX: -window.scrollX,
-                    scrollY: -window.scrollY,
-                    backgroundColor: '#ffffff'
-                }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = 'bang_phan_cong.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                });
-            });
-
-            // Tạo form ban đầu khi trang tải xong
-            updateDailyForms();
+            const noteInput = document.querySelector(`input[name="${day}-note"]`);
+            if (noteInput) data[day].note = noteInput.value;
         });
-    </script>
+
+        // Xóa nội dung bảng cũ
+        tableBodySang.innerHTML = '';
+        tableBodyChieu.innerHTML = '';
+        tableBodyNotes.innerHTML = '';
+
+        // Tạo bảng phân công ca SÁNG
+        positions.forEach(pos => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td><b>${pos.label}</b></td>`;
+            days.forEach(day => {
+                const cell = document.createElement('td');
+                cell.textContent = data[day].sang[pos.label] || '';
+                row.appendChild(cell);
+            });
+            tableBodySang.appendChild(row);
+        });
+
+        // Tạo bảng phân công ca CHIỀU
+        positions.forEach(pos => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td><b>${pos.label}</b></td>`;
+            days.forEach(day => {
+                const cell = document.createElement('td');
+                cell.textContent = data[day].chieu[pos.label] || '';
+                row.appendChild(cell);
+            });
+            tableBodyChieu.appendChild(row);
+        });
+
+        // Tạo bảng ghi chú
+        const noteRow = document.createElement('tr');
+        noteRow.innerHTML = `<td style="font-weight: bold; text-align: center;">Ghi chú</td>`;
+        days.forEach(day => {
+            const cell = document.createElement('td');
+            cell.textContent = data[day].note || '';
+            noteRow.appendChild(cell);
+        });
+        tableBodyNotes.appendChild(noteRow);
+    }
+    
+    function saveAsImage() {
+        const scheduleContainer = document.getElementById('schedule-table-container');
+
+        // Tạo một bản sao của container để xử lý, tránh ảnh hưởng đến hiển thị gốc
+        const tempContainer = scheduleContainer.cloneNode(true);
+        tempContainer.style.display = 'block'; // Đảm bảo nó được render
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.left = '-9999px'; // Đẩy ra khỏi màn hình
+        document.body.appendChild(tempContainer);
+        
+        // Ẩn nút "Lưu ảnh" trên bản sao trước khi chụp
+        const saveButton = tempContainer.querySelector('.save-button-container');
+        if (saveButton) {
+            saveButton.style.display = 'none';
+        }
+
+        html2canvas(tempContainer, {
+            scale: 2, // Tăng độ phân giải để ảnh sắc nét hơn
+            useCORS: true // Cho phép tải các tài nguyên bên ngoài nếu có
+        }).then(function(canvas) {
+            // Sau khi chụp xong, xóa bản sao
+            document.body.removeChild(tempContainer);
+
+            // Chuyển canvas thành URL ảnh và tạo link tải về
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'bang_phan_cong_nhan_su.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }).catch(function(error) {
+            console.error('Lỗi khi lưu ảnh:', error);
+            alert('Đã xảy ra lỗi khi lưu ảnh. Vui lòng thử lại.');
+        });
+    }
+</script>
+
 </body>
 </html>
