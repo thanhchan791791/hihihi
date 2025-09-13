@@ -1,157 +1,250 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ChatGPT Client</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f1f1f1;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    header {
-      background: #10a37f;
-      padding: 1rem;
-      color: white;
-      text-align: center;
-      font-size: 1.5rem;
-    }
-    #apiKeySection {
-      padding: 1rem;
-      background: #fff;
-      display: flex;
-      gap: 0.5rem;
-      justify-content: center;
-    }
-    #apiKeyInput {
-      flex: 1;
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-    #saveKeyBtn {
-      padding: 0.5rem 1rem;
-      background: #10a37f;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    #chat {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1rem;
-      background: #fff;
-    }
-    .message {
-      margin: 0.5rem 0;
-      padding: 0.75rem;
-      border-radius: 8px;
-      max-width: 80%;
-    }
-    .user {
-      background: #d1e7dd;
-      align-self: flex-end;
-      text-align: right;
-      margin-left: auto;
-    }
-    .bot {
-      background: #f8d7da;
-      align-self: flex-start;
-      text-align: left;
-      margin-right: auto;
-    }
-    #inputSection {
-      display: flex;
-      padding: 1rem;
-      background: #eee;
-    }
-    #userInput {
-      flex: 1;
-      padding: 0.75rem;
-      font-size: 1rem;
-    }
-    #sendBtn {
-      padding: 0.75rem 1rem;
-      background: #10a37f;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <header>💬 ChatGPT Mini</header>
-
-  <div id="apiKeySection">
-    <input id="apiKeyInput" type="password" placeholder="Nhập OpenAI API Key tại đây..." />
-    <button id="saveKeyBtn">Lưu Key</button>
-  </div>
-
-  <div id="chat"></div>
-
-  <div id="inputSection">
-    <input id="userInput" type="text" placeholder="Nhập nội dung..." />
-    <button id="sendBtn">Gửi</button>
-  </div>
-
-  <script>
-    let apiKey = '';
-
-    document.getElementById('saveKeyBtn').addEventListener('click', () => {
-      apiKey = document.getElementById('apiKeyInput').value.trim();
-      alert("✅ API key đã được lưu!");
-    });
-
-    document.getElementById('sendBtn').addEventListener('click', async () => {
-      const input = document.getElementById('userInput');
-      const message = input.value.trim();
-      if (!message || !apiKey) {
-        alert('❗ Nhập câu hỏi và đảm bảo đã nhập API key.');
-        return;
-      }
-
-      addMessage(message, 'user');
-      input.value = '';
-      const reply = await sendToGPT(message);
-      addMessage(reply, 'bot');
-    });
-
-    function addMessage(text, role) {
-      const chat = document.getElementById('chat');
-      const div = document.createElement('div');
-      div.className = `message ${role}`;
-      div.innerText = text;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    async function sendToGPT(message) {
-      try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + apiKey
-          },
-          body: JSON.stringify({
-            model: 'gpt-4',
-            messages: [{ role: 'user', content: message }]
-          })
-        });
-
-        if (!response.ok) {
-          return `❌ Lỗi: ${response.status}`;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ tạo bảng phân công</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Soft blue-gray background */
         }
+        .container-shadow {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Stronger shadow */
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        /* Custom scrollbar for better visual */
+        ::-webkit-scrollbar {
+            height: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #94a3b8; /* Tailwind slate-400 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background-color: #e2e8f0; /* Tailwind slate-200 */
+        }
+        .note-cell {
+            white-space: pre-wrap;
+            text-align: left;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        .day-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-12">
 
-        const data = await response.json();
-        return data.choices[0].message.content.trim();
-      } catch (err) {
-        return '❌ Lỗi khi gọi API: ' + err.message;
-      }
-    }
-  </script>
+    <div class="max-w-7xl mx-auto bg-white p-6 md:p-12 rounded-3xl container-shadow">
+        <h1 class="text-4xl lg:text-5xl font-extrabold text-center text-gray-800 mb-8 tracking-tight fade-in" style="animation-delay: 0.1s;">Tạo Bảng Phân Công Hàng Tuần</h1>
+        
+        <!-- Khu vực nhập liệu chính -->
+        <div class="space-y-6 mb-8 fade-in" style="animation-delay: 0.3s;">
+            <div id="work-areas" class="bg-gray-100 p-6 rounded-2xl shadow-inner border border-gray-200">
+                <h2 class="text-2xl font-semibold mb-4 text-center text-gray-700">Khu vực làm việc</h2>
+                <input type="text" id="work-areas-input" class="form-input w-full p-3 border border-gray-300 rounded-lg focus:ring-4 focus:ring-blue-300 focus:border-blue-500 transition-all" value="Oder, Trệt, Gấu mèo, Mèo, Pet dog1, Pet dog2, Spa, Capybara" placeholder="Nhập các khu vực, cách nhau bằng dấu phẩy (,)" aria-label="Work Areas Input">
+                <p class="text-sm text-gray-500 mt-2 text-center">Ví dụ: Oder, Trệt, Mèo, Spa...</p>
+            </div>
+            <div class="flex justify-center mt-4">
+                <button type="button" id="updateAreasBtn" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">Cập Nhật Khu Vực</button>
+            </div>
+        </div>
+
+        <!-- Biểu mẫu để điền thông tin (tự động tạo) -->
+        <form id="scheduleForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 hidden">
+            <!-- Các ô nhập liệu cho từng ngày sẽ được tạo ở đây -->
+        </form>
+        
+        <div class="flex justify-center mt-4">
+            <button type="button" id="generateBtn" class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 hidden">Tạo Bảng Phân Công</button>
+        </div>
+
+        <!-- Kết quả hiển thị bảng phân công -->
+        <div id="scheduleOutput" class="mt-12 hidden fade-in" style="animation-delay: 0.5s;">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Bảng Phân Công</h2>
+            
+            <div id="fullScheduleContainer" class="space-y-8">
+                <!-- Hai bảng sẽ được tạo bởi JavaScript ở đây -->
+            </div>
+
+            <div class="flex justify-center mt-8">
+                <button id="captureBtn" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">Chụp và Tải Bảng</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const updateAreasBtn = document.getElementById('updateAreasBtn');
+            const generateBtn = document.getElementById('generateBtn');
+            const captureBtn = document.getElementById('captureBtn');
+            const scheduleForm = document.getElementById('scheduleForm');
+            const scheduleOutput = document.getElementById('scheduleOutput');
+            const fullScheduleContainer = document.getElementById('fullScheduleContainer');
+            const workAreasInput = document.getElementById('work-areas-input');
+
+            const daysOfWeek = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+            const dayNames = {
+                'mon': 'Thứ Hai',
+                'tue': 'Thứ Ba',
+                'wed': 'Thứ Tư',
+                'thu': 'Thứ Năm',
+                'fri': 'Thứ Sáu',
+                'sat': 'Thứ Bảy',
+                'sun': 'Chủ Nhật'
+            };
+
+            // Hàm tạo các ô nhập liệu dựa trên khu vực làm việc
+            function updateDailyForms() {
+                const workAreas = workAreasInput.value.split(',').map(area => area.trim()).filter(area => area !== '');
+                if (workAreas.length === 0) {
+                    scheduleForm.classList.add('hidden');
+                    generateBtn.classList.add('hidden');
+                    return;
+                }
+
+                scheduleForm.innerHTML = '';
+                daysOfWeek.forEach((day, index) => {
+                    const dayCard = document.createElement('div');
+                    dayCard.id = day;
+                    dayCard.className = `bg-white p-6 rounded-2xl shadow-lg border border-gray-200 day-card`;
+                    dayCard.style.animationDelay = `${index * 0.1}s`;
+
+                    let htmlContent = `<h2 class="text-2xl font-semibold mb-4 text-center text-blue-600">${dayNames[day]}</h2>`;
+                    htmlContent += `<div class="space-y-4">`;
+
+                    // Buổi sáng
+                    htmlContent += `<p class="font-bold text-gray-800 mt-4 mb-2 border-b-2 border-blue-200 pb-1">Buổi sáng</p>`;
+                    workAreas.forEach(area => {
+                        htmlContent += `<label class="block text-sm text-gray-600">${area}:</label>`;
+                        htmlContent += `<input type="text" id="${day}-morning-${area.replace(/\s/g, '-')}" class="form-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Nhân viên">`;
+                    });
+
+                    // Buổi chiều
+                    htmlContent += `<p class="font-bold text-gray-800 mt-4 mb-2 border-b-2 border-blue-200 pb-1">Buổi chiều</p>`;
+                    workAreas.forEach(area => {
+                        htmlContent += `<label class="block text-sm text-gray-600">${area}:</label>`;
+                        htmlContent += `<input type="text" id="${day}-afternoon-${area.replace(/\s/g, '-')}" class="form-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Nhân viên">`;
+                    });
+                    
+                    // Ghi chú
+                    htmlContent += `<label class="block font-bold text-gray-800 mt-4">Ghi chú:</label>`;
+                    htmlContent += `<textarea id="${day}-note" rows="2" class="form-textarea w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Ghi chú thêm..."></textarea>`;
+                    
+                    htmlContent += `</div>`;
+                    dayCard.innerHTML = htmlContent;
+                    scheduleForm.appendChild(dayCard);
+                });
+                
+                scheduleForm.classList.remove('hidden');
+                generateBtn.classList.remove('hidden');
+            }
+
+            // Hàm tạo bảng phân công
+            function generateScheduleTable() {
+                const workAreas = workAreasInput.value.split(',').map(area => area.trim()).filter(area => area !== '');
+                if (workAreas.length === 0) return;
+
+                let morningTableHTML = `<h3 class="text-2xl font-bold text-gray-700 text-center mb-4">Bảng Phân Công Buổi Sáng</h3>`;
+                morningTableHTML += `<div class="table-responsive rounded-xl shadow-lg border border-gray-200"><table class="min-w-full divide-y divide-gray-300">`;
+                morningTableHTML += `<thead class="bg-gradient-to-r from-blue-500 to-blue-600 text-white"><tr>`;
+                morningTableHTML += `<th class="px-6 py-3 text-base font-bold text-center sticky left-0 from-blue-500 to-blue-600 bg-gradient-to-r">Ngày</th>`;
+                workAreas.forEach(area => {
+                    morningTableHTML += `<th class="px-6 py-3 text-sm font-medium text-center">${area}</th>`;
+                });
+                morningTableHTML += `<th class="px-6 py-3 text-sm font-medium text-center">Ghi chú</th>`;
+                morningTableHTML += `</tr></thead>`;
+                morningTableHTML += `<tbody class="divide-y divide-gray-200">`;
+                
+                let afternoonTableHTML = `<h3 class="text-2xl font-bold text-gray-700 text-center mb-4 mt-8">Bảng Phân Công Buổi Chiều</h3>`;
+                afternoonTableHTML += `<div class="table-responsive rounded-xl shadow-lg border border-gray-200"><table class="min-w-full divide-y divide-gray-300">`;
+                afternoonTableHTML += `<thead class="bg-gradient-to-r from-blue-500 to-blue-600 text-white"><tr>`;
+                afternoonTableHTML += `<th class="px-6 py-3 text-base font-bold text-center sticky left-0 from-blue-500 to-blue-600 bg-gradient-to-r">Ngày</th>`;
+                workAreas.forEach(area => {
+                    afternoonTableHTML += `<th class="px-6 py-3 text-sm font-medium text-center">${area}</th>`;
+                });
+                afternoonTableHTML += `<th class="px-6 py-3 text-sm font-medium text-center">Ghi chú</th>`;
+                afternoonTableHTML += `</tr></thead>`;
+                afternoonTableHTML += `<tbody class="divide-y divide-gray-200">`;
+                
+                daysOfWeek.forEach((day, index) => {
+                    const noteText = document.getElementById(`${day}-note`).value.trim() || '---';
+
+                    // Buổi sáng
+                    morningTableHTML += `<tr class="bg-white hover:bg-gray-50 transition-colors ${index % 2 === 0 ? '' : 'bg-gray-50'}" style="animation-delay: ${index * 0.1}s;">`;
+                    morningTableHTML += `<td class="px-6 py-4 text-base font-semibold text-gray-900 sticky left-0 bg-white ${index % 2 === 0 ? '' : 'bg-gray-50'}">${dayNames[day]}</td>`;
+                    workAreas.forEach(area => {
+                        const value = document.getElementById(`${day}-morning-${area.replace(/\s/g, '-')}`).value.trim() || '---';
+                        morningTableHTML += `<td class="px-6 py-4 text-sm text-center text-gray-700">${value}</td>`;
+                    });
+                    morningTableHTML += `<td class="px-6 py-4 text-sm text-gray-700 note-cell">${noteText}</td>`;
+                    morningTableHTML += `</tr>`;
+
+                    // Buổi chiều
+                    afternoonTableHTML += `<tr class="bg-white hover:bg-gray-50 transition-colors ${index % 2 === 0 ? '' : 'bg-gray-50'}" style="animation-delay: ${index * 0.1}s;">`;
+                    afternoonTableHTML += `<td class="px-6 py-4 text-base font-semibold text-gray-900 sticky left-0 bg-white ${index % 2 === 0 ? '' : 'bg-gray-50'}">${dayNames[day]}</td>`;
+                    workAreas.forEach(area => {
+                        const value = document.getElementById(`${day}-afternoon-${area.replace(/\s/g, '-')}`).value.trim() || '---';
+                        afternoonTableHTML += `<td class="px-6 py-4 text-sm text-center text-gray-700">${value}</td>`;
+                    });
+                    afternoonTableHTML += `<td class="px-6 py-4 text-sm text-gray-700 note-cell">${noteText}</td>`;
+                    afternoonTableHTML += `</tr>`;
+                });
+
+                morningTableHTML += '</tbody></table></div>';
+                afternoonTableHTML += '</tbody></table></div>';
+
+                fullScheduleContainer.innerHTML = morningTableHTML + afternoonTableHTML;
+                scheduleOutput.classList.remove('hidden');
+            }
+
+            // Xử lý sự kiện khi nhấn nút "Cập Nhật Khu Vực"
+            updateAreasBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                updateDailyForms();
+            });
+
+            // Xử lý sự kiện khi nhấn nút "Tạo Bảng Phân Công"
+            generateBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                generateScheduleTable();
+            });
+
+            // Xử lý sự kiện khi nhấn nút "Chụp và Tải Bảng"
+            captureBtn.addEventListener('click', () => {
+                html2canvas(fullScheduleContainer, {
+                    scale: 2,
+                    logging: false,
+                    scrollX: -window.scrollX,
+                    scrollY: -window.scrollY,
+                    backgroundColor: '#ffffff'
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'bang_phan_cong.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            });
+
+            // Tạo form ban đầu khi trang tải xong
+            updateDailyForms();
+        });
+    </script>
 </body>
 </html>
