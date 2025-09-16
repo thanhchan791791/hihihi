@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -99,6 +100,14 @@
             }
             .btn-suggestion:hover {
                   background: linear-gradient(to right, #388E3C, #66BB6A);
+            }
+
+            .btn-suggestion.disabled,
+            .btn-view-photos.disabled,
+            .dog-card.disabled {
+                  opacity: 0.5;
+                  pointer-events: none;
+                  cursor: not-allowed;
             }
 
 
@@ -391,6 +400,51 @@
             .top-buttons-container {
                   margin-bottom: 20px;
             }
+            
+            /* Pop-up xác nhận */
+            #suggestionPopup {
+                  position: fixed;
+                  bottom: -150px; /* Bắt đầu từ dưới màn hình */
+                  left: 50%;
+                  transform: translateX(-50%);
+                  z-index: 9999;
+                  width: 90%;
+                  max-width: 400px;
+                  background: #fff8fc;
+                  border-radius: 20px;
+                  padding: 20px;
+                  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                  transition: bottom 0.5s ease;
+            }
+            #suggestionPopup.show-popup {
+                  bottom: 20px;
+            }
+            .popup-message {
+                  font-size: 1.1em;
+                  font-weight: bold;
+                  margin-bottom: 15px;
+                  color: #a36173;
+            }
+            .popup-buttons {
+                  display: flex;
+                  justify-content: center;
+                  gap: 10px;
+            }
+            .popup-buttons button {
+                  padding: 10px 20px;
+                  border-radius: 20px;
+                  border: none;
+                  font-weight: bold;
+                  cursor: pointer;
+            }
+            .popup-buttons #confirmSuggestBtn {
+                  background-color: #d86c8f;
+                  color: white;
+            }
+            .popup-buttons #cancelSuggestBtn {
+                  background-color: #f0f0f0;
+                  color: #555;
+            }
       </style>
 </head>
 <body>
@@ -491,6 +545,14 @@
       </div>
 </div>
 
+<div id="suggestionPopup">
+      <div class="popup-message">Bạn có chắc muốn gửi yêu cầu tìm bé <span id="popupSuggestionText"></span> không?</div>
+      <div class="popup-buttons">
+            <button id="cancelSuggestBtn">Hủy</button>
+            <button id="confirmSuggestBtn">Xác nhận</button>
+      </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -521,8 +583,13 @@
       let selectedDogs = [];
       let allDogs = [];
       let isPageLoaded = false;
+      let lastAction = null; // null, 'dog_selected', 'suggestion_sent'
 
-      // Hiển thị cảnh báo Bootstrap
+      const suggestionPopup = document.getElementById('suggestionPopup');
+      const popupSuggestionText = document.getElementById('popupSuggestionText');
+      const confirmSuggestBtn = document.getElementById('confirmSuggestBtn');
+      const cancelSuggestBtn = document.getElementById('cancelSuggestBtn');
+
       function showBootstrapAlert(message, type = "success", duration = 3000) {
             const container = document.getElementById("alert-box-container");
             const alertBox = document.getElementById("alert-box");
@@ -547,11 +614,17 @@
       function updateSelectedCount() {
             selectedCount.style.display = selectedDogs.length > 0 ? "block" : "none";
             selectedCount.textContent = `Đã chọn: ${selectedDogs.length} bé`;
-
-            // Hiển thị/ẩn nút "Chốt các bé iu"
             submitBtn.style.display = selectedDogs.length > 0 ? "inline-block" : "none";
-      }
 
+            // Vô hiệu hóa nút gợi ý khi đã chọn cún
+            if (selectedDogs.length > 0) {
+                  lastAction = 'dog_selected';
+                  document.querySelectorAll('.btn-suggestion').forEach(btn => btn.classList.add('disabled'));
+            } else if (lastAction !== 'suggestion_sent') {
+                  lastAction = null;
+                  document.querySelectorAll('.btn-suggestion').forEach(btn => btn.classList.remove('disabled'));
+            }
+      }
 
       function getSeatFromHash() {
             const hash = window.location.hash.toLowerCase();
@@ -571,6 +644,21 @@
                   : "Vị trí chưa xác định từ đường link!";
       }
 
+      function disableDogCards() {
+            document.querySelectorAll('.dog-card').forEach(card => card.classList.add('disabled'));
+            document.getElementById('search-input').disabled = true;
+      }
+      function enableDogCards() {
+            document.querySelectorAll('.dog-card').forEach(card => card.classList.remove('disabled'));
+            document.getElementById('search-input').disabled = false;
+      }
+      function disableSuggestionButtons() {
+            document.querySelectorAll('.btn-suggestion').forEach(btn => btn.classList.add('disabled'));
+      }
+      function enableSuggestionButtons() {
+            document.querySelectorAll('.btn-suggestion').forEach(btn => btn.classList.remove('disabled'));
+      }
+
       function renderDogs(filter = "") {
             dogList.innerHTML = "";
             const keywords = filter.toLowerCase().split(/\s+/).filter(k => k);
@@ -584,6 +672,7 @@
                   div.dataset.name = dog.name;
                   if (selectedDogs.includes(dog.name)) div.classList.add("selected");
                   if (dog.status !== "play") div.classList.add("sleeping");
+                  if (lastAction === 'suggestion_sent') div.classList.add('disabled');
 
                   div.innerHTML = `
                         <div class="dog-image-wrapper">
@@ -596,9 +685,13 @@
                   `;
 
                   div.addEventListener("click", () => {
+                        if (lastAction === 'suggestion_sent') {
+                            showBootstrapAlert("❗ Bạn đã gửi yêu cầu tìm bé rồi. Vui lòng đợi nhân viên hỗ trợ hoặc đợi 30 phút sau mới có thể chọn cún nhé!", "warning");
+                            return;
+                        }
+
                         const dogName = dog.name;
 
-                        // Nếu chó đang ngủ, hiển thị thông báo và không chọn
                         if (dog.status !== "play") {
                               showBootstrapAlert(`😴 Bé ${dogName} đang nghỉ ngơi và làm ở ca khác, bạn vui lòng chọn bé đang thức nha!`, "warning");
                               return;
@@ -625,7 +718,14 @@
             });
       }
 
-      // Xử lý khởi động
+      function resetState() {
+          lastAction = null;
+          selectedDogs = [];
+          updateSelectedCount();
+          enableSuggestionButtons();
+          enableDogCards();
+      }
+
       db.ref("dogs").on("value", snapshot => {
             const data = snapshot.val();
             allDogs = Object.values(data || {}).sort((a, b) => {
@@ -640,7 +740,6 @@
       window.addEventListener("hashchange", updateSeatDisplay);
       window.addEventListener("DOMContentLoaded", updateSeatDisplay);
 
-      // Nút gửi yêu cầu chụp ảnh
       submitBtn.addEventListener("click", () => {
             const todayStr = new Date().toISOString().split("T")[0];
             const lastSelectDate = localStorage.getItem("lastSelectDate");
@@ -653,10 +752,11 @@
             db.ref("lastSelectTime").once("value").then(snapshot => {
                   const lastTimestamp = snapshot.val();
                   const now = Date.now();
-                  if (lastTimestamp && now - lastTimestamp < 1800000) {
-                        const wait = 1800 - Math.floor((now - lastTimestamp) / 1000);
+                  const cooldown = 1800000;
+                  if (lastTimestamp && now - lastTimestamp < cooldown) {
+                        const wait = (cooldown - (now - lastTimestamp)) / 1000;
                         const min = Math.floor(wait / 60);
-                        const sec = wait % 60;
+                        const sec = Math.floor(wait % 60);
                         const msg = `⏳ Vui lòng quay lại sau ${min} phút ${sec} giây nha!`;
                         showBootstrapAlert(msg, "warning");
                         return;
@@ -688,9 +788,8 @@
                               localStorage.setItem("lastSelectDate", todayStr);
 
                               showBootstrapAlert(`🎉 Bạn đã chốt: ${selectedDogs.join(", ")}`, "success", 5000);
-                              selectedDogs = [];
+                              resetState(); // Reset trạng thái
                               renderDogs(searchInput.value);
-                              updateSelectedCount();
 
                               const encodedMsg = encodeURIComponent(msg);
                               fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`);
@@ -698,13 +797,11 @@
             });
       });
 
-      // Nút gọi nhân viên
       requestStaffBtn.addEventListener("click", () => {
             const seat = getSeatFromHash() || { side: "?", table: "?" };
             const msg = `🔔🔔🔔 Khách hàng tại vị trí ${seat.side} - ${seat.table} cần hỗ trợ! Vui lòng tới bàn ngay.`;
             const encodedMsg = encodeURIComponent(msg);
             
-            // Gửi thông báo tới Telegram
             fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`)
                   .then(response => {
                         if (response.ok) {
@@ -718,36 +815,62 @@
                   });
       });
 
-      // Thêm xử lý cho các nút gợi ý
+      let currentSuggestion = null;
       document.querySelectorAll('.btn-suggestion').forEach(button => {
             button.addEventListener('click', () => {
-                  const suggestion = button.dataset.suggestion;
-                  const seat = getSeatFromHash() || { side: "?", table: "?" };
-                  const msg = `📢 Khách hàng tại vị trí ${seat.side} - ${seat.table} muốn tìm bé cún có đặc điểm: ${suggestion}.`;
-                  const encodedMsg = encodeURIComponent(msg);
+                if (lastAction === 'dog_selected') {
+                    showBootstrapAlert("❗ Bạn đã chọn cún rồi. Vui lòng chốt các bé hoặc đợi 30 phút sau để gửi yêu cầu tìm bé khác nhé!", "warning");
+                    return;
+                }
 
-                  fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`)
-                        .then(response => {
-                              if (response.ok) {
-                                    showBootstrapAlert(`Yêu cầu tìm bé ${suggestion} của bạn đã được gửi.`, "success");
-                              } else {
-                                    showBootstrapAlert("⚠️ Lỗi: Không gửi được yêu cầu, vui lòng thử lại!", "danger");
-                              }
-                        })
-                        .catch(() => {
-                              showBootstrapAlert("⚠️ Lỗi kết nối, vui lòng thử lại!", "danger");
-                        });
+                currentSuggestion = button.dataset.suggestion;
+                popupSuggestionText.textContent = `"${currentSuggestion}"`;
+                suggestionPopup.classList.add('show-popup');
             });
       });
 
-      // Hiển thị slider ảnh nền ban đầu
+      confirmSuggestBtn.addEventListener('click', () => {
+          suggestionPopup.classList.remove('show-popup');
+          const suggestion = currentSuggestion;
+          const seat = getSeatFromHash() || { side: "?", table: "?" };
+          const cooldown = 1800000;
+          const now = Date.now();
+          const lastSuggestionTime = localStorage.getItem("lastSuggestionTime");
+
+          if (lastSuggestionTime && (now - parseInt(lastSuggestionTime, 10) < cooldown)) {
+                const wait = (cooldown - (now - lastSuggestionTime)) / 1000;
+                const min = Math.floor(wait / 60);
+                const sec = Math.floor(wait % 60);
+                showBootstrapAlert(`⏳ Vui lòng đợi ${min} phút ${sec} giây trước khi gửi yêu cầu tìm bé khác!`, "warning", 5000);
+                return;
+          }
+
+          const msg = `📢 Khách hàng tại vị trí ${seat.side} - ${seat.table} muốn tìm bé cún có đặc điểm: ${suggestion}.`;
+          const encodedMsg = encodeURIComponent(msg);
+
+          fetch(`https://api.telegram.org/bot7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI/sendMessage?chat_id=-4831972836&text=${encodedMsg}`)
+                .then(response => {
+                      if (response.ok) {
+                            localStorage.setItem("lastSuggestionTime", now.toString());
+                            lastAction = 'suggestion_sent';
+                            disableDogCards();
+                            showBootstrapAlert(`Yêu cầu tìm bé ${suggestion} của bạn đã được gửi.`, "success");
+                      } else {
+                            showBootstrapAlert("⚠️ Lỗi: Không gửi được yêu cầu, vui lòng thử lại!", "danger");
+                      }
+                })
+                .catch(() => {
+                      showBootstrapAlert("⚠️ Lỗi kết nối, vui lòng thử lại!", "danger");
+                });
+      });
+
+      cancelSuggestBtn.addEventListener('click', () => {
+          suggestionPopup.classList.remove('show-popup');
+      });
+
       const photoUrls = [
-            "image/slide9.jpg",
-            "image/slide6.jpg",
-            "image/slide2.jpg",
-            "image/slide3.jpg",
-            "image/slide4.jpg",
-            "image/slide5.jpg"
+            "image/slide9.jpg", "image/slide6.jpg", "image/slide2.jpg",
+            "image/slide3.jpg", "image/slide4.jpg", "image/slide5.jpg"
       ];
       const carouselInner = document.querySelector("#carouselPhotos .carousel-inner");
 
@@ -769,7 +892,7 @@
             }, 500);
       });
       
-      const isMaintenance = false; // ✅ Chuyển thành true khi muốn bật bảo trì
+      const isMaintenance = false;
 
       if (isMaintenance) {
             document.body.innerHTML = `
