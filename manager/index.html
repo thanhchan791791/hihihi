@@ -24,15 +24,16 @@
             --blur-effect: blur(10px);
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color-light);
-            color: var(--text-color-light);
-            transition: background-color 0.5s ease, color 0.5s ease;
-            overflow-x: hidden;
-        }
+       body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color-light);
+    color: var(--text-color-light);
+    transition: background-color 0.5s ease, color 0.5s ease;
+    overflow: hidden; /* ❌ không cho cuộn */
+}
+
 
         body.dark-mode {
             background-color: var(--bg-color-dark);
@@ -151,25 +152,31 @@
         .main-content-container.nav-active {
             transform: translateX(300px);
         }
-        .content-section {
+       .content-section {
     visibility: hidden;
     opacity: 0;
-    position: absolute;
-    top: 90px; /* tránh đè header */
+    position: fixed;
+    top: 70px; /* chừa đúng header */
     left: 0;
     width: 100%;
-    height: calc(100% - 90px);
+    height: calc(100vh - 70px);
     transform: scale(0.98);
     transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s linear 0.4s;
+    overflow: hidden; /* không cho cuộn */
+}
+/* Cho riêng phần Nhân sự được cuộn */
+#dashboard.content-section {
+    overflow-y: auto;   /* bật cuộn dọc */
+    padding-bottom: 20px; /* tránh bị dính sát đáy */
 }
 
 .content-section.active {
     visibility: visible;
     opacity: 1;
-    position: relative;
     transform: scale(1);
     transition-delay: 0s;
 }
+
 
 
         .card {
@@ -280,18 +287,15 @@
         }
 
         /* IFRAME */
-        .iframe-container {
-            width: 100vw;
-            height: 100vh;
-            border: none;
-            z-index: 1000;
-            position: fixed;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            transform: scale(0.95);
-            animation: iframeEntrance 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
+       .iframe-container {
+    width: 100%;
+    height: 100%;
+    border: none;
+    opacity: 0;
+    transform: scale(0.95);
+    animation: iframeEntrance 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
         
 
         /* OVERLAY */
