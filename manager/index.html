@@ -350,6 +350,17 @@
             color: var(--boss-icon-color);
             animation: bossIconPulse 2s infinite ease-in-out;
         }
+        
+        /* New Boss Name Styling */
+        .employee-name-boss {
+            font-size: 1.2em;
+            font-weight: 700;
+            background: -webkit-linear-gradient(45deg, #ffd700, #ff9500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
 
         .employee-phone {
             margin-top: 5px;
@@ -393,6 +404,13 @@
             gap: 5px;
         }
 
+        .zalo-button {
+            background-color: #0084ff; /* Zalo blue */
+        }
+        .zalo-button i {
+            font-size: 1.2em; /* Bigger Zalo icon */
+        }
+        
         .iframe-container {
             width: 100%;
             height: 100%;
@@ -591,7 +609,7 @@
                 item.className = 'employee-item employee-item-animated';
                 item.style.animationDelay = `${index * 0.05}s`;
 
-                const nameContent = emp.isBoss ? `<i class="${emp.icon}"></i> ${emp.name}` : emp.name;
+                const nameContent = emp.isBoss ? `<i class="${emp.icon}"></i> <span class="employee-name-boss">${emp.name}</span>` : emp.name;
                 const nameClass = emp.isBoss ? 'employee-name employee-boss' : 'employee-name';
 
                 item.innerHTML = `
@@ -602,6 +620,9 @@
                     <div class="button-group">
                         <a href="tel:${emp.phone}" class="call-button">
                             <i class="fas fa-phone"></i>
+                        </a>
+                        <a href="zalo://chat?id=${emp.phone}" class="call-button zalo-button">
+                            <i class="fas fa-comment-dots"></i>
                         </a>
                     </div>
                 `;
