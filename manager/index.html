@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CherryPet Coffee - Quản Lý</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
@@ -406,9 +407,14 @@
 
         .zalo-button {
             background-color: #0084ff; /* Zalo blue */
+            width: auto;
+            height: auto;
+            padding: 10px 15px;
+            border-radius: 10px;
         }
         .zalo-button i {
             font-size: 1.2em; /* Bigger Zalo icon */
+            margin-right: 5px;
         }
         
         .iframe-container {
@@ -621,8 +627,8 @@
                         <a href="tel:${emp.phone}" class="call-button">
                             <i class="fas fa-phone"></i>
                         </a>
-                        <a href="zalo://chat?id=${emp.phone}" class="call-button zalo-button">
-                            <i class="fas fa-comment-dots"></i>
+                        <a href="https://zalo.me/${emp.phone}" target="_blank" class="call-button zalo-button">
+                            <i class="fab fa-zalo"></i> Zalo
                         </a>
                     </div>
                 `;
