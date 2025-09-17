@@ -20,6 +20,7 @@
             --shadow-color-light: rgba(44, 62, 80, 0.1);
             --shadow-color-dark: rgba(0, 0, 0, 0.5);
             --accent-color: #f39c12;
+            --boss-icon-color: gold; /* New color for boss icon */
             --blur-effect: blur(10px);
         }
 
@@ -188,43 +189,6 @@
             font-weight: 700;
         }
         
-        /* New styles for input form */
-        .employee-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 30px;
-            padding: 0 20px;
-        }
-        .employee-form input {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            background-color: var(--bg-color-light);
-            color: var(--text-color-light);
-        }
-        body.dark-mode .employee-form input {
-            background-color: var(--card-bg-dark);
-            border-color: #444;
-            color: var(--text-color-dark);
-        }
-        .employee-form button {
-            padding: 12px 20px;
-            background-color: var(--primary-color);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-        .employee-form button:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-
         /* Employee List styles */
         .employee-list {
             display: flex;
@@ -251,6 +215,22 @@
         .employee-name {
             font-weight: 600;
             color: var(--primary-color);
+        }
+        /* New styles for bosses */
+        .employee-boss {
+            font-weight: 700;
+            color: var(--accent-color);
+            position: relative;
+            transform: scale(1.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 5px rgba(243, 156, 18, 0.5); /* Glow effect */
+        }
+        .employee-boss i {
+            font-size: 1.2em;
+            color: var(--boss-icon-color);
+            animation: bossIconPulse 1.5s infinite ease-in-out;
         }
         .employee-phone {
             flex-grow: 1;
@@ -283,24 +263,6 @@
         .call-button:active {
             transform: scale(0.95);
         }
-        .delete-button {
-            background-color: #e74c3c;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-        .delete-button:hover {
-            background-color: #c0392b;
-            transform: scale(1.1);
-        }
         .button-group {
             display: flex;
             align-items: center;
@@ -320,10 +282,7 @@
             transform: scale(0.95);
             animation: iframeEntrance 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
-        .content-section.active .card, 
-        .content-section.active h2 {
-            display: none;
-        }
+        
 
         /* OVERLAY */
         .overlay {
@@ -357,6 +316,11 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
+        @keyframes bossIconPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -374,7 +338,7 @@
     <nav class="nav" id="navMenu">
         <a href="#" class="nav-link active" onclick="showSection('dashboard')">
             <i class="fas fa-tachometer-alt"></i>
-            <span>Nhân viên</span>
+            <span>Nhân sự</span>
         </a>
         <a href="#" class="nav-link" onclick="showSection('schedule')">
             <i class="fas fa-calendar-alt"></i>
@@ -399,44 +363,55 @@
             <section class="content-section active" id="dashboard">
                 <div class="card">
                     <h2>Nhân viên</h2>
-                    <div class="employee-form">
-                        <input type="text" id="employeeNameInput" placeholder="Nhập tên nhân viên">
-                        <input type="tel" id="employeePhoneInput" placeholder="Nhập số điện thoại">
-                        <button onclick="addEmployee()">Thêm nhân viên</button>
-                    </div>
                     <div class="employee-list" id="employeeList">
-                        <div class="employee-item" style="animation-delay: 0.1s;">
-                            <span class="employee-name">Thành</span>
-                            <span class="employee-phone">0909650816</span>
+                        <div class="employee-item">
+                            <span class="employee-name employee-boss">
+                                <i class="fas fa-crown"></i>
+                                Tín
+                            </span>
+                            <span class="employee-phone">0907489088</span>
                             <div class="button-group">
-                                <a href="tel:0909650816" class="call-button"><i class="fas fa-phone"></i></a>
-                                <button class="delete-button" onclick="removeEmployee(this)"><i class="fas fa-trash-alt"></i></button>
+                                <a href="tel:0907489088" class="call-button">
+                                    <i class="fas fa-phone"></i>
+                                </a>
                             </div>
                         </div>
-                        <div class="employee-item" style="animation-delay: 0.2s;">
-                            <span class="employee-name">Trang</span>
-                            <span class="employee-phone">0912345678</span>
+                        <div class="employee-item">
+                            <span class="employee-name employee-boss">
+                                <i class="fas fa-gem"></i>
+                                Hoàng
+                            </span>
+                            <span class="employee-phone">0815155989</span>
                             <div class="button-group">
-                                <a href="tel:0912345678" class="call-button"><i class="fas fa-phone"></i></a>
-                                <button class="delete-button" onclick="removeEmployee(this)"><i class="fas fa-trash-alt"></i></button>
+                                <a href="tel:0815155989" class="call-button">
+                                    <i class="fas fa-phone"></i>
+                                </a>
                             </div>
                         </div>
-                        <div class="employee-item" style="animation-delay: 0.3s;">
-                            <span class="employee-name">Hải</span>
-                            <span class="employee-phone">0987654321</span>
-                            <div class="button-group">
-                                <a href="tel:0987654321" class="call-button"><i class="fas fa-phone"></i></a>
-                                <button class="delete-button" onclick="removeEmployee(this)"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </div>
-                        <div class="employee-item" style="animation-delay: 0.4s;">
-                            <span class="employee-name">Ngọc</span>
-                            <span class="employee-phone">0977889900</span>
-                            <div class="button-group">
-                                <a href="tel:0977889900" class="call-button"><i class="fas fa-phone"></i></a>
-                                <button class="delete-button" onclick="removeEmployee(this)"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </div>
+                        <div class="employee-item"><span class="employee-name">Duy</span><span class="employee-phone">0969076994</span><div class="button-group"><a href="tel:0969076994" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Yến</span><span class="employee-phone">0964367735</span><div class="button-group"><a href="tel:0964367735" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Thừa</span><span class="employee-phone">0938804823</span><div class="button-group"><a href="tel:0938804823" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Vân</span><span class="employee-phone">0931029512</span><div class="button-group"><a href="tel:0931029512" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Kim anh</span><span class="employee-phone">0934966680</span><div class="button-group"><a href="tel:0934966680" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Thành</span><span class="employee-phone">0909650816</span><div class="button-group"><a href="tel:0909650816" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Nghi</span><span class="employee-phone">0933109915</span><div class="button-group"><a href="tel:0933109915" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Yến gấu mèo</span><span class="employee-phone">0775910406</span><div class="button-group"><a href="tel:0775910406" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Uyên spa</span><span class="employee-phone">0796097238</span><div class="button-group"><a href="tel:0796097238" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">An spa</span><span class="employee-phone">0862370518</span><div class="button-group"><a href="tel:0862370518" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Phúc</span><span class="employee-phone">0353510125</span><div class="button-group"><a href="tel:0353510125" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Hằng</span><span class="employee-phone">0907507308</span><div class="button-group"><a href="tel:0907507308" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Nghi mèo</span><span class="employee-phone">0703749982</span><div class="button-group"><a href="tel:0703749982" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Toàn</span><span class="employee-phone">0345553228</span><div class="button-group"><a href="tel:0345553228" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Vỹ</span><span class="employee-phone">0845245468</span><div class="button-group"><a href="tel:0845245468" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Uyên capy</span><span class="employee-phone">0902639611</span><div class="button-group"><a href="tel:0902639611" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Ân capy</span><span class="employee-phone">0565708439</span><div class="button-group"><a href="tel:0565708439" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Thúy vy</span><span class="employee-phone">0394560935</span><div class="button-group"><a href="tel:0394560935" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Quỳnh vy</span><span class="employee-phone">0356590350</span><div class="button-group"><a href="tel:0356590350" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Ngân</span><span class="employee-phone">0377512029</span><div class="button-group"><a href="tel:0377512029" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Khang</span><span class="employee-phone">0962000965</span><div class="button-group"><a href="tel:0962000965" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Kim</span><span class="employee-phone">0909360446</span><div class="button-group"><a href="tel:0909360446" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Nam</span><span class="employee-phone">0347096271</span><div class="button-group"><a href="tel:0347096271" class="call-button"><i class="fas fa-phone"></i></a></div></div>
+                        <div class="employee-item"><span class="employee-name">Sang</span><span class="employee-phone">0384280294</span><div class="button-group"><a href="tel:0384280294" class="call-button"><i class="fas fa-phone"></i></a></div></div>
                     </div>
                 </div>
             </section>
@@ -474,68 +449,36 @@
         }
 
         function showSection(sectionId) {
-            // Remove 'active' class from all nav links and content sections
+            const selectedSection = document.getElementById(sectionId);
+
+            // Nếu section đang active rồi thì chỉ đóng menu, không remove để tránh mất nội dung
+            if (selectedSection && selectedSection.classList.contains('active')) {
+                toggleNav();
+                return;
+            }
+
+            // Xóa active ở tất cả link và section
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
 
-            // Add 'active' class to the selected nav link and content section
+            // Thêm active vào link và section được chọn
             const selectedLink = document.querySelector(`.nav-link[onclick*='${sectionId}']`);
-            if (selectedLink) {
-                selectedLink.classList.add('active');
-            }
-            const selectedSection = document.getElementById(sectionId);
-            if (selectedSection) {
-                selectedSection.classList.add('active');
-            }
+            if (selectedLink) selectedLink.classList.add('active');
+            if (selectedSection) selectedSection.classList.add('active');
 
-            // Automatically close the navigation menu after a section is selected
+            // Đóng menu sau khi chọn
             toggleNav();
         }
 
         function toggleDarkMode() {
             body.classList.toggle('dark-mode');
             const toggleIcon = document.querySelector('.dark-mode-toggle i');
-            if (body.classList.contains('dark-mode')) {
+            if (body.classList.contains('dark-mode')) {                       
                 toggleIcon.classList.remove('fa-moon');
                 toggleIcon.classList.add('fa-sun');
             } else {
                 toggleIcon.classList.remove('fa-sun');
                 toggleIcon.classList.add('fa-moon');
-            }
-        }
-        
-        function addEmployee() {
-            const nameInput = document.getElementById('employeeNameInput');
-            const phoneInput = document.getElementById('employeePhoneInput');
-            const employeeList = document.getElementById('employeeList');
-        
-            const name = nameInput.value.trim();
-            const phone = phoneInput.value.trim();
-        
-            if (name && phone) {
-                const newEmployeeItem = document.createElement('div');
-                newEmployeeItem.classList.add('employee-item');
-                newEmployeeItem.innerHTML = `
-                    <span class="employee-name">${name}</span>
-                    <span class="employee-phone">${phone}</span>
-                    <div class="button-group">
-                        <a href="tel:${phone}" class="call-button"><i class="fas fa-phone"></i></a>
-                        <button class="delete-button" onclick="removeEmployee(this)"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                `;
-                employeeList.appendChild(newEmployeeItem);
-        
-                nameInput.value = '';
-                phoneInput.value = '';
-            } else {
-                alert('Vui lòng nhập đủ Tên và Số điện thoại!');
-            }
-        }
-        
-        function removeEmployee(button) {
-            const employeeItem = button.closest('.employee-item');
-            if (employeeItem) {
-                employeeItem.remove();
             }
         }
     </script>
