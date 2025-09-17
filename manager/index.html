@@ -9,87 +9,101 @@
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
         :root {
-            --bg-color-light: #f5f7fa;
-            --bg-color-dark: #121212;
+            --bg-color-light: #f0f2f5;
+            --bg-color-dark: #1c1c1e;
             --card-bg-light: #ffffff;
-            --card-bg-dark: #1e1e1e;
-            --primary-color: #e74c3c;
-            --secondary-color: #c0392b;
-            --text-color-light: #2c3e50;
-            --text-color-dark: #ecf0f1;
-            --shadow-color-light: rgba(44, 62, 80, 0.1);
-            --shadow-color-dark: rgba(0, 0, 0, 0.5);
-            --accent-color: #f39c12;
-            --boss-icon-color: gold; /* New color for boss icon */
-            --blur-effect: blur(10px);
+            --card-bg-dark: #2c2c2e;
+            --primary-color: #ff3b30;
+            --secondary-color: #ff9500;
+            --text-color-light: #1c1c1e;
+            --text-color-dark: #f2f2f7;
+            --shadow-color-light: rgba(0, 0, 0, 0.1);
+            --shadow-color-dark: rgba(0, 0, 0, 0.3);
+            --accent-color: #007aff;
+            --boss-icon-color: #ffd700;
+            --blur-effect: blur(20px);
         }
 
-       body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg-color-light);
-    color: var(--text-color-light);
-    transition: background-color 0.5s ease, color 0.5s ease;
-    overflow: hidden; /* ❌ không cho cuộn */
-}
-
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color-light);
+            color: var(--text-color-light);
+            transition: background-color 0.5s ease, color 0.5s ease;
+            overflow: hidden;
+        }
 
         body.dark-mode {
             background-color: var(--bg-color-dark);
             color: var(--text-color-dark);
         }
 
-        /* HEADER */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 70px;
-            background-color: rgba(255, 255, 255, 0.8);
+            height: 80px;
+            background-color: rgba(255, 255, 255, 0.7);
             backdrop-filter: var(--blur-effect);
-            box-shadow: 0 4px 15px var(--shadow-color-light);
+            -webkit-backdrop-filter: var(--blur-effect);
+            box-shadow: 0 4px 20px var(--shadow-color-light);
             display: flex;
             align-items: center;
-            padding: 0 30px;
+            padding: 0 20px;
             z-index: 1000;
             transition: background-color 0.5s ease, box-shadow 0.5s ease;
         }
+
         body.dark-mode .header {
-            background-color: rgba(30, 30, 30, 0.8);
-            box-shadow: 0 4px 15px var(--shadow-color-dark);
+            background-color: rgba(44, 44, 46, 0.7);
+            box-shadow: 0 4px 20px var(--shadow-color-dark);
         }
+
         .header .menu-icon {
-            font-size: 28px;
+            font-size: 24px;
             cursor: pointer;
             color: var(--primary-color);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, color 0.3s ease;
         }
+
         .header .menu-icon:active {
             transform: scale(0.9);
         }
+
         .header .title {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
-            color: var(--secondary-color);
-            margin-left: 20px;
+            color: var(--text-color-light);
+            margin-left: 15px;
+            transition: color 0.5s ease;
+            animation: pulse 4s infinite ease-in-out;
         }
+
+        body.dark-mode .header .title {
+            color: var(--text-color-dark);
+        }
+
         .header .title span {
             font-weight: 400;
+            color: var(--primary-color);
         }
+
         .header .dark-mode-toggle {
             margin-left: auto;
             cursor: pointer;
             font-size: 22px;
-            color: var(--text-color-light);
-            transition: color 0.5s ease, transform 0.3s ease;
+            color: var(--secondary-color);
+            transition: color 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
         body.dark-mode .header .dark-mode-toggle {
-            color: var(--text-color-dark);
+            color: var(--secondary-color);
         }
-        .header .dark-mode-toggle:hover {
-            transform: rotate(30deg);
+
+        .header .dark-mode-toggle:active {
+            transform: scale(0.8);
         }
 
         /* NAVIGATION MENU */
@@ -98,103 +112,125 @@
             top: 0;
             left: -300px;
             height: 100vh;
-            width: 300px;
-            background-color: var(--card-bg-light);
-            box-shadow: 4px 0 15px var(--shadow-color-light);
-            padding-top: 90px;
+            width: 280px;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: var(--blur-effect);
+            -webkit-backdrop-filter: var(--blur-effect);
+            box-shadow: 4px 0 20px var(--shadow-color-light);
+            padding-top: 100px;
             transition: left 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             z-index: 999;
         }
+
         body.dark-mode .nav {
-            background-color: var(--card-bg-dark);
-            box-shadow: 4px 0 15px var(--shadow-color-dark);
+            background-color: rgba(44, 44, 46, 0.8);
+            box-shadow: 4px 0 20px var(--shadow-color-dark);
         }
+
         .nav.active {
             left: 0;
         }
+
         .nav .nav-link {
             display: flex;
             align-items: center;
-            padding: 18px 30px;
+            padding: 18px 25px;
             text-decoration: none;
             color: var(--text-color-light);
             border-left: 5px solid transparent;
-            transition: all 0.4s ease;
-            font-size: 18px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-size: 17px;
             font-weight: 500;
         }
+
         body.dark-mode .nav .nav-link {
             color: var(--text-color-dark);
         }
-        .nav .nav-link:hover, .nav .nav-link.active {
-            background-color: rgba(var(--primary-color-rgb, 231, 76, 60), 0.1);
+
+        .nav .nav-link:hover,
+        .nav .nav-link.active {
+            background-color: rgba(var(--primary-color-rgb, 255, 59, 48), 0.1);
             border-left-color: var(--primary-color);
             transform: translateX(10px);
         }
-        .nav .nav-link:hover span, .nav .nav-link.active span {
+
+        .nav .nav-link:hover span,
+        .nav .nav-link.active span {
             color: var(--primary-color);
         }
+
         .nav .nav-link i {
             margin-right: 20px;
-            font-size: 22px;
+            font-size: 20px;
             color: var(--primary-color);
             transition: all 0.4s ease;
         }
-        .nav .nav-link:hover i, .nav .nav-link.active i {
+
+        .nav .nav-link:hover i,
+        .nav .nav-link.active i {
             transform: scale(1.1);
         }
 
         /* MAIN CONTENT */
         .main-content-container {
-            padding: 90px 0 30px 0;
+            padding: 100px 0 30px 0;
             transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
+
         .main-content-container.nav-active {
-            transform: translateX(300px);
+            transform: translateX(280px);
         }
-       .content-section {
-    visibility: hidden;
-    opacity: 0;
-    position: fixed;
-    top: 70px; /* chừa đúng header */
-    left: 0;
-    width: 100%;
-    height: calc(100vh - 70px);
-    transform: scale(0.98);
-    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s linear 0.4s;
-    overflow: hidden; /* không cho cuộn */
-}
-/* Cho riêng phần Nhân sự được cuộn */
-#dashboard.content-section {
-    overflow-y: auto;   /* bật cuộn dọc */
-    padding-bottom: 20px; /* tránh bị dính sát đáy */
-}
 
-.content-section.active {
-    visibility: visible;
-    opacity: 1;
-    transform: scale(1);
-    transition-delay: 0s;
-}
+        .content-section {
+            visibility: hidden;
+            opacity: 0;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 80px);
+            transform: scale(0.98);
+            transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s linear 0.4s;
+            overflow: hidden;
+        }
 
+        #dashboard.content-section {
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
 
+        .content-section.active {
+            visibility: visible;
+            opacity: 1;
+            transform: scale(1);
+            transition-delay: 0s;
+        }
 
         .card {
             background-color: var(--card-bg-light);
             padding: 30px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px var(--shadow-color-light);
+            box-shadow: 0 15px 40px var(--shadow-color-light);
             margin: 0 auto 30px auto;
-            max-width: 1000px;
-            transition: background-color 0.5s ease, box-shadow 0.5s ease, transform 0.3s ease;
+            max-width: 90%;
+            transition: background-color 0.5s ease, box-shadow 0.5s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: cardSlideIn 0.8s ease forwards;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
+
         body.dark-mode .card {
             background-color: var(--card-bg-dark);
-            box-shadow: 0 10px 30px var(--shadow-color-dark);
+            box-shadow: 0 15px 40px var(--shadow-color-dark);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
+
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 45px var(--shadow-color-light);
+        }
+
+        body.dark-mode .card:hover {
+            box-shadow: 0 20px 45px var(--shadow-color-dark);
         }
 
         h2 {
@@ -202,61 +238,128 @@
             border-bottom: 3px solid var(--primary-color);
             padding-bottom: 15px;
             margin-top: 0;
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
+            letter-spacing: 1px;
         }
-        
+
+        /* Search Bar Styles */
+        .search-container {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-color-light);
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            position: sticky;
+            top: -15px;
+            z-index: 50;
+            transition: background-color 0.5s ease, box-shadow 0.5s ease;
+        }
+        body.dark-mode .search-container {
+            background-color: var(--card-bg-dark);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .search-container i {
+            color: var(--primary-color);
+            font-size: 18px;
+            margin-right: 15px;
+        }
+        .search-container input {
+            flex-grow: 1;
+            border: none;
+            background: transparent;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            color: var(--text-color-light);
+            outline: none;
+        }
+        body.dark-mode .search-container input {
+            color: var(--text-color-dark);
+        }
+        .search-container input::placeholder {
+            color: rgba(var(--text-color-light-rgb, 28, 28, 30), 0.5);
+        }
+        body.dark-mode .search-container input::placeholder {
+            color: rgba(var(--text-color-dark-rgb, 242, 242, 247), 0.5);
+        }
+
         /* Employee List styles */
         .employee-list {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            padding: 0 20px;
+            padding: 0 10px;
         }
+
         .employee-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 15px 20px;
-            border-radius: 10px;
+            padding: 18px 25px;
+            border-radius: 15px;
             background-color: var(--bg-color-light);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, background-color 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease, opacity 0.5s ease, visibility 0.5s ease;
+            position: relative;
         }
         .employee-item:hover {
-            transform: translateX(5px);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
         body.dark-mode .employee-item {
             background-color: var(--card-bg-dark);
         }
+
+        /* Hidden state for filter animation */
+        .employee-item.hidden {
+            opacity: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: all 0.5s ease-out;
+        }
+
+        .employee-info {
+            display: flex;
+            flex-direction: column;
+        }
+
         .employee-name {
             font-weight: 600;
             color: var(--primary-color);
+            font-size: 1.1em;
         }
-        /* New styles for bosses */
+
         .employee-boss {
             font-weight: 700;
-            color: var(--accent-color);
+            color: var(--boss-icon-color);
             position: relative;
             transform: scale(1.05);
             display: flex;
             align-items: center;
             gap: 10px;
-            text-shadow: 0 0 5px rgba(243, 156, 18, 0.5); /* Glow effect */
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
         }
+
         .employee-boss i {
             font-size: 1.2em;
             color: var(--boss-icon-color);
-            animation: bossIconPulse 1.5s infinite ease-in-out;
+            animation: bossIconPulse 2s infinite ease-in-out;
         }
+
         .employee-phone {
-            flex-grow: 1;
-            margin-left: 20px;
+            margin-top: 5px;
             color: var(--text-color-light);
+            font-size: 0.9em;
         }
         body.dark-mode .employee-phone {
             color: var(--text-color-dark);
         }
+
         .call-button {
             text-decoration: none;
             background-color: var(--primary-color);
@@ -271,69 +374,106 @@
             font-size: 20px;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
+
         .call-button:hover {
             background-color: var(--secondary-color);
-            transform: scale(1.1);
+            transform: scale(1.1) rotate(5deg);
         }
+
         .call-button:active {
-            transform: scale(0.95);
+            transform: scale(0.9);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
         }
+
         .button-group {
             display: flex;
             align-items: center;
             gap: 5px;
         }
 
-        /* IFRAME */
-       .iframe-container {
-    width: 100%;
-    height: 100%;
-    border: none;
-    opacity: 0;
-    transform: scale(0.95);
-    animation: iframeEntrance 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            border: none;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: iframeEntrance 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
 
-        
-
-        /* OVERLAY */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: var(--blur-effect);
+            -webkit-backdrop-filter: var(--blur-effect);
             z-index: 998;
             display: none;
             transition: opacity 0.5s ease;
-            opacity: 1;
+            opacity: 0;
         }
+
         .overlay.active {
             display: block;
             opacity: 1;
         }
 
         /* ANIMATIONS */
-        @keyframes sectionEntrance {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes dashboardItemEntrance {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes iframeEntrance {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes bossIconPulse {
+        @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+            50% { transform: scale(1.02); }
             100% { transform: scale(1); }
+        }
+
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes iframeEntrance {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bossIconPulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes employeeFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .employee-item-animated {
+            animation: employeeFadeIn 0.5s ease-out forwards;
+        }
+
+        .employee-list > div {
+            animation: none !important;
         }
     </style>
 </head>
@@ -377,55 +517,11 @@
             <section class="content-section active" id="dashboard">
                 <div class="card">
                     <h2>Nhân viên</h2>
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="employeeSearch" placeholder="Tìm kiếm nhân viên...">
+                    </div>
                     <div class="employee-list" id="employeeList">
-                        <div class="employee-item">
-                            <span class="employee-name employee-boss">
-                                <i class="fas fa-crown"></i>
-                                Xếp Tín
-                            </span>
-                            <span class="employee-phone">0907489088</span>
-                            <div class="button-group">
-                                <a href="tel:0907489088" class="call-button">
-                                    <i class="fas fa-phone"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="employee-item">
-                            <span class="employee-name employee-boss">
-                                <i class="fas fa-gem"></i>
-                               Xếp Hoàng
-                            </span>
-                            <span class="employee-phone">0815155989</span>
-                            <div class="button-group">
-                                <a href="tel:0815155989" class="call-button">
-                                    <i class="fas fa-phone"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="employee-item"><span class="employee-name">Duy</span><span class="employee-phone">0969076994</span><div class="button-group"><a href="tel:0969076994" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Yến</span><span class="employee-phone">0964367735</span><div class="button-group"><a href="tel:0964367735" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Thừa</span><span class="employee-phone">0938804823</span><div class="button-group"><a href="tel:0938804823" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Vân</span><span class="employee-phone">0931029512</span><div class="button-group"><a href="tel:0931029512" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Kim anh</span><span class="employee-phone">0934966680</span><div class="button-group"><a href="tel:0934966680" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Thành</span><span class="employee-phone">0909650816</span><div class="button-group"><a href="tel:0909650816" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Nghi</span><span class="employee-phone">0933109915</span><div class="button-group"><a href="tel:0933109915" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Yến gấu mèo</span><span class="employee-phone">0775910406</span><div class="button-group"><a href="tel:0775910406" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Uyên spa</span><span class="employee-phone">0796097238</span><div class="button-group"><a href="tel:0796097238" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">An spa</span><span class="employee-phone">0862370518</span><div class="button-group"><a href="tel:0862370518" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Phúc</span><span class="employee-phone">0353510125</span><div class="button-group"><a href="tel:0353510125" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Hằng</span><span class="employee-phone">0907507308</span><div class="button-group"><a href="tel:0907507308" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Nghi mèo</span><span class="employee-phone">0703749982</span><div class="button-group"><a href="tel:0703749982" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Toàn</span><span class="employee-phone">0345553228</span><div class="button-group"><a href="tel:0345553228" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Vỹ</span><span class="employee-phone">0845245468</span><div class="button-group"><a href="tel:0845245468" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Uyên capy</span><span class="employee-phone">0902639611</span><div class="button-group"><a href="tel:0902639611" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Ân capy</span><span class="employee-phone">0565708439</span><div class="button-group"><a href="tel:0565708439" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Thúy vy</span><span class="employee-phone">0394560935</span><div class="button-group"><a href="tel:0394560935" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Quỳnh vy</span><span class="employee-phone">0356590350</span><div class="button-group"><a href="tel:0356590350" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Ngân</span><span class="employee-phone">0377512029</span><div class="button-group"><a href="tel:0377512029" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Khang</span><span class="employee-phone">0962000965</span><div class="button-group"><a href="tel:0962000965" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Kim</span><span class="employee-phone">0909360446</span><div class="button-group"><a href="tel:0909360446" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Nam</span><span class="employee-phone">0347096271</span><div class="button-group"><a href="tel:0347096271" class="call-button"><i class="fas fa-phone"></i></a></div></div>
-                        <div class="employee-item"><span class="employee-name">Sang</span><span class="employee-phone">0384280294</span><div class="button-group"><a href="tel:0384280294" class="call-button"><i class="fas fa-phone"></i></a></div></div>
                     </div>
                 </div>
             </section>
@@ -447,7 +543,7 @@
             </section>
         </main>
     </div>
-    
+
     <div class="overlay" id="overlay" onclick="toggleNav()"></div>
 
     <script>
@@ -455,6 +551,74 @@
         const mainContentContainer = document.getElementById('mainContentContainer');
         const overlay = document.getElementById('overlay');
         const body = document.body;
+
+        const employeeData = [
+            { name: "Xếp Tín", phone: "0907489088", isBoss: true, icon: "fas fa-crown" },
+            { name: "Xếp Hoàng", phone: "0815155989", isBoss: true, icon: "fas fa-gem" },
+            { name: "Duy", phone: "0969076994" },
+            { name: "Yến", phone: "0964367735" },
+            { name: "Thừa", phone: "0938804823" },
+            { name: "Vân", phone: "0931029512" },
+            { name: "Kim anh", phone: "0934966680" },
+            { name: "Thành", phone: "0909650816" },
+            { name: "Nghi", phone: "0933109915" },
+            { name: "Yến gấu mèo", phone: "0775910406" },
+            { name: "Uyên spa", phone: "0796097238" },
+            { name: "An spa", phone: "0862370518" },
+            { name: "Phúc", phone: "0353510125" },
+            { name: "Hằng", phone: "0907507308" },
+            { name: "Nghi mèo", phone: "0703749982" },
+            { name: "Toàn", phone: "0345553228" },
+            { name: "Vỹ", phone: "0845245468" },
+            { name: "Uyên capy", phone: "0902639611" },
+            { name: "Ân capy", phone: "0565708439" },
+            { name: "Thúy vy", phone: "0394560935" },
+            { name: "Quỳnh vy", phone: "0356590350" },
+            { name: "Ngân", phone: "0377512029" },
+            { name: "Khang", phone: "0962000965" },
+            { name: "Kim", phone: "0909360446" },
+            { name: "Nam", phone: "0347096271" },
+            { name: "Sang", phone: "0384280294" }
+        ];
+
+        const employeeList = document.getElementById('employeeList');
+        const employeeSearch = document.getElementById('employeeSearch');
+
+        function renderEmployees(employees) {
+            employeeList.innerHTML = '';
+            employees.forEach((emp, index) => {
+                const item = document.createElement('div');
+                item.className = 'employee-item employee-item-animated';
+                item.style.animationDelay = `${index * 0.05}s`;
+
+                const nameContent = emp.isBoss ? `<i class="${emp.icon}"></i> ${emp.name}` : emp.name;
+                const nameClass = emp.isBoss ? 'employee-name employee-boss' : 'employee-name';
+
+                item.innerHTML = `
+                    <div class="employee-info">
+                        <span class="${nameClass}">${nameContent}</span>
+                        <span class="employee-phone">${emp.phone}</span>
+                    </div>
+                    <div class="button-group">
+                        <a href="tel:${emp.phone}" class="call-button">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                    </div>
+                `;
+                employeeList.appendChild(item);
+            });
+        }
+
+        function filterEmployees() {
+            const searchTerm = employeeSearch.value.toLowerCase();
+            const filteredEmployees = employeeData.filter(emp =>
+                emp.name.toLowerCase().includes(searchTerm) || emp.phone.includes(searchTerm)
+            );
+            renderEmployees(filteredEmployees);
+        }
+
+        renderEmployees(employeeData);
+        employeeSearch.addEventListener('input', filterEmployees);
 
         function toggleNav() {
             navMenu.classList.toggle('active');
@@ -464,30 +628,30 @@
 
         function showSection(sectionId) {
             const selectedSection = document.getElementById(sectionId);
-
-            // Nếu section đang active rồi thì chỉ đóng menu, không remove để tránh mất nội dung
             if (selectedSection && selectedSection.classList.contains('active')) {
                 toggleNav();
                 return;
             }
 
-            // Xóa active ở tất cả link và section
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
 
-            // Thêm active vào link và section được chọn
             const selectedLink = document.querySelector(`.nav-link[onclick*='${sectionId}']`);
             if (selectedLink) selectedLink.classList.add('active');
             if (selectedSection) selectedSection.classList.add('active');
 
-            // Đóng menu sau khi chọn
+            if (sectionId === 'dashboard') {
+                renderEmployees(employeeData);
+                employeeSearch.value = '';
+            }
+
             toggleNav();
         }
 
         function toggleDarkMode() {
             body.classList.toggle('dark-mode');
             const toggleIcon = document.querySelector('.dark-mode-toggle i');
-            if (body.classList.contains('dark-mode')) {                       
+            if (body.classList.contains('dark-mode')) {
                 toggleIcon.classList.remove('fa-moon');
                 toggleIcon.classList.add('fa-sun');
             } else {
