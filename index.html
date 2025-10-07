@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -69,7 +68,7 @@
                   transform: scale(1.05);
             }
 
-            .btn-view-photos, .btn-suggestion {
+            .btn-view-photos, .btn-suggestion-main {
                   font-size: 1.3em;
                   font-weight: bold;
                   padding: 14px 32px;
@@ -84,21 +83,34 @@
                   text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
             }
 
-            .btn-view-photos i, .btn-suggestion i {
+            .btn-view-photos i, .btn-suggestion-main i {
                   animation: bounceIcon 1.5s infinite;
             }
 
-            .btn-view-photos:hover, .btn-suggestion:hover {
+            .btn-view-photos:hover, .btn-suggestion-main:hover {
                   background: linear-gradient(to right, #a36173, #8a4e61);
                   transform: scale(1.05);
                   box-shadow: 0 8px 20px rgba(163, 97, 115, 0.6);
             }
-            .btn-suggestion {
+            .btn-suggestion { /* Dành cho các nút bên trong modal */
                   background: linear-gradient(to right, #4CAF50, #81C784);
                   padding: 10px 20px;
-                  font-size: 1em;
+                  font-size: 1.1em;
+                  font-weight: bold;
+                  border-radius: 25px;
+                  color: white;
+                  border: none;
+                  transition: all 0.2s ease;
             }
             .btn-suggestion:hover {
+                  background: linear-gradient(to right, #388E3C, #66BB6A);
+                  transform: translateY(-2px);
+            }
+
+            .btn-suggestion-main { /* Đổi tên class cho nút chính */
+                  background: linear-gradient(to right, #4CAF50, #81C784);
+            }
+            .btn-suggestion-main:hover {
                   background: linear-gradient(to right, #388E3C, #66BB6A);
             }
 
@@ -445,6 +457,35 @@
                   background-color: #f0f0f0;
                   color: #555;
             }
+
+            /* Custom Modal Styles for iOS-like bottom sheet */
+            .modal.bottom-sheet .modal-dialog {
+                position: fixed;
+                margin: 0;
+                width: 100%;
+                max-width: none;
+                bottom: 0;
+                transform: translate(0, 100%);
+                transition: transform 0.3s ease-out;
+            }
+            .modal.bottom-sheet.show .modal-dialog {
+                transform: translate(0, 0);
+            }
+            .modal.bottom-sheet .modal-content {
+                border-radius: 20px 20px 0 0;
+                border: none;
+            }
+            .modal.bottom-sheet .modal-header {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            .modal.bottom-sheet .modal-body {
+                padding-top: 10px;
+                padding-bottom: 30px;
+            }
+            .modal-backdrop.show {
+                opacity: 0.5; /* Giảm độ mờ của backdrop */
+            }
       </style>
 </head>
 <body>
@@ -488,15 +529,10 @@
       </div>
 
       <div class="suggestion-container mt-4 mb-4">
-            <h2 style="font-size: 1.5em; color: #a36173; font-weight: bold; margin-bottom: 15px;">Hoặc bạn thích bé cún nào?</h2>
-            <div class="d-flex justify-content-center flex-wrap gap-2">
-                  <button class="btn btn-suggestion" data-suggestion="chân dài">Chân Dài </button>
-                  <button class="btn btn-suggestion" data-suggestion="trắng trẻo">Trắng Trẻo </button>
-                  <button class="btn btn-suggestion" data-suggestion="múp rụp">Múp Rụp </button>
-                  <button class="btn btn-suggestion" data-suggestion="da ngăm">Da Ngăm </button>
-            </div>
+            <button id="openSuggestionModalBtn" class="btn btn-suggestion-main">
+                <i class="fa-solid fa-paw me-2"></i> Gợi ý Cún
+            </button>
       </div>
-
       <div>
             <input type="text" id="search-input" placeholder="Nhập tên, giống hoặc tính cách bé cún..." />
       </div>
@@ -528,6 +564,25 @@
 
 <div id="selected-count">Đã chọn: 0 bé</div>
 
+<div class="modal fade bottom-sheet" id="suggestionModal" tabindex="-1" aria-labelledby="suggestionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="suggestionModalLabel" style="color: #a36173; font-weight: bold;">Bạn thích bé cún nào?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p style="color: #4a3a41; margin-bottom: 20px;">Chúng tôi sẽ tìm bé cún phù hợp nhất với tiêu chí của bạn!</p>
+                <div class="d-flex justify-content-center flex-wrap gap-3">
+                    <button class="btn btn-suggestion" data-suggestion="chân dài">Chân Dài </button>
+                    <button class="btn btn-suggestion" data-suggestion="trắng trẻo">Trắng Trẻo </button>
+                    <button class="btn btn-suggestion" data-suggestion="múp rụp">Múp Rụp </button>
+                    <button class="btn btn-suggestion" data-suggestion="da ngăm">Da Ngăm </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="sleepModal" tabindex="-1" aria-labelledby="sleepModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content" style="border-radius: 20px;">
@@ -590,6 +645,19 @@
       const confirmSuggestBtn = document.getElementById('confirmSuggestBtn');
       const cancelSuggestBtn = document.getElementById('cancelSuggestBtn');
 
+      // Khởi tạo Modal Gợi ý Cún
+      const suggestionModal = new bootstrap.Modal(document.getElementById('suggestionModal'));
+      const openSuggestionModalBtn = document.getElementById('openSuggestionModalBtn');
+      
+      // Mở modal gợi ý
+      openSuggestionModalBtn.addEventListener('click', () => {
+          if (lastAction === 'dog_selected') {
+              showBootstrapAlert("❗ Bạn đã chọn cún rồi. Vui lòng chốt các bé hoặc đợi 30 phút sau để gửi yêu cầu tìm bé khác nhé!", "warning");
+              return;
+          }
+          suggestionModal.show();
+      });
+
       function showBootstrapAlert(message, type = "success", duration = 3000) {
             const container = document.getElementById("alert-box-container");
             const alertBox = document.getElementById("alert-box");
@@ -619,10 +687,10 @@
             // Vô hiệu hóa nút gợi ý khi đã chọn cún
             if (selectedDogs.length > 0) {
                   lastAction = 'dog_selected';
-                  document.querySelectorAll('.btn-suggestion').forEach(btn => btn.classList.add('disabled'));
+                  document.querySelectorAll('.btn-suggestion-main').forEach(btn => btn.classList.add('disabled'));
             } else if (lastAction !== 'suggestion_sent') {
                   lastAction = null;
-                  document.querySelectorAll('.btn-suggestion').forEach(btn => btn.classList.remove('disabled'));
+                  document.querySelectorAll('.btn-suggestion-main').forEach(btn => btn.classList.remove('disabled'));
             }
       }
 
@@ -653,10 +721,10 @@
             document.getElementById('search-input').disabled = false;
       }
       function disableSuggestionButtons() {
-            document.querySelectorAll('.btn-suggestion').forEach(btn => btn.classList.add('disabled'));
+            document.querySelectorAll('.btn-suggestion-main').forEach(btn => btn.classList.add('disabled'));
       }
       function enableSuggestionButtons() {
-            document.querySelectorAll('.btn-suggestion').forEach(btn => btn.classList.remove('disabled'));
+            document.querySelectorAll('.btn-suggestion-main').forEach(btn => btn.classList.remove('disabled'));
       }
 
       function renderDogs(filter = "") {
@@ -816,8 +884,11 @@
       });
 
       let currentSuggestion = null;
-      document.querySelectorAll('.btn-suggestion').forEach(button => {
+      // Lắng nghe sự kiện click cho các nút gợi ý bên trong modal
+      document.querySelectorAll('#suggestionModal .btn-suggestion').forEach(button => {
             button.addEventListener('click', () => {
+                suggestionModal.hide(); // Ẩn modal gợi ý
+                
                 if (lastAction === 'dog_selected') {
                     showBootstrapAlert("❗ Bạn đã chọn cún rồi. Vui lòng chốt các bé hoặc đợi 30 phút sau để gửi yêu cầu tìm bé khác nhé!", "warning");
                     return;
