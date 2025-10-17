@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống phân công nhân sự</title>
+    <title>Hệ thống phân công nhân sự - Live Preview</title>
     <style>
+        /* ========================================= */
+        /* CSS CHO FORM VÀ NÚT UNDO CỐ ĐỊNH */
+        /* ========================================= */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -19,6 +22,7 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-top: 60px; /* Thêm khoảng cách để nút cố định không che mất tiêu đề */
         }
 
         h1 {
@@ -54,7 +58,7 @@
             flex: 1 1 45%;
             padding: 15px;
             border: 1px solid #ccc;
-            border-radius: 4-px;
+            border-radius: 4px;
             background-color: #fff;
         }
 
@@ -80,11 +84,40 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             box-sizing: border-box;
+            transition: border-color 0.3s;
         }
 
-        button {
-            display: block;
-            width: 100%;
+        .job-position input:focus {
+            border-color: #007bff;
+        }
+
+        /* Nút UNDO cố định */
+        #undo-button-fixed {
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            z-index: 1000;
+            padding: 10px 15px;
+            background-color: #ffc107;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        #undo-button-fixed:hover:not(:disabled) {
+            background-color: #e0a800;
+        }
+
+        #undo-button-fixed:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .button-group button {
             padding: 15px;
             background-color: #007bff;
             color: #fff;
@@ -92,18 +125,26 @@
             border-radius: 6px;
             font-size: 18px;
             cursor: pointer;
-            margin-top: 30px;
             transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
         }
 
-        button:hover {
+        .button-group button:hover {
             background-color: #0056b3;
         }
 
+        /* ========================================= */
+        /* CSS CHO BẢNG LIVE PREVIEW VÀ ANIMATION */
+        /* ========================================= */
+
         #schedule-table-container {
-            display: none;
-            max-width: 100vw;
-            margin: auto;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .schedule-table {
@@ -130,8 +171,25 @@
             text-align: center;
         }
 
-        .schedule-table tr:nth-child(even) {
-            background-color: #f9f9f9;
+        /* Animation cho cell */
+        .schedule-table td.updated-cell {
+            background-color: #d4edda; /* Màu nền nhẹ khi update */
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0.5;
+                background-color: #fff3cd; /* Flash màu vàng nhẹ */
+            }
+            to {
+                opacity: 1;
+                background-color: transparent;
+            }
+        }
+
+        .schedule-table td {
+            transition: background-color 0.5s; /* Đảm bảo màu nền trở về bình thường */
         }
 
         .note-row td {
@@ -142,17 +200,6 @@
             background-color: #eaf6ff;
         }
 
-        @media (max-width: 768px) {
-            .schedule-table th, .schedule-table td {
-                font-size: 8px;
-                padding: 3px;
-            }
-
-            .schedule-table td > b {
-                font-size: 10px;
-            }
-        }
-        
         .save-button-container {
             text-align: center;
             margin-top: 20px;
@@ -161,12 +208,21 @@
         .save-button-container button {
             width: auto;
             padding: 10px 20px;
+            background-color: #28a745;
+        }
+
+        .save-button-container button:hover {
+            background-color: #1e7e34;
         }
 
     </style>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 <body>
+
+<button type="button" id="undo-button-fixed" onclick="undoLastAction()" disabled title="Quay lại thao tác nhập liệu trước đó.">
+    ↩️ Quay lại thao tác trước
+</button>
 
 <div id="assignment-form-container">
     <h1>NHẬP LIỆU PHÂN CÔNG TUẦN</h1>
@@ -176,28 +232,28 @@
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t2-sang-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t2-sang-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t2-sang-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t2-sang-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t2-sang-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t2-sang-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t2-sang-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t2-sang-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t2-sang-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t2-sang-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t2-sang-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t2-sang-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t2-sang-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t2-sang-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t2-sang-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t2-sang-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
                 <div class="shift-section">
                     <h3>CHIỀU</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t2-chieu-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t2-chieu-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t2-chieu-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t2-chieu-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t2-chieu-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t2-chieu-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t2-chieu-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t2-chieu-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t2-chieu-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t2-chieu-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t2-chieu-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t2-chieu-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t2-chieu-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t2-chieu-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t2-chieu-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t2-chieu-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
             </div>
-            <div class="job-position"><label>Lịch off:</label><input type="text" name="t2-note"></div>
+            <div class="job-position"><label>Lịch off:</label><input type="text" name="t2-note" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
         </div>
 
         <div class="day-container" id="day-3">
@@ -205,28 +261,28 @@
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t3-sang-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t3-sang-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t3-sang-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t3-sang-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t3-sang-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t3-sang-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t3-sang-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t3-sang-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t3-sang-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t3-sang-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t3-sang-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t3-sang-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t3-sang-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t3-sang-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t3-sang-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t3-sang-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
                 <div class="shift-section">
                     <h3>CHIỀU</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t3-chieu-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t3-chieu-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t3-chieu-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t3-chieu-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t3-chieu-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t3-chieu-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t3-chieu-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t3-chieu-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t3-chieu-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t3-chieu-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t3-chieu-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t3-chieu-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t3-chieu-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t3-chieu-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t3-chieu-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t3-chieu-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
             </div>
-            <div class="job-position"><label>Lịch off:</label><input type="text" name="t3-note"></div>
+            <div class="job-position"><label>Lịch off:</label><input type="text" name="t3-note" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
         </div>
 
         <div class="day-container" id="day-4">
@@ -234,28 +290,28 @@
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t4-sang-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t4-sang-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t4-sang-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t4-sang-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t4-sang-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t4-sang-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t4-sang-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t4-sang-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t4-sang-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t4-sang-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t4-sang-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t4-sang-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t4-sang-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t4-sang-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t4-sang-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t4-sang-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
                 <div class="shift-section">
                     <h3>CHIỀU</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t4-chieu-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t4-chieu-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t4-chieu-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t4-chieu-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t4-chieu-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t4-chieu-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t4-chieu-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t4-chieu-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t4-chieu-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t4-chieu-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t4-chieu-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t4-chieu-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t4-chieu-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t4-chieu-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t4-chieu-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t4-chieu-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
             </div>
-            <div class="job-position"><label>Lịch off:</label><input type="text" name="t4-note"></div>
+            <div class="job-position"><label>Lịch off:</label><input type="text" name="t4-note" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
         </div>
 
         <div class="day-container" id="day-5">
@@ -263,28 +319,28 @@
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t5-sang-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t5-sang-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t5-sang-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t5-sang-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t5-sang-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t5-sang-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t5-sang-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t5-sang-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t5-sang-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t5-sang-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t5-sang-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t5-sang-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t5-sang-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t5-sang-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t5-sang-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t5-sang-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
                 <div class="shift-section">
                     <h3>CHIỀU</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t5-chieu-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t5-chieu-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t5-chieu-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t5-chieu-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t5-chieu-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t5-chieu-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t5-chieu-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t5-chieu-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t5-chieu-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t5-chieu-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t5-chieu-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t5-chieu-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t5-chieu-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t5-chieu-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t5-chieu-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t5-chieu-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
             </div>
-            <div class="job-position"><label>Lịch off:</label><input type="text" name="t5-note"></div>
+            <div class="job-position"><label>Lịch off:</label><input type="text" name="t5-note" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
         </div>
 
         <div class="day-container" id="day-6">
@@ -292,28 +348,28 @@
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t6-sang-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t6-sang-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t6-sang-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t6-sang-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t6-sang-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t6-sang-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t6-sang-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t6-sang-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t6-sang-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t6-sang-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t6-sang-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t6-sang-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t6-sang-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t6-sang-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t6-sang-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t6-sang-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
                 <div class="shift-section">
                     <h3>CHIỀU</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t6-chieu-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t6-chieu-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t6-chieu-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t6-chieu-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t6-chieu-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t6-chieu-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t6-chieu-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t6-chieu-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t6-chieu-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t6-chieu-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t6-chieu-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t6-chieu-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t6-chieu-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t6-chieu-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t6-chieu-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t6-chieu-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
             </div>
-            <div class="job-position"><label>Lịch off:</label><input type="text" name="t6-note"></div>
+            <div class="job-position"><label>Lịch off:</label><input type="text" name="t6-note" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
         </div>
 
         <div class="day-container" id="day-7">
@@ -321,28 +377,28 @@
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t7-sang-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t7-sang-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t7-sang-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t7-sang-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t7-sang-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t7-sang-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t7-sang-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t7-sang-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t7-sang-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t7-sang-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t7-sang-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t7-sang-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t7-sang-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t7-sang-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t7-sang-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t7-sang-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
                 <div class="shift-section">
                     <h3>CHIỀU</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="t7-chieu-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="t7-chieu-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t7-chieu-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="t7-chieu-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t7-chieu-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t7-chieu-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="t7-chieu-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="t7-chieu-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="t7-chieu-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="t7-chieu-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="t7-chieu-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="t7-chieu-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="t7-chieu-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="t7-chieu-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="t7-chieu-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="t7-chieu-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
             </div>
-            <div class="job-position"><label>Lịch off:</label><input type="text" name="t7-note"></div>
+            <div class="job-position"><label>Lịch off:</label><input type="text" name="t7-note" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
         </div>
 
         <div class="day-container" id="day-cn">
@@ -350,31 +406,33 @@
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="cn-sang-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="cn-sang-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="cn-sang-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="cn-sang-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="cn-sang-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="cn-sang-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="cn-sang-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="cn-sang-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="cn-sang-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="cn-sang-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="cn-sang-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="cn-sang-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="cn-sang-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="cn-sang-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="cn-sang-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="cn-sang-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
                 <div class="shift-section">
                     <h3>CHIỀU</h3>
-                    <div class="job-position"><label>Oder:</label><input type="text" name="cn-chieu-oder"></div>
-                    <div class="job-position"><label>Trệt:</label><input type="text" name="cn-chieu-tret"></div>
-                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="cn-chieu-gaumeo"></div>
-                    <div class="job-position"><label>Mèo:</label><input type="text" name="cn-chieu-meo"></div>
-                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="cn-chieu-petdog1"></div>
-                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="cn-chieu-petdog2"></div>
-                    <div class="job-position"><label>Spa:</label><input type="text" name="cn-chieu-spa"></div>
-                    <div class="job-position"><label>Capybara:</label><input type="text" name="cn-chieu-capybara"></div>
+                    <div class="job-position"><label>Oder:</label><input type="text" name="cn-chieu-oder" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Trệt:</label><input type="text" name="cn-chieu-tret" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Gấu mèo:</label><input type="text" name="cn-chieu-gaumeo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Mèo:</label><input type="text" name="cn-chieu-meo" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog1:</label><input type="text" name="cn-chieu-petdog1" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Pet dog2:</label><input type="text" name="cn-chieu-petdog2" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Spa:</label><input type="text" name="cn-chieu-spa" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
+                    <div class="job-position"><label>Capybara:</label><input type="text" name="cn-chieu-capybara" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
                 </div>
             </div>
-            <div class="job-position"><label>Lịch off:</label><input type="text" name="cn-note"></div>
+            <div class="job-position"><label>Lịch off:</label><input type="text" name="cn-note" oninput="liveUpdate(this)" onblur="saveStateAndLocalStorage()"></div>
         </div>
 
-        <button type="button" onclick="generateSchedule()">Tạo bảng phân công</button>
+        <div class="button-group">
+            <button type="button" onclick="scrollToTables()">Xem bảng phân công chi tiết</button>
+        </div>
     </form>
 </div>
 
@@ -425,119 +483,257 @@
 </div>
 
 <script>
-    function generateSchedule() {
-        const formContainer = document.getElementById('assignment-form-container');
-        const tableContainer = document.getElementById('schedule-table-container');
+    const STORAGE_KEY = 'assignmentFormDataLive';
+    const UNDO_STACK = [];
+    const MAX_UNDO_STATES = 10;
+    const form = document.getElementById('assignmentForm');
+    const undoButton = document.getElementById('undo-button-fixed');
+    
+    const POSITIONS = [
+        { label: 'Oder', key: 'oder' },
+        { label: 'Trệt', key: 'tret' },
+        { label: 'Gấu mèo', key: 'gaumeo' },
+        { label: 'Mèo', key: 'meo' },
+        { label: 'Pet dog1', key: 'petdog1' },
+        { label: 'Pet dog2', key: 'petdog2' },
+        { label: 'Spa', key: 'spa' },
+        { label: 'Capybara', key: 'capybara' }
+    ];
+    const DAYS = ['t2', 't3', 't4', 't5', 't6', 't7', 'cn'];
+    const DAY_MAP = { 't2': 1, 't3': 2, 't4': 3, 't5': 4, 't6': 5, 't7': 6, 'cn': 7 }; // Map ngày sang chỉ số cột trong bảng
+
+    // Khởi tạo trạng thái và tải dữ liệu khi trang tải
+    document.addEventListener('DOMContentLoaded', () => {
+        setupTables();
+        loadData();
+        // Lấy trạng thái form ban đầu để làm trạng thái undo đầu tiên
+        UNDO_STACK.push(getFormData());
+        updateUndoButtonState();
+        liveUpdateAll(); // Cập nhật toàn bộ bảng sau khi load data
+    });
+
+    /**
+     * Khởi tạo cấu trúc các bảng (chỉ tạo các hàng tĩnh)
+     */
+    function setupTables() {
         const tableBodySang = document.querySelector('#schedule-table-sang tbody');
         const tableBodyChieu = document.querySelector('#schedule-table-chieu tbody');
         const tableBodyNotes = document.querySelector('#schedule-table-notes tbody');
 
-        // Ẩn form nhập liệu
-        formContainer.style.display = 'none';
-        // Hiển thị bảng phân công
-        tableContainer.style.display = 'block';
+        // Tạo bảng ca SÁNG và ca CHIỀU
+        POSITIONS.forEach(pos => {
+            // Sáng
+            let rowSang = document.createElement('tr');
+            rowSang.setAttribute('data-position', pos.key);
+            rowSang.innerHTML = `<td><b>${pos.label}</b></td>` + DAYS.map(day => 
+                `<td id="cell-${day}-sang-${pos.key}" data-day="${day}" data-shift="sang" data-pos="${pos.key}"></td>`
+            ).join('');
+            tableBodySang.appendChild(rowSang);
 
-        // Khai báo ngày và vị trí
-        const days = ['t2', 't3', 't4', 't5', 't6', 't7', 'cn'];
-        const positions = [
-            { label: 'Oder', key: 'oder' },
-            { label: 'Trệt', key: 'tret' },
-            { label: 'Gấu mèo', key: 'gaumeo' },
-            { label: 'Mèo', key: 'meo' },
-            { label: 'Pet dog1', key: 'petdog1' },
-            { label: 'Pet dog2', key: 'petdog2' },
-            { label: 'Spa', key: 'spa' },
-            { label: 'Capybara', key: 'capybara' }
-        ];
-
-        const data = {};
-
-        days.forEach(day => {
-            data[day] = { sang: {}, chieu: {}, note: '' };
-            positions.forEach(pos => {
-                const sangInput = document.querySelector(`input[name="${day}-sang-${pos.key}"]`);
-                const chieuInput = document.querySelector(`input[name="${day}-chieu-${pos.key}"]`);
-                
-                if (sangInput) data[day].sang[pos.label] = sangInput.value;
-                if (chieuInput) data[day].chieu[pos.label] = chieuInput.value;
-            });
-            const noteInput = document.querySelector(`input[name="${day}-note"]`);
-            if (noteInput) data[day].note = noteInput.value;
+            // Chiều
+            let rowChieu = document.createElement('tr');
+            rowChieu.setAttribute('data-position', pos.key);
+            rowChieu.innerHTML = `<td><b>${pos.label}</b></td>` + DAYS.map(day => 
+                `<td id="cell-${day}-chieu-${pos.key}" data-day="${day}" data-shift="chieu" data-pos="${pos.key}"></td>`
+            ).join('');
+            tableBodyChieu.appendChild(rowChieu);
         });
 
-        // Xóa nội dung bảng cũ
-        tableBodySang.innerHTML = '';
-        tableBodyChieu.innerHTML = '';
-        tableBodyNotes.innerHTML = '';
-
-        // Tạo bảng phân công ca SÁNG
-        positions.forEach(pos => {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td><b>${pos.label}</b></td>`;
-            days.forEach(day => {
-                const cell = document.createElement('td');
-                cell.textContent = data[day].sang[pos.label] || '';
-                row.appendChild(cell);
-            });
-            tableBodySang.appendChild(row);
-        });
-
-        // Tạo bảng phân công ca CHIỀU
-        positions.forEach(pos => {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td><b>${pos.label}</b></td>`;
-            days.forEach(day => {
-                const cell = document.createElement('td');
-                cell.textContent = data[day].chieu[pos.label] || '';
-                row.appendChild(cell);
-            });
-            tableBodyChieu.appendChild(row);
-        });
-
-        // Tạo bảng ghi chú
+        // Tạo bảng Ghi chú
         const noteRow = document.createElement('tr');
-        noteRow.innerHTML = `<td style="font-weight: bold; text-align: center;">Lịch off</td>`;
-        days.forEach(day => {
-            const cell = document.createElement('td');
-            cell.textContent = data[day].note || '';
-            noteRow.appendChild(cell);
-        });
+        noteRow.className = 'note-row';
+        noteRow.innerHTML = `<td style="font-weight: bold; text-align: center;">Lịch off</td>` + DAYS.map(day => 
+            `<td id="cell-${day}-note" data-day="${day}" data-shift="note" data-pos="note"></td>`
+        ).join('');
         tableBodyNotes.appendChild(noteRow);
     }
+
+    /**
+     * Cập nhật một ô trong bảng Live Preview
+     * @param {HTMLInputElement} input - Element input vừa thay đổi
+     */
+    function liveUpdate(input) {
+        // Tên input: t2-sang-oder (day-shift-position)
+        const [day, shift, pos] = input.name.split('-');
+        const cellId = `cell-${day}-${shift}-${pos}`;
+        const cell = document.getElementById(cellId);
+        
+        if (cell) {
+            // Loại bỏ class animation cũ
+            cell.classList.remove('updated-cell');
+            
+            // Cập nhật nội dung
+            cell.textContent = input.value;
+            
+            // Thêm class animation mới
+            // Sử dụng setTimeout 0ms để đảm bảo trình duyệt đã loại bỏ class cũ trước khi thêm lại
+            setTimeout(() => {
+                cell.classList.add('updated-cell');
+            }, 50);
+
+            // Sau khi animation chạy xong, loại bỏ class để chuẩn bị cho lần cập nhật tiếp theo
+            setTimeout(() => {
+                cell.classList.remove('updated-cell');
+            }, 550); // 500ms là thời gian animation
+        }
+    }
+
+    /**
+     * Cập nhật toàn bộ bảng (thường dùng khi tải trang hoặc undo)
+     */
+    function liveUpdateAll() {
+        const formData = getFormData();
+        for (const name in formData) {
+            const value = formData[name];
+            const [day, shift, pos] = name.split('-');
+            if (day && shift && pos) {
+                const cellId = `cell-${day}-${shift}-${pos}`;
+                const cell = document.getElementById(cellId);
+                if (cell) {
+                    cell.textContent = value;
+                }
+            } else if (day && shift === 'note') {
+                const cellId = `cell-${day}-note`;
+                const cell = document.getElementById(cellId);
+                 if (cell) {
+                    cell.textContent = value;
+                }
+            }
+        }
+    }
+
+
+    /* ========================================= */
+    /* LOGIC LƯU TRỮ VÀ UNDO */
+    /* ========================================= */
+
+    function getFormData() {
+        const formData = {};
+        const inputs = form.querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+            formData[input.name] = input.value;
+        });
+        return formData;
+    }
+
+    function setFormData(data) {
+        for (const name in data) {
+            const input = form.querySelector(`[name="${name}"]`);
+            if (input) {
+                input.value = data[name];
+            }
+        }
+    }
+
+    function updateUndoButtonState() {
+        // Nút disable nếu chỉ còn trạng thái ban đầu (size=1)
+        undoButton.disabled = UNDO_STACK.length <= 1;
+        undoButton.title = UNDO_STACK.length > 1 ? "Quay lại thao tác nhập liệu trước đó." : "Không có thao tác nào để quay lại.";
+    }
+
+    /**
+     * Lưu trạng thái hiện tại của form vào stack và Local Storage.
+     * Được gọi khi input bị blur (mất focus).
+     */
+    function saveStateAndLocalStorage() {
+        const currentData = getFormData();
+        
+        // 1. Lưu vào Local Storage để tránh mất dữ liệu khi refresh
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
+
+        // 2. Lưu vào Undo Stack
+        const lastState = UNDO_STACK[UNDO_STACK.length - 1];
+        if (JSON.stringify(lastState) !== JSON.stringify(currentData)) {
+            // Chỉ thêm vào stack nếu có sự thay đổi
+            UNDO_STACK.push(currentData);
+            
+            // Giữ stack không quá lớn
+            if (UNDO_STACK.length > MAX_UNDO_STATES) {
+                UNDO_STACK.shift(); // Xóa phần tử đầu tiên (trạng thái cũ nhất)
+            }
+            updateUndoButtonState();
+        }
+    }
+
+    /**
+     * Thực hiện thao tác Quay lại (Undo)
+     */
+    function undoLastAction() {
+        if (UNDO_STACK.length > 1) {
+            // Bỏ trạng thái hiện tại
+            UNDO_STACK.pop(); 
+            // Lấy trạng thái trước đó
+            const previousState = UNDO_STACK[UNDO_STACK.length - 1];
+            
+            setFormData(previousState);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(previousState));
+            liveUpdateAll(); // Cập nhật lại giao diện sau khi undo
+            updateUndoButtonState();
+
+            // Hiệu ứng nhẹ cho biết undo thành công
+            undoButton.style.backgroundColor = '#d4edda';
+            undoButton.style.color = '#155724';
+            setTimeout(() => {
+                undoButton.style.backgroundColor = '#ffc107';
+                undoButton.style.color = '#333';
+            }, 300);
+        }
+    }
+
+    function loadData() {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            setFormData(data);
+        }
+    }
     
+    /* ========================================= */
+    /* CÁC HÀM KHÁC */
+    /* ========================================= */
+
+    function scrollToTables() {
+        document.getElementById('schedule-table-container').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    /**
+     * Lưu bảng phân công thành ảnh.
+     */
     function saveAsImage() {
         const scheduleContainer = document.getElementById('schedule-table-container');
+        const saveButtonContainer = scheduleContainer.querySelector('.save-button-container');
 
-        // Tạo một bản sao của container để xử lý, tránh ảnh hưởng đến hiển thị gốc
-        const tempContainer = scheduleContainer.cloneNode(true);
-        tempContainer.style.display = 'block'; // Đảm bảo nó được render
-        tempContainer.style.position = 'absolute';
-        tempContainer.style.left = '-9999px'; // Đẩy ra khỏi màn hình
-        document.body.appendChild(tempContainer);
-        
-        // Ẩn nút "Lưu ảnh" trên bản sao trước khi chụp
-        const saveButton = tempContainer.querySelector('.save-button-container');
-        if (saveButton) {
-            saveButton.style.display = 'none';
+        // Ẩn nút "Lưu ảnh" trước khi chụp
+        if (saveButtonContainer) {
+            saveButtonContainer.style.display = 'none';
         }
 
-        html2canvas(tempContainer, {
+        // Dùng html2canvas để chụp ảnh nội dung
+        html2canvas(scheduleContainer, {
             scale: 2, // Tăng độ phân giải để ảnh sắc nét hơn
-            useCORS: true // Cho phép tải các tài nguyên bên ngoài nếu có
+            useCORS: true 
         }).then(function(canvas) {
-            // Sau khi chụp xong, xóa bản sao
-            document.body.removeChild(tempContainer);
+            // Hiện lại nút sau khi chụp
+            if (saveButtonContainer) {
+                saveButtonContainer.style.display = 'block';
+            }
 
-            // Chuyển canvas thành URL ảnh và tạo link tải về
+            // Tự động tải về
             const link = document.createElement('a');
             link.href = canvas.toDataURL('image/png');
-            link.download = 'bang_phan_cong_nhan_su.png';
+            link.download = 'bang_phan_cong_nhan_su_live.png';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            
+            alert('Đã lưu bảng phân công thành ảnh!');
         }).catch(function(error) {
             console.error('Lỗi khi lưu ảnh:', error);
             alert('Đã xảy ra lỗi khi lưu ảnh. Vui lòng thử lại.');
+            // Đảm bảo hiện lại nút ngay cả khi có lỗi
+            if (saveButtonContainer) {
+                saveButtonContainer.style.display = 'block';
+            }
         });
     }
 </script>
