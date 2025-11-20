@@ -5,6 +5,8 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
       <title>Gợi Ý Chó Cưng</title>
 
+      <link rel="icon" href="logocherry.png" type="image/png" /> 
+
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -38,20 +40,19 @@
                   font-weight: bold;
             }
             
-            /* --- LOGO STYLING ADDED --- */
+            /* --- LOGO STYLING --- */
             .logo-container {
                   margin-bottom: 20px;
             }
 
             .logo-container img {
                   width: 100%;
-                  max-width: 150px; /* Điều chỉnh kích thước tối đa của logo */
+                  max-width: 150px; 
                   height: auto;
-                  border-radius: 50%; /* Tùy chọn: làm logo tròn */
+                  border-radius: 50%; 
                   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
                   border: 4px solid var(--light-bg);
             }
-            /* --------------------------- */
 
             .suggestion-container {
                   width: 100%;
@@ -61,10 +62,11 @@
                   border-radius: 20px;
                   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
                   position: relative;
-                  overflow: hidden; /* Quan trọng cho hiệu ứng slide */
+                  overflow: hidden; 
+                  margin-bottom: 40px; 
             }
 
-            /* --- Toggle Switch Styling (iOS style) --- */
+            /* --- Toggle Switch Styling --- */
             .toggle-container {
                   display: inline-flex;
                   background-color: #e9e9e9;
@@ -106,7 +108,6 @@
                   padding-top: 10px;
             }
             
-            /* Class to shift the wrapper */
             .suggestion-wrapper.show-personality {
                   transform: translateX(-100%);
             }
@@ -121,7 +122,7 @@
                   color: white;
                   border: none;
                   box-shadow: 0 4px 10px rgba(216, 108, 143, 0.4);
-                  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Hiệu ứng nhấn mượt */
+                  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
                   margin: 5px;
                   min-width: 110px;
             }
@@ -135,6 +136,31 @@
             .btn-suggestion:active {
                   transform: scale(0.95);
                   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
+            
+            /* --- Breed Filter Buttons --- */
+            .btn-filter {
+                  font-size: 0.9em;
+                  font-weight: 500;
+                  padding: 8px 15px;
+                  border-radius: 20px;
+                  background-color: #fff0f5; /* Màu nền nhẹ */
+                  color: var(--dark-text);
+                  border: 1px solid var(--primary-color);
+                  transition: all 0.2s; 
+                  margin: 5px;
+            }
+
+            .btn-filter.active {
+                  background-color: var(--primary-color);
+                  color: white;
+                  border-color: var(--primary-color);
+                  font-weight: bold;
+            }
+
+            .btn-filter:hover:not(.active) {
+                  background-color: #fce7ef;
+                  transform: translateY(-1px);
             }
 
             /* --- Other Elements --- */
@@ -158,7 +184,7 @@
                   border-radius: 20px;
                   padding: 20px;
                   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-                  transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Hiệu ứng bật lên spring */
+                  transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             }
             #suggestionPopup.show-popup {
                   bottom: 20px;
@@ -191,6 +217,7 @@
                   color: #555;
             }
 
+            /* --- Alert Box --- */
             #alert-box-container {
                   position: fixed;
                   top: -100px;
@@ -201,7 +228,7 @@
                   max-width: 400px;
                   text-align: center;
                   transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
-                  opacity: 0;
+                  opacity: 0; 
             }
 
             #alert-box-container.show {
@@ -219,6 +246,134 @@
                   border-radius: 25px;
                   padding: 12px 20px;
                   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            
+            /* --- DOG LIST STYLING --- */
+            #dogListTitle {
+                  font-size: 1.8em;
+                  color: var(--secondary-color);
+                  margin: 50px 0 15px 0; /* Giảm margin-bottom để chèn filter */
+                  font-weight: bold;
+                  width: 100%;
+            }
+            
+            #dogFilterContainer { /* Thêm CSS cho Filter Container */
+                  margin-bottom: 30px;
+                  width: 100%;
+                  max-width: 600px;
+                  display: flex;
+                  flex-wrap: wrap;
+                  justify-content: center;
+            }
+
+            .dog-card {
+                  background: white;
+                  border-radius: 15px;
+                  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                  padding: 15px;
+                  margin-bottom: 20px;
+                  transition: transform 0.3s;
+                  border: 1px solid #f0f0f0;
+                  cursor: pointer;
+            }
+
+            .dog-card:hover {
+                  transform: translateY(-3px);
+                  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .dog-image {
+                  width: 100%;
+                  height: 200px; 
+                  object-fit: cover;
+                  border-radius: 10px;
+                  margin-bottom: 15px;
+                  border: 3px solid var(--light-bg);
+            }
+
+            .dog-name {
+                  font-size: 1.4em;
+                  font-weight: bold;
+                  color: var(--primary-color);
+                  margin-bottom: 5px;
+            }
+
+            .dog-breed {
+                  font-size: 1em;
+                  color: var(--dark-text);
+                  opacity: 0.8;
+            }
+            
+            /* --- DOG DETAIL POPUP --- */
+            #dogDetailPopup {
+                  position: fixed;
+                  top: -150%; 
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  z-index: 10000; 
+                  width: 90%;
+                  max-width: 450px;
+                  background: white;
+                  border-radius: 20px;
+                  padding: 25px;
+                  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                  opacity: 0;
+                  transition: top 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease-in-out; 
+            }
+            #dogDetailPopup.show-detail-popup {
+                  top: 50%; 
+                  opacity: 1;
+            }
+
+            #closeDetailPopupBtn {
+                  position: absolute;
+                  top: 10px;
+                  right: 15px;
+                  background: none;
+                  border: none;
+                  font-size: 1.8em;
+                  font-weight: bold;
+                  color: var(--primary-color);
+                  cursor: pointer;
+                  line-height: 1;
+            }
+
+            #dogDetailContent img {
+                  width: 100%;
+                  height: 250px;
+                  object-fit: cover;
+                  border-radius: 15px;
+                  margin-bottom: 15px;
+                  border: 5px solid var(--light-bg);
+                  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+
+            .detail-name {
+                  font-size: 1.8em;
+                  font-weight: bold;
+                  color: var(--secondary-color);
+                  margin-bottom: 10px;
+            }
+
+            .detail-info {
+                  text-align: left;
+                  padding: 0 15px;
+            }
+            .detail-info p {
+                  margin: 5px 0;
+                  font-size: 1.1em;
+                  padding: 8px 0;
+                  border-bottom: 1px dashed #f0f0f0;
+            }
+            .detail-info p:last-child {
+                  border-bottom: none;
+            }
+
+            .detail-info strong {
+                  color: var(--primary-color);
+                  min-width: 110px;
+                  display: inline-block;
+                  font-weight: 600;
             }
       </style>
 </head>
@@ -264,6 +419,8 @@
             </div> </div>
 
       <div id="seat-info">Vị trí đang tải...</div>
+      
+      <button id="showDogsBtn" class="btn btn-suggestion" style="margin-bottom: 40px; min-width: 200px;">Tất cả Cún Cưng</button>
 
       <div id="alert-box-container">
             <div id="alert-box" class="alert alert-success" role="alert">
@@ -280,6 +437,30 @@
             </div>
       </div>
 
+      <div id="dogDetailPopup">
+            <button id="closeDetailPopupBtn" aria-label="Đóng">&times;</button>
+            <div id="dogDetailContent">
+                  </div>
+      </div>
+
+      <h2 id="dogListTitle" style="display: none;">Danh sách cún cưng hiện tại</h2>
+      
+      <div id="dogFilterContainer" style="display: none;">
+            <button class="btn btn-filter active" data-breed-filter="all">Tất cả</button>
+            <button class="btn btn-filter" data-breed-filter="samoyed">Samoyed</button>
+            <button class="btn btn-filter" data-breed-filter="husky">Husky</button>
+            <button class="btn btn-filter" data-breed-filter="golden">Golden</button>
+            <button class="btn btn-filter" data-breed-filter="alaska">Alaska</button>
+            <button class="btn btn-filter" data-breed-filter="corgi">Corgi</button>
+            <button class="btn btn-filter" data-breed-filter="poodle">Poodle</button>
+      </div>
+
+      <div id="dogListContainer" class="container" style="display: none;">
+            <div class="row row-cols-2 row-cols-md-3 g-3">
+                  <p id="loadingMessage">Đang tải danh sách cún cưng...</p>
+            </div>
+      </div>
+      
       <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
       <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -294,8 +475,9 @@
                   appId: "1:1003873040746:web:607f4ff587afc430d3cd13"
             };
             firebase.initializeApp(firebaseConfig);
-            // const db = firebase.database(); // Giữ lại nếu cần lưu trữ
+            const db = firebase.database(); 
 
+            // DOM Elements
             const suggestionPopup = document.getElementById('suggestionPopup');
             const popupSuggestionText = document.getElementById('popupSuggestionText');
             const confirmSuggestBtn = document.getElementById('confirmSuggestBtn');
@@ -305,10 +487,26 @@
             const suggestionWrapper = document.getElementById('suggestionWrapper');
             const toggleAppearance = document.getElementById('toggleAppearance');
             const togglePersonality = document.getElementById('togglePersonality');
-
+            
+            // Elements MỚI/CẦN THAM CHIẾU
+            const dogListContainerDiv = document.getElementById('dogListContainer'); // To show/hide the whole container
+            const dogListContainerRow = document.querySelector('#dogListContainer .row'); // To append cards
+            const dogListTitle = document.getElementById('dogListTitle');
+            const showDogsBtn = document.getElementById('showDogsBtn'); // Nút mới
+            
+            const dogDetailPopup = document.getElementById('dogDetailPopup');
+            const dogDetailContent = document.getElementById('dogDetailContent');
+            const closeDetailPopupBtn = document.getElementById('closeDetailPopupBtn');
+            
+            // ELEMENTS VÀ BIẾN MỚI CHO CHỨC NĂNG LỌC
+            const dogFilterContainer = document.getElementById('dogFilterContainer');
+            let currentFilterBreed = 'all'; // Mặc định là 'all'
+            
             let currentSuggestion = null;
             let currentType = 'appearance';
-            
+            let allDogsData = {}; 
+            let isDogListVisible = false; // Flag MỚI để kiểm soát việc render UI
+
             // --- Helper Functions ---
             
             function showBootstrapAlert(message, type = "success", duration = 3000) {
@@ -367,15 +565,12 @@
             toggleAppearance.addEventListener('click', () => setSelectionMode('appearance'));
             togglePersonality.addEventListener('click', () => setSelectionMode('personality'));
 
-
             // --- Event Listeners for Suggestions and Pop-up ---
-
             document.querySelectorAll('.btn-suggestion').forEach(button => {
                   button.addEventListener('click', () => {
                         currentSuggestion = button.dataset.suggestion;
                         currentType = button.dataset.type;
                         
-                        // Định dạng lại tên gợi ý cho đẹp
                         const displaySuggestion = currentSuggestion.replace(/\b\w/g, char => char.toUpperCase()).replace(' ', ', ');
 
                         popupSuggestionText.textContent = `"${displaySuggestion}"`;
@@ -423,9 +618,167 @@
             cancelSuggestBtn.addEventListener('click', () => {
                   suggestionPopup.classList.remove('show-popup');
             });
+            
+            // --- DOG DETAIL POPUP LOGIC ---
+            
+            function showDogDetails(dogKey) {
+                  const dog = allDogsData[dogKey];
+
+                  if (!dog) {
+                        showBootstrapAlert('Không tìm thấy thông tin của bé cún này.', 'danger');
+                        return;
+                  }
+                  
+                  const statusText = dog.status ? dog.status.charAt(0).toUpperCase() + dog.status.slice(1) : 'Không rõ';
+                  const statusColor = dog.status && dog.status.toLowerCase() === 'rest' ? '#c0392b' : '#27ae60';
+
+                  dogDetailContent.innerHTML = `
+                        <img src="${dog.image || 'placeholder.png'}" alt="${dog.name}">
+                        <div class="detail-name">${dog.name}</div>
+                        <div class="detail-info">
+                              <p><strong>Giống:</strong> ${dog.breed || 'Đang cập nhật'}</p>
+                              <p><strong>Tính cách:</strong> ${dog.trait || 'Đang cập nhật'}</p>
+                              <p><strong>Cảm xúc:</strong> ${dog.emotion || 'Đang cập nhật'}</p>
+                              <p><strong>Trạng thái:</strong> <span style="font-weight: bold; color: ${statusColor};">${statusText}</span></p>
+                        </div>
+                  `;
+
+                  dogDetailPopup.classList.add('show-detail-popup');
+            }
+
+            closeDetailPopupBtn.addEventListener('click', () => {
+                  dogDetailPopup.classList.remove('show-detail-popup');
+            });
+
+
+            // --- DOG LIST DISPLAY & FILTER LOGIC (Đã tách thành hàm riêng để dễ quản lý) ---
+            function renderDogsList(filterBreed = 'all') {
+                const dogsData = allDogsData;
+                dogListContainerRow.innerHTML = ''; 
+                currentFilterBreed = filterBreed;
+                
+                // Cập nhật trạng thái active của nút filter
+                document.querySelectorAll('.btn-filter').forEach(btn => {
+                    if (btn.dataset.breedFilter === filterBreed) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+
+
+                if (Object.keys(dogsData).length === 0) {
+                    dogListContainerRow.innerHTML = '<p style="margin-top: 15px;">Không tìm thấy dữ liệu cún cưng.</p>';
+                    return;
+                }
+
+                let dogCount = 0;
+                
+                for (const key in dogsData) {
+                    if (dogsData.hasOwnProperty(key)) {
+                          const dog = dogsData[key];
+
+                          // Lọc theo giống (chuyển về chữ thường để so sánh)
+                          const dogBreedLower = dog.breed ? dog.breed.toLowerCase() : '';
+                          const filterLower = filterBreed.toLowerCase();
+                          
+                          const matchesFilter = filterLower === 'all' || dogBreedLower.includes(filterLower);
+
+
+                          if (dog.name && dog.breed && matchesFilter) {
+                                const card = document.createElement('div');
+                                card.className = 'col';
+
+                                card.innerHTML = `
+                                      <div class="dog-card" data-dog-key="${key}">
+                                            <img src="${dog.image || 'placeholder.png'}" alt="${dog.name}" class="dog-image">
+                                            <div class="dog-name">${dog.name}</div>
+                                            <div class="dog-breed">${dog.breed}</div>
+                                      </div>
+                                `;
+                                dogListContainerRow.appendChild(card);
+                                dogCount++;
+                          }
+                    }
+                }
+
+                // Cần phải gán lại sự kiện click cho các thẻ mới được tạo
+                document.querySelectorAll('.dog-card').forEach(card => {
+                      card.addEventListener('click', () => {
+                            showDogDetails(card.dataset.dogKey);
+                      });
+                });
+
+
+                if (dogCount === 0) {
+                      dogListContainerRow.innerHTML = `<p style="margin-top: 15px;">Không tìm thấy bé cún nào thuộc giống <strong>${filterBreed}</strong>.</p>`;
+                }
+            }
+
+
+            // --- FETCH DATA LOGIC (Chỉ lắng nghe và lưu trữ dữ liệu) ---
+            function fetchDogs() {
+                  const dogsRef = db.ref('dogs');
+                  dogsRef.on('value', (snapshot) => {
+                        allDogsData = {}; // Clear old data
+                        
+                        // Xử lý dữ liệu và lưu vào biến toàn cục allDogsData
+                        if (snapshot.exists()) {
+                              const dogsData = snapshot.val();
+                              for (const key in dogsData) {
+                                    if (dogsData.hasOwnProperty(key)) {
+                                          allDogsData[key] = dogsData[key];
+                                    }
+                              }
+                        }
+                        
+                        // Nếu danh sách đã được hiển thị, cập nhật lại (live update) với bộ lọc hiện tại
+                        if (isDogListVisible) {
+                            renderDogsList(currentFilterBreed);
+                        }
+
+                  }, (error) => {
+                        console.error("Lỗi khi đọc dữ liệu Firebase: ", error);
+                        // Hiển thị lỗi chỉ khi người dùng đã yêu cầu xem danh sách
+                        if (isDogListVisible) {
+                            dogListContainerRow.innerHTML = `
+                                  <div style="margin-top: 15px; color: red; background: #ffe0e0; border: 1px solid red; padding: 10px; border-radius: 10px;">
+                                        <strong>LỖI TẢI DỮ LIỆU FIREBASE:</strong><br>
+                                        Mã lỗi: ${error.code}<br>
+                                        Chi tiết: ${error.message}
+                                  </div>`;
+                        }
+                  });
+            }
+            
+            // --- BUTTON TẤT CẢ CÚN CƯNG LISTENER ---
+            showDogsBtn.addEventListener('click', () => {
+                  isDogListVisible = true;
+                  showDogsBtn.style.display = 'none'; // Ẩn nút sau khi click
+                  dogListTitle.style.display = 'block'; // Hiển thị tiêu đề
+                  dogFilterContainer.style.display = 'flex'; // HIỂN THỊ CÁC NÚT LỌC MỚI
+                  dogListContainerDiv.style.display = 'block'; // Hiển thị container
+                  
+                  // Gọi hàm render để hiển thị dữ liệu đã được lắng nghe (mặc định 'all')
+                  renderDogsList('all'); 
+            });
+            
+            // --- LISTENER CHO CÁC NÚT LỌC ---
+            dogFilterContainer.addEventListener('click', (event) => {
+                const target = event.target;
+                if (target.classList.contains('btn-filter')) {
+                    const breed = target.dataset.breedFilter;
+                    // Lọc lại danh sách
+                    renderDogsList(breed); 
+                }
+            });
+
 
             window.addEventListener("hashchange", updateSeatDisplay);
-            window.addEventListener("DOMContentLoaded", updateSeatDisplay);
+            window.addEventListener("DOMContentLoaded", () => {
+                  updateSeatDisplay();
+                  fetchDogs(); // Chỉ bắt đầu lắng nghe dữ liệu, KHÔNG hiển thị ra màn hình.
+            });
       </script>
 </body>
 </html>
