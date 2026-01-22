@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Hệ Thống Kho iOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+        :root {
+            --ios-bg: #F2F2F7;
+            --ios-card: #FFFFFF;
+            --ios-blue: #007AFF;
+            --ios-red: #FF3B30;
+            --ios-text: #000000;
+            --ios-separator: #C6C6C8;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --ios-bg: #000000;
+                --ios-card: #1C1C1E;
+                --ios-blue: #0A84FF;
+                --ios-red: #FF453A;
+                --ios-text: #FFFFFF;
+                --ios-separator: #38383A;
+            }
+        }
+        body { font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--ios-bg); color: var(--ios-text); -webkit-font-smoothing: antialiased; }
+        .ios-card { background: var(--ios-card); border-radius: 14px; overflow: hidden; }
+        .ios-input { background: transparent; border: none; border-bottom: 0.5px solid var(--ios-separator); padding: 12px 0; width: 100%; font-size: 17px; outline: none; }
+        .ios-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .ios-btn:active { transform: scale(0.95); opacity: 0.7; }
+        .ios-blur { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); background: rgba(255, 255, 255, 0.8); }
+        @media (prefers-color-scheme: dark) { .ios-blur { background: rgba(28, 28, 30, 0.8); } }
+        .list-item { border-bottom: 0.5px solid var(--ios-separator); }
+        .list-item:last-child { border-bottom: none; }
+        #transactionModal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+        #modalContent { animation: modalSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes modalSlide { from { transform: scale(1.1); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBNB1acbPtKox8eTjth3FtWuDOLhueRIys",
+            authDomain: "dogs-be72b.firebaseapp.com",
+            databaseURL: "https://dogs-be72b-default-rtdb.firebaseio.com",
+            projectId: "dogs-be72b",
+            storageBucket: "dogs-be72b.firebasestorage.app",
+            messagingSenderId: "1003873040746",
+            appId: "1:1003873040746:web:607f4ff587afc430d3cd13",
+            measurementId: "G-Y72BF1RQ2C"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        let localProducts = {};
+        let currentType = 'NHẬP';
+        let editingHistoryId = null;
+
+        const productSelect = document.getElementById('productSelect');
+        const inventoryBody = document.getElementById('inventoryBody');
+        const historyBody = document.getElementById('historyBody');
+
+        onValue(ref(db, 'products'), (snapshot) => {
+            const data = snapshot.val() || {};
+            localProducts = data;
+            inventoryBody.innerHTML = '';
+            productSelect.innerHTML = '<option value="">Chọn nguyên liệu...</option>';
+            Object.keys(data).forEach(id => {
+                const p = data[id];
+                inventoryBody.innerHTML += `<tr class="list-item fade-in"><td class="py-4 pl-4"><div class="font-semibold text-[17px]">${p.name}</div><div class="text-[12px] text-gray-500 uppercase">${p.updatedAt ? new Date(p.updatedAt).toLocaleTimeString() : '-'}</div></td><td class="py-4 text-right pr-4"><span class="text-[17px] font-bold ${p.stock < 10 ? 'text-red-500' : 'text-blue-500'}">${p.stock}</span> <span class="text-[12px] text-gray-400 font-medium">${p.unit}</span></td></tr>`;
+                productSelect.innerHTML += `<option value="${id}">${p.name} (${p.unit})</option>`;
+            });
+            lucide.createIcons();
+        });
+
+        onValue(ref(db, 'history'), (snapshot) => {
+            const data = snapshot.val() || {};
+            historyBody.innerHTML = '';
+            const sortedKeys = Object.keys(data).sort((a, b) => data[b].timestamp - data[a].timestamp);
+            sortedKeys.forEach(id => {
+                const h = data[id];
+                const isImport = h.type === 'NHẬP';
+                historyBody.innerHTML += `
+                    <div class="flex items-center justify-between py-3 px-4 list-item fade-in">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full ${isImport ? 'bg-blue-50 text-blue-500' : 'bg-orange-50 text-orange-500'} flex items-center justify-center">
+                                <i data-lucide="${isImport ? 'arrow-down-left' : 'arrow-up-right'}" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-[15px]">${h.productName}</div>
+                                <div class="text-[11px] text-gray-400">${new Date(h.timestamp).toLocaleString()}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-right">
+                                <div class="font-bold ${isImport ? 'text-blue-500' : 'text-orange-500'}">${isImport ? '+' : '-'}${h.quantity}</div>
+                                <div class="text-[11px] text-gray-400 italic">${h.note || ''}</div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="editHistory('${id}')" class="text-blue-500 p-1"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                                <button onclick="deleteHistory('${id}')" class="text-red-500 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            lucide.createIcons();
+        });
+
+        window.openModal = (type, historyId = null) => {
+            currentType = type;
+            editingHistoryId = historyId;
+            document.getElementById('modalTitle').innerText = historyId ? 'Sửa Lịch Sử' : (type === 'NHẬP' ? 'Nhập Kho' : 'Xuất Kho');
+            document.getElementById('submitBtn').innerText = historyId ? 'CẬP NHẬT' : type;
+            document.getElementById('submitBtn').className = `ios-btn w-full py-3 rounded-xl text-white ${type === 'NHẬP' ? 'bg-blue-500' : 'bg-orange-500'}`;
+            document.getElementById('transactionModal').style.display = 'flex';
+        };
+
+        window.closeModal = () => {
+            document.getElementById('transactionModal').style.display = 'none';
+            editingHistoryId = null;
+        };
+
+        window.editHistory = (id) => {
+            onValue(ref(db, 'history/' + id), (snapshot) => {
+                const h = snapshot.val();
+                if(!h) return;
+                document.getElementById('quantity').value = h.quantity;
+                document.getElementById('note').value = h.note || '';
+                openModal(h.type, id);
+            }, { onlyOnce: true });
+        };
+
+        window.deleteHistory = (id) => {
+            if(confirm('Xác nhận xóa lịch sử này? (Lưu ý: Tồn kho sẽ không tự động hoàn lại)')) remove(ref(db, 'history/' + id));
+        };
+
+        window.addProduct = () => {
+            const name = document.getElementById('newName').value;
+            const unit = document.getElementById('newUnit').value;
+            if (!name || !unit) return;
+            push(ref(db, 'products'), { name, unit, stock: 0, updatedAt: Date.now() });
+            document.getElementById('newName').value = ''; document.getElementById('newUnit').value = '';
+        };
+
+        window.handleStock = () => {
+            const id = productSelect.value;
+            const qty = parseFloat(document.getElementById('quantity').value);
+            const note = document.getElementById('note').value;
+            if ((!id && !editingHistoryId) || isNaN(qty) || qty <= 0) return;
+
+            if(editingHistoryId) {
+                update(ref(db, 'history/' + editingHistoryId), { quantity: qty, note: note });
+            } else {
+                const currentProduct = localProducts[id];
+                const newStock = currentType === 'NHẬP' ? (currentProduct.stock + qty) : (currentProduct.stock - qty);
+                if (newStock < 0) return alert("Hết hàng!");
+                const updates = {};
+                updates[`/products/${id}/stock`] = newStock;
+                updates[`/products/${id}/updatedAt`] = Date.now();
+                update(ref(db), updates);
+                push(ref(db, 'history'), { productName: currentProduct.name, type: currentType, quantity: qty, note: note, timestamp: Date.now() });
+            }
+            document.getElementById('quantity').value = ''; document.getElementById('note').value = '';
+            closeModal();
+        };
+    </script>
+</head>
+<body class="pb-20">
+    <header class="sticky top-0 z-40 ios-blur px-6 pt-10 pb-4 border-b border-[#C6C6C8]/20 flex justify-between items-center">
+        <h1 class="text-2xl font-bold tracking-tight">Hệ Thống Kho</h1>
+        <div class="flex gap-3">
+            <button onclick="openModal('NHẬP')" class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center ios-btn shadow-lg shadow-blue-500/30"><i data-lucide="plus"></i></button>
+            <button onclick="openModal('XUẤT')" class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center ios-btn shadow-lg shadow-orange-500/30"><i data-lucide="minus"></i></button>
+        </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-4 mt-6 space-y-8">
+        <section>
+            <h2 class="px-2 mb-2 text-[13px] font-semibold text-gray-500 uppercase">Lịch sử giao dịch</h2>
+            <div class="ios-card shadow-sm" id="historyBody"></div>
+        </section>
+
+        <section>
+            <h2 class="px-2 mb-2 text-[13px] font-semibold text-gray-500 uppercase">Tồn kho hiện tại</h2>
+            <div class="ios-card shadow-sm">
+                <table class="w-full"><tbody id="inventoryBody"></tbody></table>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="px-2 mb-2 text-[13px] font-semibold text-gray-500 uppercase">Khai báo mặt hàng</h2>
+            <div class="ios-card p-5 space-y-4 shadow-sm">
+                <input id="newName" type="text" placeholder="Tên nguyên liệu" class="ios-input">
+                <input id="newUnit" type="text" placeholder="Đơn vị tính" class="ios-input">
+                <button onclick="addProduct()" class="ios-btn w-full bg-[#34C759] text-white py-3 rounded-xl">KHỞI TẠO</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="transactionModal" onclick="if(event.target==this) closeModal()">
+        <div id="modalContent" class="ios-card p-6 w-[90%] max-w-sm shadow-2xl space-y-5">
+            <div class="flex justify-between items-center">
+                <h2 id="modalTitle" class="text-xl font-bold">Giao dịch</h2>
+                <button onclick="closeModal()" class="text-gray-400"><i data-lucide="x"></i></button>
+            </div>
+            <select id="productSelect" class="ios-input"></select>
+            <input id="quantity" type="number" placeholder="Số lượng" class="ios-input">
+            <input id="note" type="text" placeholder="Ghi chú..." class="ios-input">
+            <button id="submitBtn" onclick="handleStock()" class="ios-btn w-full py-3 rounded-xl text-white">XÁC NHẬN</button>
+        </div>
+    </div>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>
