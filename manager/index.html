@@ -157,7 +157,7 @@
 
         .nav .nav-link:hover,
         .nav .nav-link.active {
-            background-color: rgba(var(--primary-color-rgb, 255, 59, 48), 0.1);
+            background-color: rgba(255, 59, 48, 0.1);
             border-left-color: var(--primary-color);
             transform: translateX(10px);
         }
@@ -251,7 +251,6 @@
             letter-spacing: 1px;
         }
 
-        /* Search Bar Styles */
         .search-container {
             display: flex;
             align-items: center;
@@ -287,13 +286,12 @@
             color: var(--text-color-dark);
         }
         .search-container input::placeholder {
-            color: rgba(var(--text-color-light-rgb, 28, 28, 30), 0.5);
+            color: rgba(28, 28, 30, 0.5);
         }
         body.dark-mode .search-container input::placeholder {
-            color: rgba(var(--text-color-dark-rgb, 242, 242, 247), 0.5);
+            color: rgba(242, 242, 247, 0.5);
         }
 
-        /* Employee List styles */
         .employee-list {
             display: flex;
             flex-direction: column;
@@ -320,7 +318,6 @@
             background-color: var(--card-bg-dark);
         }
 
-        /* Hidden state for filter animation */
         .employee-item.hidden {
             opacity: 0;
             height: 0;
@@ -359,7 +356,6 @@
             animation: bossIconPulse 2s infinite ease-in-out;
         }
         
-        /* New Boss Name Styling */
         .employee-name-boss {
             font-size: 1.2em;
             font-weight: 700;
@@ -368,7 +364,6 @@
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
         }
-
 
         .employee-phone {
             margin-top: 5px;
@@ -413,14 +408,14 @@
         }
 
         .zalo-button {
-            background-color: #0084ff; /* Zalo blue */
+            background-color: #0084ff;
             width: auto;
             height: auto;
             padding: 10px 15px;
             border-radius: 10px;
         }
         .zalo-button i {
-            font-size: 1.2em; /* Bigger Zalo icon */
+            font-size: 1.2em;
             margin-right: 5px;
         }
         
@@ -453,7 +448,6 @@
             opacity: 1;
         }
 
-        /* ANIMATIONS */
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.02); }
@@ -461,25 +455,13 @@
         }
 
         @keyframes cardSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes iframeEntrance {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         @keyframes bossIconPulse {
@@ -489,14 +471,8 @@
         }
 
         @keyframes employeeFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .employee-item-animated {
@@ -524,6 +500,10 @@
         <a href="#" class="nav-link active" onclick="showSection('dashboard')">
             <i class="fas fa-tachometer-alt"></i>
             <span>Nhân sự</span>
+        </a>
+        <a href="#" class="nav-link" onclick="showSection('minigame')">
+            <i class="fas fa-gamepad"></i>
+            <span>Minigame</span>
         </a>
         <a href="#" class="nav-link" onclick="showSection('schedule')">
             <i class="fas fa-calendar-alt"></i>
@@ -555,6 +535,10 @@
                     <div class="employee-list" id="employeeList">
                     </div>
                 </div>
+            </section>
+
+            <section class="content-section" id="minigame">
+                <iframe class="iframe-container" src="https://cherrybooking.io.vn/cmt8/minigame.html" title="Trang quản lý minigame"></iframe>
             </section>
 
             <section class="content-section" id="schedule">
