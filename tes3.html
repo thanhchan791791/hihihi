@@ -22,7 +22,7 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-top: 60px; /* Thêm khoảng cách để nút cố định không che mất tiêu đề */
+            margin-top: 60px;
         }
 
         h1 {
@@ -91,7 +91,6 @@
             border-color: #007bff;
         }
 
-        /* Nút UNDO cố định */
         #undo-button-fixed {
             position: fixed;
             top: 15px;
@@ -171,25 +170,18 @@
             text-align: center;
         }
 
-        /* Animation cho cell */
         .schedule-table td.updated-cell {
-            background-color: #d4edda; /* Màu nền nhẹ khi update */
+            background-color: #d4edda; 
             animation: fadeIn 0.5s ease-out;
         }
         
         @keyframes fadeIn {
-            from {
-                opacity: 0.5;
-                background-color: #fff3cd; /* Flash màu vàng nhẹ */
-            }
-            to {
-                opacity: 1;
-                background-color: transparent;
-            }
+            from { opacity: 0.5; background-color: #fff3cd; }
+            to { opacity: 1; background-color: transparent; }
         }
 
         .schedule-table td {
-            transition: background-color 0.5s; /* Đảm bảo màu nền trở về bình thường */
+            transition: background-color 0.5s;
         }
 
         .note-row td {
@@ -228,7 +220,7 @@
     <h1>NHẬP LIỆU PHÂN CÔNG TUẦN</h1>
     <form id="assignmentForm">
         <div class="day-container" id="day-2">
-            <h2>Thứ 2</h2>
+            <h2 class="day-title" data-day="t2">Thứ 2</h2>
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
@@ -257,7 +249,7 @@
         </div>
 
         <div class="day-container" id="day-3">
-            <h2>Thứ 3</h2>
+            <h2 class="day-title" data-day="t3">Thứ 3</h2>
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
@@ -286,7 +278,7 @@
         </div>
 
         <div class="day-container" id="day-4">
-            <h2>Thứ 4</h2>
+            <h2 class="day-title" data-day="t4">Thứ 4</h2>
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
@@ -315,7 +307,7 @@
         </div>
 
         <div class="day-container" id="day-5">
-            <h2>Thứ 5</h2>
+            <h2 class="day-title" data-day="t5">Thứ 5</h2>
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
@@ -344,7 +336,7 @@
         </div>
 
         <div class="day-container" id="day-6">
-            <h2>Thứ 6</h2>
+            <h2 class="day-title" data-day="t6">Thứ 6</h2>
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
@@ -373,7 +365,7 @@
         </div>
 
         <div class="day-container" id="day-7">
-            <h2>Thứ 7</h2>
+            <h2 class="day-title" data-day="t7">Thứ 7</h2>
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
@@ -402,7 +394,7 @@
         </div>
 
         <div class="day-container" id="day-cn">
-            <h2>Chủ Nhật</h2>
+            <h2 class="day-title" data-day="cn">Chủ Nhật</h2>
             <div class="shift-group">
                 <div class="shift-section">
                     <h3>SÁNG</h3>
@@ -440,15 +432,15 @@
     <h2>Bảng phân công ca SÁNG</h2>
     <table id="schedule-table-sang" class="schedule-table">
         <thead>
-            <tr>
+            <tr class="header-days">
                 <th>Vị trí</th>
-                <th>Thứ 2</th>
-                <th>Thứ 3</th>
-                <th>Thứ 4</th>
-                <th>Thứ 5</th>
-                <th>Thứ 6</th>
-                <th>Thứ 7</th>
-                <th>Chủ Nhật</th>
+                <th data-day="t2">Thứ 2</th>
+                <th data-day="t3">Thứ 3</th>
+                <th data-day="t4">Thứ 4</th>
+                <th data-day="t5">Thứ 5</th>
+                <th data-day="t6">Thứ 6</th>
+                <th data-day="t7">Thứ 7</th>
+                <th data-day="cn">Chủ Nhật</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -457,15 +449,15 @@
     <h2>Bảng phân công ca CHIỀU</h2>
     <table id="schedule-table-chieu" class="schedule-table">
         <thead>
-            <tr>
+            <tr class="header-days">
                 <th>Vị trí</th>
-                <th>Thứ 2</th>
-                <th>Thứ 3</th>
-                <th>Thứ 4</th>
-                <th>Thứ 5</th>
-                <th>Thứ 6</th>
-                <th>Thứ 7</th>
-                <th>Chủ Nhật</th>
+                <th data-day="t2">Thứ 2</th>
+                <th data-day="t3">Thứ 3</th>
+                <th data-day="t4">Thứ 4</th>
+                <th data-day="t5">Thứ 5</th>
+                <th data-day="t6">Thứ 6</th>
+                <th data-day="t7">Thứ 7</th>
+                <th data-day="cn">Chủ Nhật</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -500,240 +492,161 @@
         { label: 'Capybara', key: 'capybara' }
     ];
     const DAYS = ['t2', 't3', 't4', 't5', 't6', 't7', 'cn'];
-    const DAY_MAP = { 't2': 1, 't3': 2, 't4': 3, 't5': 4, 't6': 5, 't7': 6, 'cn': 7 }; // Map ngày sang chỉ số cột trong bảng
 
     // Khởi tạo trạng thái và tải dữ liệu khi trang tải
     document.addEventListener('DOMContentLoaded', () => {
+        setupDateHeaders(); // Thiết lập ngày tháng cho tuần sau
         setupTables();
         loadData();
-        // Lấy trạng thái form ban đầu để làm trạng thái undo đầu tiên
         UNDO_STACK.push(getFormData());
         updateUndoButtonState();
-        liveUpdateAll(); // Cập nhật toàn bộ bảng sau khi load data
+        liveUpdateAll(); 
     });
 
     /**
-     * Khởi tạo cấu trúc các bảng (chỉ tạo các hàng tĩnh)
+     * Tự động tính toán ngày của tuần sau và cập nhật vào tiêu đề
      */
+    function setupDateHeaders() {
+        const today = new Date();
+        const currentDay = today.getDay(); // 0: CN, 1: T2...
+        
+        // Tính khoảng cách đến Thứ 2 tuần sau
+        // Nếu hôm nay là T2 (1), cần +7 ngày. Nếu là CN (0), cần +1 ngày.
+        let daysUntilNextMonday = (currentDay === 0) ? 1 : (8 - currentDay);
+        
+        const nextMonday = new Date(today);
+        nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+
+        const dayLabels = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"];
+
+        DAYS.forEach((dayKey, index) => {
+            const dateOfNextDay = new Date(nextMonday);
+            dateOfNextDay.setDate(nextMonday.getDate() + index);
+            
+            const dateString = `${dateOfNextDay.getDate()}/${dateOfNextDay.getMonth() + 1}`;
+            const fullLabel = `${dayLabels[index]} (${dateString})`;
+
+            // Cập nhật trong Form nhập liệu
+            const formTitle = document.querySelector(`.day-title[data-day="${dayKey}"]`);
+            if (formTitle) formTitle.textContent = fullLabel;
+
+            // Cập nhật trong các Bảng Preview (Tìm tất cả th có data-day tương ứng)
+            const tableHeaders = document.querySelectorAll(`th[data-day="${dayKey}"]`);
+            tableHeaders.forEach(th => th.textContent = fullLabel);
+        });
+    }
+
     function setupTables() {
         const tableBodySang = document.querySelector('#schedule-table-sang tbody');
         const tableBodyChieu = document.querySelector('#schedule-table-chieu tbody');
         const tableBodyNotes = document.querySelector('#schedule-table-notes tbody');
 
-        // Tạo bảng ca SÁNG và ca CHIỀU
         POSITIONS.forEach(pos => {
-            // Sáng
             let rowSang = document.createElement('tr');
-            rowSang.setAttribute('data-position', pos.key);
             rowSang.innerHTML = `<td><b>${pos.label}</b></td>` + DAYS.map(day => 
-                `<td id="cell-${day}-sang-${pos.key}" data-day="${day}" data-shift="sang" data-pos="${pos.key}"></td>`
+                `<td id="cell-${day}-sang-${pos.key}"></td>`
             ).join('');
             tableBodySang.appendChild(rowSang);
 
-            // Chiều
             let rowChieu = document.createElement('tr');
-            rowChieu.setAttribute('data-position', pos.key);
             rowChieu.innerHTML = `<td><b>${pos.label}</b></td>` + DAYS.map(day => 
-                `<td id="cell-${day}-chieu-${pos.key}" data-day="${day}" data-shift="chieu" data-pos="${pos.key}"></td>`
+                `<td id="cell-${day}-chieu-${pos.key}"></td>`
             ).join('');
             tableBodyChieu.appendChild(rowChieu);
         });
 
-        // Tạo bảng Ghi chú
         const noteRow = document.createElement('tr');
         noteRow.className = 'note-row';
         noteRow.innerHTML = `<td style="font-weight: bold; text-align: center;">Lịch off</td>` + DAYS.map(day => 
-            `<td id="cell-${day}-note" data-day="${day}" data-shift="note" data-pos="note"></td>`
+            `<td id="cell-${day}-note"></td>`
         ).join('');
         tableBodyNotes.appendChild(noteRow);
     }
 
-    /**
-     * Cập nhật một ô trong bảng Live Preview
-     * @param {HTMLInputElement} input - Element input vừa thay đổi
-     */
     function liveUpdate(input) {
-        // Tên input: t2-sang-oder (day-shift-position)
         const [day, shift, pos] = input.name.split('-');
-        const cellId = `cell-${day}-${shift}-${pos}`;
+        const cellId = shift === 'note' ? `cell-${day}-note` : `cell-${day}-${shift}-${pos}`;
         const cell = document.getElementById(cellId);
         
         if (cell) {
-            // Loại bỏ class animation cũ
             cell.classList.remove('updated-cell');
-            
-            // Cập nhật nội dung
             cell.textContent = input.value;
-            
-            // Thêm class animation mới
-            // Sử dụng setTimeout 0ms để đảm bảo trình duyệt đã loại bỏ class cũ trước khi thêm lại
-            setTimeout(() => {
-                cell.classList.add('updated-cell');
-            }, 50);
-
-            // Sau khi animation chạy xong, loại bỏ class để chuẩn bị cho lần cập nhật tiếp theo
-            setTimeout(() => {
-                cell.classList.remove('updated-cell');
-            }, 550); // 500ms là thời gian animation
+            setTimeout(() => { cell.classList.add('updated-cell'); }, 50);
+            setTimeout(() => { cell.classList.remove('updated-cell'); }, 550);
         }
     }
 
-    /**
-     * Cập nhật toàn bộ bảng (thường dùng khi tải trang hoặc undo)
-     */
     function liveUpdateAll() {
         const formData = getFormData();
         for (const name in formData) {
             const value = formData[name];
             const [day, shift, pos] = name.split('-');
-            if (day && shift && pos) {
-                const cellId = `cell-${day}-${shift}-${pos}`;
-                const cell = document.getElementById(cellId);
-                if (cell) {
-                    cell.textContent = value;
-                }
-            } else if (day && shift === 'note') {
-                const cellId = `cell-${day}-note`;
-                const cell = document.getElementById(cellId);
-                 if (cell) {
-                    cell.textContent = value;
-                }
-            }
+            const cellId = (shift === 'note') ? `cell-${day}-note` : `cell-${day}-${shift}-${pos}`;
+            const cell = document.getElementById(cellId);
+            if (cell) cell.textContent = value;
         }
     }
-
-
-    /* ========================================= */
-    /* LOGIC LƯU TRỮ VÀ UNDO */
-    /* ========================================= */
 
     function getFormData() {
         const formData = {};
         const inputs = form.querySelectorAll('input[type="text"]');
-        inputs.forEach(input => {
-            formData[input.name] = input.value;
-        });
+        inputs.forEach(input => { formData[input.name] = input.value; });
         return formData;
     }
 
     function setFormData(data) {
         for (const name in data) {
             const input = form.querySelector(`[name="${name}"]`);
-            if (input) {
-                input.value = data[name];
-            }
+            if (input) input.value = data[name];
         }
     }
 
     function updateUndoButtonState() {
-        // Nút disable nếu chỉ còn trạng thái ban đầu (size=1)
         undoButton.disabled = UNDO_STACK.length <= 1;
-        undoButton.title = UNDO_STACK.length > 1 ? "Quay lại thao tác nhập liệu trước đó." : "Không có thao tác nào để quay lại.";
     }
 
-    /**
-     * Lưu trạng thái hiện tại của form vào stack và Local Storage.
-     * Được gọi khi input bị blur (mất focus).
-     */
     function saveStateAndLocalStorage() {
         const currentData = getFormData();
-        
-        // 1. Lưu vào Local Storage để tránh mất dữ liệu khi refresh
         localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
-
-        // 2. Lưu vào Undo Stack
         const lastState = UNDO_STACK[UNDO_STACK.length - 1];
         if (JSON.stringify(lastState) !== JSON.stringify(currentData)) {
-            // Chỉ thêm vào stack nếu có sự thay đổi
             UNDO_STACK.push(currentData);
-            
-            // Giữ stack không quá lớn
-            if (UNDO_STACK.length > MAX_UNDO_STATES) {
-                UNDO_STACK.shift(); // Xóa phần tử đầu tiên (trạng thái cũ nhất)
-            }
+            if (UNDO_STACK.length > MAX_UNDO_STATES) UNDO_STACK.shift();
             updateUndoButtonState();
         }
     }
 
-    /**
-     * Thực hiện thao tác Quay lại (Undo)
-     */
     function undoLastAction() {
         if (UNDO_STACK.length > 1) {
-            // Bỏ trạng thái hiện tại
             UNDO_STACK.pop(); 
-            // Lấy trạng thái trước đó
             const previousState = UNDO_STACK[UNDO_STACK.length - 1];
-            
             setFormData(previousState);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(previousState));
-            liveUpdateAll(); // Cập nhật lại giao diện sau khi undo
+            liveUpdateAll();
             updateUndoButtonState();
-
-            // Hiệu ứng nhẹ cho biết undo thành công
-            undoButton.style.backgroundColor = '#d4edda';
-            undoButton.style.color = '#155724';
-            setTimeout(() => {
-                undoButton.style.backgroundColor = '#ffc107';
-                undoButton.style.color = '#333';
-            }, 300);
         }
     }
 
     function loadData() {
         const savedData = localStorage.getItem(STORAGE_KEY);
-        if (savedData) {
-            const data = JSON.parse(savedData);
-            setFormData(data);
-        }
+        if (savedData) setFormData(JSON.parse(savedData));
     }
     
-    /* ========================================= */
-    /* CÁC HÀM KHÁC */
-    /* ========================================= */
-
     function scrollToTables() {
         document.getElementById('schedule-table-container').scrollIntoView({ behavior: 'smooth' });
     }
 
-    /**
-     * Lưu bảng phân công thành ảnh.
-     */
     function saveAsImage() {
         const scheduleContainer = document.getElementById('schedule-table-container');
-        const saveButtonContainer = scheduleContainer.querySelector('.save-button-container');
+        const saveBtn = scheduleContainer.querySelector('.save-button-container');
+        if (saveBtn) saveBtn.style.display = 'none';
 
-        // Ẩn nút "Lưu ảnh" trước khi chụp
-        if (saveButtonContainer) {
-            saveButtonContainer.style.display = 'none';
-        }
-
-        // Dùng html2canvas để chụp ảnh nội dung
-        html2canvas(scheduleContainer, {
-            scale: 2, // Tăng độ phân giải để ảnh sắc nét hơn
-            useCORS: true 
-        }).then(function(canvas) {
-            // Hiện lại nút sau khi chụp
-            if (saveButtonContainer) {
-                saveButtonContainer.style.display = 'block';
-            }
-
-            // Tự động tải về
+        html2canvas(scheduleContainer, { scale: 2, useCORS: true }).then(canvas => {
+            if (saveBtn) saveBtn.style.display = 'block';
             const link = document.createElement('a');
             link.href = canvas.toDataURL('image/png');
             link.download = 'bang_phan_cong_nhan_su_live.png';
-            document.body.appendChild(link);
             link.click();
-            document.body.removeChild(link);
-            
-            alert('Đã lưu bảng phân công thành ảnh!');
-        }).catch(function(error) {
-            console.error('Lỗi khi lưu ảnh:', error);
-            alert('Đã xảy ra lỗi khi lưu ảnh. Vui lòng thử lại.');
-            // Đảm bảo hiện lại nút ngay cả khi có lỗi
-            if (saveButtonContainer) {
-                saveButtonContainer.style.display = 'block';
-            }
         });
     }
 </script>
