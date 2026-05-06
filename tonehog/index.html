@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gửi Tông Hồng 🌸</title>
+    <!-- Nhúng font chữ dễ thương từ Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --ios-pink: #ff85a2;
+            --ios-blue: #007aff;
+            --glass: rgba(255, 255, 255, 0.85);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        body {
+            margin: 0; padding: 0;
+            /* Cập nhật font chữ chính ở đây */
+            font-family: 'Quicksand', -apple-system, sans-serif;
+            background: linear-gradient(160deg, #fce4ec 0%, #fff1f2 100%);
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+
+        /* Hiệu ứng nền mờ di chuyển */
+        .bg-glow {
+            position: absolute; width: 100%; height: 100%; z-index: 1; filter: blur(60px); opacity: 0.5;
+        }
+        .blob { position: absolute; background: var(--ios-pink); border-radius: 50%; animation: move 12s infinite alternate; }
+
+        @keyframes move { from { transform: translate(-10%, -10%); } to { transform: translate(20%, 20%); } }
+
+        .ios-card {
+            width: 92%; max-width: 380px;
+            background: var(--glass);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 40px; padding: 25px;
+            box-shadow: 0 25px 55px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            z-index: 10; text-align: center;
+        }
+
+        /* Stacked Photos - Hiệu ứng ảnh xếp chồng */
+        .photo-stack {
+            position: relative;
+            width: 180px; height: 180px;
+            margin: 0 auto 30px;
+        }
+
+        .ios-img {
+            width: 100%; height: 100%; object-fit: cover;
+            border-radius: 42px; position: absolute; top: 0; left: 0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid white;
+        }
+
+        /* Trạng thái các ảnh (ẩn/hiện) */
+        .img-hidden { opacity: 0; transform: scale(0.8) translateY(30px) rotate(10deg); z-index: 1; }
+        .img-active { opacity: 1; transform: scale(1) translateY(0) rotate(0); z-index: 10; }
+        .img-past { opacity: 0; transform: scale(1.2) translateY(-30px) rotate(-10deg); z-index: 1; }
+
+        h1 { 
+            font-size: 1.6rem; 
+            color: #1d1d1f; 
+            margin-bottom: 10px; 
+            letter-spacing: -0.2px;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        #msg { 
+            font-size: 1.05rem; 
+            color: #3a3a3c; 
+            line-height: 1.6; 
+            min-height: 90px; 
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .btn-group { display: flex; flex-direction: column; gap: 12px; }
+        
+        .ios-btn {
+            font-family: 'Quicksand', sans-serif;
+            background: white; border: none; padding: 16px; border-radius: 18px;
+            font-size: 1rem; font-weight: 700; color: var(--ios-blue);
+            cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .ios-btn.main { background: var(--ios-pink); color: white; }
+        .ios-btn:active { transform: scale(0.95); opacity: 0.9; }
+
+        .water-reminder {
+            display: none; background: #e1f5fe; color: #0288d1;
+            padding: 20px; border-radius: 25px; margin-top: 15px;
+            animation: slideIn 0.5s ease-out;
+            font-weight: 500;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } }
+    </style>
+</head>
+<body>
+
+<div class="bg-glow">
+    <div class="blob" style="width: 300px; height: 300px; top: -50px; left: -50px;"></div>
+    <div class="blob" style="width: 200px; height: 200px; bottom: 0; right: 0; background: #ffc2d1;"></div>
+</div>
+
+<div class="ios-card">
+    <div class="photo-stack" id="stack">
+        <img src="img1.jpg" class="ios-img img-active" id="p1">
+        <img src="img2.jpg" class="ios-img img-hidden" id="p2">
+        <img src="img3.PNG" class="ios-img img-hidden" id="p3">
+        <img src="img4.PNG" class="ios-img img-hidden" id="p4">
+        <img src="img5.PNG" class="ios-img img-hidden" id="p5">
+    </div>
+
+    <h1 id="title">Chào Tông Hồng 🌸</h1>
+    <p id="msg">Tui thấy dạo này Trà áp lực học hành quá, nên làm cái này tặng riêng cho Trà nè.</p>
+
+    <div class="btn-group" id="btn-container">
+        <button class="ios-btn main" onclick="step(2)">Bấm xem tiếp nha ✨</button>
+    </div>
+
+    <div id="water" class="water-reminder">
+        🥤 <b>Hứa rồi nhé!</b> <br> Giờ thì uống nước và nghỉ ngơi chút đi Trà!
+    </div>
+</div>
+
+<script>
+    const data = {
+        2: {
+            title: "Đừng lo lắng quá...",
+            msg: "Mỗi lúc thấy mệt mỏi hay deadline dồn dập, cứ nhắn tui nhé. Tớ sẽ luôn hỗ trợ hay làm gì đó cho Trà dui!",
+            btns: [["Trà biết rồi nè 🐾", 3]],
+            img: 2
+        },
+        3: {
+            title: "Cùng nhau tốt hơn ✨",
+            msg: "Khi nào nhớ lego hay bánh bao, vyvy, happy cứ nhắn nhé sẽ có hình nó mỗi ngày luôn kekee!",
+            btns: [["Sao bạn tốt thế? 🥺", 4]],
+            img: 3
+        },
+        4: {
+            title: "Vì là Tông Hồng mà!",
+            msg: "Đơn giản vì Trà là tông hồng =)). À, mà muốn tốt hơn thì phải bắt đầu từ việc nhỏ này...",
+            btns: [["Việc gì thế ta? 🤔", 5]],
+            img: 4
+        },
+        5: {
+            title: "Nhắc nhở quan trọng!",
+            msg: "Đó là phải UỐNG NƯỚC! Thức khuya mà thiếu nước là không tốt đâu. Nhớ uống nước nha máaa!",
+            btns: [["Hứa uống đủ nước luôn! 🥤", "final"]],
+            img: 5
+        }
+    };
+
+    function step(n) {
+        const content = data[n];
+        const msgEl = document.getElementById('msg');
+        const titleEl = document.getElementById('title');
+        const btnContainer = document.getElementById('btn-container');
+
+        // Hiệu ứng ảnh trượt mượt
+        if (n >= 2 && n <= 5) {
+            document.getElementById(`p${n-1}`).className = "ios-img img-past";
+            document.getElementById(`p${n}`).className = "ios-img img-active";
+        }
+
+        // Chuyển nội dung text
+        msgEl.style.opacity = 0;
+        titleEl.style.opacity = 0;
+
+        setTimeout(() => {
+            titleEl.innerText = content.title;
+            msgEl.innerText = content.msg;
+            titleEl.style.opacity = 1;
+            msgEl.style.opacity = 1;
+
+            btnContainer.innerHTML = "";
+            content.btns.forEach(b => {
+                const button = document.createElement('button');
+                button.className = "ios-btn main";
+                button.innerText = b[0];
+                button.onclick = () => {
+                    if (b[1] === "final") finish();
+                    else step(b[1]);
+                };
+                btnContainer.appendChild(button);
+            });
+        }, 300);
+    }
+
+    function finish() {
+        document.getElementById('btn-container').style.display = "none";
+        document.getElementById('water').style.display = "block";
+        document.getElementById('msg').innerText = "Ngoan lắm! Học tốt và giữ sức khỏe nhé Tông Hồng. Tớ luôn ở đây! 👋";
+        if (navigator.vibrate) navigator.vibrate(50); // Rung nhẹ kiểu iOS
+    }
+</script>
+</body>
+</html>
