@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Vé Trải Nghiệm & Gọi Món</title>
+    <!-- Animate.css tạo hiệu ứng mượt mà -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        :root {
+            --primary-pink: #ff8fa3;
+            --primary-pink-hover: #ff758f;
+            --bg-pastel: #fff0f3;
+            --card-bg: #ffffff;
+            --text-dark: #4a4e69;
+            --green-pastel: #a7c957;
+            --red-pastel: #f35b04;
+            --accent-yellow: #fee440;
+            --ios-radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 15px;
+            overflow-x: hidden;
+        }
+
+        /* Container chuẩn iOS Card */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            width: 100%;
+            max-width: 480px;
+            border-radius: var(--ios-radius);
+            box-shadow: 0 20px 40px rgba(255, 117, 143, 0.2);
+            padding: 30px 20px;
+            position: relative;
+            border: 4px solid #fff;
+        }
+
+        .decor-bubble {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.3;
+            animation: float 4s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-10px) rotate(15deg); }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 22px;
+            color: #5c5552;
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 1px 1px 0px #fff;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #6d6875;
+            padding-left: 4px;
+        }
+
+        input[type="text"],
+        input[type="tel"] {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #ffe5ec;
+            border-radius: 18px;
+            font-size: 15px;
+            outline: none;
+            background-color: #fffafb;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        input:focus {
+            border-color: var(--primary-pink);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(255, 143, 163, 0.15);
+        }
+
+        /* Khung nội quy */
+        .rules-box {
+            background-color: #fff5f6;
+            border: 2px dashed #ffb3c1;
+            border-radius: 18px;
+            padding: 18px;
+            max-height: 220px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 22px;
+            text-align: justify;
+            color: #5e548e;
+        }
+
+        .rules-box strong {
+            color: #ff4d6d;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            color: #ff758f;
+            background: #fff0f3;
+            padding: 12px 16px;
+            border-radius: 16px;
+        }
+
+        .checkbox-container input {
+            width: 22px;
+            height: 22px;
+            accent-color: var(--primary-pink);
+            cursor: pointer;
+        }
+
+        /* Nút nhấn */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ff8fa3 0%, #ff758f 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 17px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 117, 143, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(255, 117, 143, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn:disabled {
+            background: #e0e0e0;
+            color: #a1a1a1;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* Thông báo lưu ý bắt buộc */
+        .notice-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 12px 14px;
+            border-radius: 16px;
+            font-size: 13.5px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        /* Vé Option */
+        .ticket-option {
+            background: #fff;
+            border: 3px solid #f0f0f0;
+            border-radius: 22px;
+            padding: 18px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.03);
+        }
+
+        .ticket-option::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0; width: 8px;
+        }
+
+        .ticket-option.green { border-color: #e2f0d9; }
+        .ticket-option.green::before { background-color: var(--green-pastel); }
+        
+        .ticket-option.red { border-color: #ffdad3; background: linear-gradient(180deg, #ffffff 0%, #fff5f3 100%); }
+        .ticket-option.red::before { background-color: var(--red-pastel); }
+
+        .badge-hot {
+            position: absolute;
+            top: 0; right: 0;
+            background: linear-gradient(135deg, #ff4d6d 0%, #ff758f 100%);
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        .ticket-info h3 {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .ticket-info.green h3 { color: #52796f; }
+        .ticket-info.red h3 { color: #d90429; }
+        .ticket-price { font-size: 14px; font-weight: 700; color: #6d6875; }
+
+        .included-animals { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+        .animal-tag {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 700;
+            background: #f1f5f9;
+        }
+        .ticket-option.green .animal-tag { background: #e8f5e9; color: #2e7d32; }
+        .ticket-option.red .animal-tag { background: #ffebee; color: #c62828; }
+
+        /* Bộ tăng giảm số lượng */
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 30px;
+            border: 1px solid #e9ecef;
+        }
+
+        .qty-btn {
+            width: 32px; height: 32px;
+            border-radius: 50%; border: none;
+            background: white; font-size: 18px; font-weight: bold;
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .qty-input { width: 26px; text-align: center; border: none; font-size: 16px; font-weight: 800; background: transparent; }
+
+        /* KHU VỰC MENU NƯỚC UỐNG TRÊN CÙNG */
+        .menu-top-section {
+            background: #fff8f9;
+            border: 2px solid #ffe5ec;
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .menu-img-container {
+            width: 100%;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            cursor: zoom-in;
+        }
+
+        .menu-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Khu vực Tìm kiếm & Gợi ý nước uống thông minh */
+        .search-drink-box {
+            background: #fff;
+            border: 2px solid #ffe5ec;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-results-container {
+            margin-top: 10px;
+            max-height: 180px;
+            overflow-y: auto;
+            border-radius: 12px;
+        }
+
+        .drink-search-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 8px;
+            border-bottom: 1px solid #fff0f3;
+            background: #fffafb;
+            transition: background 0.2s;
+        }
+        .drink-search-item:hover {
+            background: #fff0f3;
+        }
+        .drink-search-name { font-size: 14px; font-weight: 700; color: #4a4e69; }
+        .drink-search-price { font-size: 13px; color: #ff758f; font-weight: 700; margin-left: 5px; }
+
+        /* Giỏ hàng các món nước đã chọn */
+        .selected-drinks-cart {
+            margin-top: 15px;
+            background: #fdf2f4;
+            border-radius: 16px;
+            padding: 12px;
+            display: none; /* Chỉ hiện khi có món */
+        }
+        .cart-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #ff758f;
+            margin-bottom: 8px;
+            border-bottom: 1px dashed #ffccd5;
+            padding-bottom: 4px;
+        }
+
+        /* Thanh tính tổng tiền trực quan Realtime */
+        .price-sticky-bar {
+            background: #fff0f3;
+            border: 2px solid #ffccd5;
+            border-radius: 18px;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+        .price-sticky-bar span { color: #ff4d6d; font-size: 20px; }
+
+        /* Modal phóng to ảnh */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        .modal-overlay img { max-width: 95%; max-height: 90%; border-radius: 12px; }
+
+        /* Màn hình thành công */
+        .success-card { text-align: center; }
+        .success-icon { font-size: 45px; color: #2e7d32; animation: heartBeat 1.5s infinite; margin-bottom: 15px; }
+
+        .customer-summary {
+            background: #fdf0f2;
+            padding: 16px;
+            border-radius: 20px;
+            margin: 15px 0;
+            font-size: 14px;
+            text-align: left;
+            border: 1px solid #ffe3e8;
+            line-height: 1.6;
+        }
+
+        .bill-details {
+            background: #fff;
+            border: 2px dashed #ffccd5;
+            border-radius: 20px;
+            padding: 16px;
+            margin: 18px 0;
+            text-align: left;
+        }
+        .bill-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #ff758f;
+            border-bottom: 1px solid #ffe5ec;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .bill-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13.5px;
+            margin-bottom: 6px;
+            color: #6d6875;
+        }
+        .bill-total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 800;
+            color: #d90429;
+            border-top: 2px dashed #ffccd5;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .note-staff { font-size: 13px; color: #8d99ae; margin-top: 15px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="container animate__animated animate__fadeInUp">
+    <!-- Icon trang trí -->
+    <div class="decor-bubble" style="top: 10px; left: 15px;">🐾</div>
+    <div class="decor-bubble" style="top: 40px; right: 20px;">🐱</div>
+    <div class="decor-bubble" style="bottom: 20px; left: 20px;">🐶</div>
+
+    <!-- BƯỚC 1: THÔNG TIN KHÁCH HÀNG -->
+    <div id="step-1" class="step active">
+        <h2>Chào Bạn Nhỏ! ✨</h2>
+        <p style="text-align: center; font-size: 14px; color: #8d99ae; margin-bottom: 20px;">Điền thông tin đặt lịch hẹn với các bé thú cưng nha!</p>
+        
+        <div class="form-group">
+            <label for="fullname">Họ tên của bạn</label>
+            <input type="text" id="fullname" placeholder="Ví dụ: Nguyễn Văn A" autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">Số điện thoại (Nhập đúng 10 số)</label>
+            <input type="tel" id="phone" placeholder="Ví dụ: 0912345678" autocomplete="off" maxlength="10">
+        </div>
+
+        <button class="btn" onclick="goToStep2()">Tiếp tục nhận vé ➔</button>
+    </div>
+
+    <!-- BƯỚC 2: NỘI QUY & ĐIỀU KHOẢN -->
+    <div id="step-2" class="step">
+        <h2>Nội Quy Quán Nhỏ 📋</h2>
+        <div class="rules-box">
+            <p><strong>Lưu ý quan trọng:</strong></p>
+            <p style="margin-top: 8px;">Tất cả thú cưng tại quán đều được tiêm phòng đầy đủ các bệnh theo định kỳ và luôn khỏe mạnh khi đón khách. Chúng tôi rất mong quý khách <strong>cân nhắc kỹ</strong> trước khi sử dụng dịch vụ.</p>
+            <p style="margin-top: 12px;">Vé sau khi mua <strong>không hoàn trả lại</strong>. Tuy nhiên, quán cam kết sẽ hỗ trợ nhiệt tình và chu đáo hết mình trong suốt quá trình trải nghiệm của quý khách!</p>
+        </div>
+
+        <label class="checkbox-container">
+            <input type="checkbox" id="agree-checkbox" onchange="toggleRuleBtn()">
+            <span>Tôi chấp nhận rủi ro và tiếp tục</span>
+        </label>
+
+        <button class="btn" id="btn-rule-next" disabled onclick="goToStep3()">Đồng ý & Tiếp tục ➔</button>
+    </div>
+
+    <!-- BƯỚC 3: XEM MENU, CHỌN VÉ & TÌM KIẾM ĐỒ UỐNG -->
+    <div id="step-3" class="step">
+        <h2>Chọn Vé & Gọi Món 🍕</h2>
+
+        <!-- MENU HÌNH ẢNH NẰM TRÊN CÙNG -->
+        <div class="menu-top-section">
+            <div class="menu-img-container" onclick="openMenuModal()">
+                <img src="menu.png" class="menu-img" alt="Menu Nước Uống" onerror="this.src='menu.jpg'">
+                <p style="font-size: 11px; color:#a1a1a1; margin-top:5px; font-weight:bold;">🔍 Bấm vào ảnh để xem toàn màn hình</p>
+            </div>
+        </div>
+
+        <!-- DÒNG LƯU Ý BẮT BUỘC MUA VÉ, NƯỚC THÌ TÙY CHỌN -->
+        <div class="notice-box">
+            📌 Vé vào cửa là BẮT BUỘC mua.<br>Nước uống KHÔNG BẮT BUỘC, bạn tùy ý lựa chọn nhé!
+        </div>
+
+        <!-- Khu vực chọn Vé -->
+        <div class="ticket-option green animate__animated animate__fadeInLeft">
+            <div class="ticket-info green">
+                <h3>Vé Xanh 🌱 (Combo 1)</h3>
+                <span class="ticket-price">80.000đ / vé</span>
+                <div class="included-animals">
+                    <span class="animal-tag">Chó</span><span class="animal-tag">Mèo</span>
+                </div>
+            </div>
+            <div class="quantity-selector">
+                <button class="qty-btn" onclick="changeTicketQty('green', -1)">-</button>
+                <input type="number" id="qty-green" class="qty-input" value="0" min="0" readonly>
+                <button class="qty-btn" onclick="changeTicketQty('green', 1)">+</button>
+            </div>
+        </div>
+
+        <div class="ticket-option red animate__animated animate__fadeInRight">
+            <div class="badge-hot">🔥 HOT</div>
+            <div class="ticket-info red">
+                <h3>Vé Đỏ 👑 (Combo 2)</h3>
+                <span class="ticket-price">110.000đ / vé</span>
+                <div class="included-animals">
+                    <span class="animal-tag">Chó</span><span class="animal-tag">Mèo</span><span class="animal-tag">Capybara</span><span class="animal-tag">Gấu Mèo</span>
+                </div>
+            </div>
+            <div class="quantity-selector">
+                <button class="qty-btn" onclick="changeTicketQty('red', -1)">-</button>
+                <input type="number" id="qty-red" class="qty-input" value="0" min="0" readonly>
+                <button class="qty-btn" onclick="changeTicketQty('red', 1)">+</button>
+            </div>
+        </div>
+
+        <!-- KHU VỰC NHẬP TÊN ĐỂ GỢI Ý MÓN -->
+        <div class="search-drink-box">
+            <label for="search-drink-input" style="color: #ff758f;">🍹 Gõ tên món nước muốn uống:</label>
+            <div class="search-input-wrapper">
+                <input type="text" id="search-drink-input" placeholder="Ví dụ: tradao, caphesuada, matcha..." oninput="filterDrinks()" autocomplete="off">
+            </div>
+            
+            <!-- Nơi hiển thị các món khớp với từ khóa tìm kiếm -->
+            <div class="search-results-container" id="search-results"></div>
+
+            <!-- Giỏ hàng hiển thị các món nước đã được chọn số lượng > 0 -->
+            <div class="selected-drinks-cart" id="selected-cart">
+                <div class="cart-title">🛒 Món nước bạn đã chọn:</div>
+                <div id="cart-items-list"></div>
+            </div>
+        </div>
+
+        <!-- Tổng tiền Realtime -->
+        <div class="price-sticky-bar">
+            <span>TỔNG CỘNG:</span>
+            <span id="realtime-total">0đ</span>
+        </div>
+
+        <button class="btn" style="background: linear-gradient(135deg, #4ef084 0%, #10b981 100%); box-shadow: 0 8px 20px rgba(16,185,129,0.3);" onclick="showConfirmation()">Xác nhận đơn hàng ➔</button>
+    </div>
+
+    <!-- BƯỚC THÀNH CÔNG -->
+    <div id="step-success" class="step success-card">
+        <div class="success-icon">❤️</div>
+        <h2>Đặt Vé Thành Công!</h2>
+        
+        <div class="customer-summary">
+            <p><strong>👤 Khách hàng:</strong> <span id="summary-name" style="color:#ff758f; font-weight:700;"></span></p>
+            <p><strong>📞 Số điện thoại:</strong> <span id="summary-phone" style="font-weight:600;"></span></p>
+            <p><strong>⏰ Thời gian đặt vé:</strong> <span id="summary-time" style="color: #4f46e5; font-weight:700;"></span></p>
+        </div>
+
+        <!-- Chi tiết hóa đơn rõ ràng -->
+        <div class="bill-details">
+            <div class="bill-title">🧾 CHI TIẾT HÓA ĐƠN</div>
+            <div id="bill-items-container">
+                <!-- Danh sách các mặt hàng đã chọn mua -->
+            </div>
+            <div class="bill-total-row">
+                <span>Tổng tiền thanh toán:</span>
+                <span id="summary-grand-total">0đ</span>
+            </div>
+        </div>
+
+        <p class="note-staff">Hãy xuất trình màn hình hóa đơn này cho nhân viên quầy để đối chiếu và nhận vòng tay nha! ✨</p>
+        <!-- <button class="btn" style="margin-top: 20px; background: #6d6875; box-shadow: none;" onclick="resetForm()">Quay lại ban đầu</button> -->
+    </div>
+</div>
+
+<!-- Modal xem ảnh lớn -->
+<div id="menu-modal" class="modal-overlay" onclick="closeMenuModal()">
+    <img src="menu.png" alt="Menu Phóng To" onerror="this.src='menu.jpg'">
+</div>
+
+<script>
+    // Toàn bộ cơ sở dữ liệu menu nước của quán
+    const allDrinks = [
+        // COFFEE
+        { id: "cf1", name: "Espresso đá", price: 40000 },
+        { id: "cf2", name: "Cà phê sữa đá", price: 40000 },
+        { id: "cf3", name: "Caramel coffee", price: 40000 },
+        { id: "cf4", name: "Chocolate latte", price: 40000 },
+        { id: "cf5", name: "Matcha latte", price: 40000 },
+        { id: "cf6", name: "Cam ép", price: 40000 },
+        { id: "cf7", name: "Bạc xỉu", price: 40000 },
+        { id: "cf8", name: "Americano (nóng/lạnh)", price: 40000 },
+        // TEA
+        { id: "te1", name: "Trà đào", price: 40000 },
+        { id: "te2", name: "Trà đào cam sả", price: 40000 },
+        { id: "te3", name: "Trà kiwi", price: 40000 },
+        { id: "te4", name: "Trà vải", price: 40000 },
+        { id: "te5", name: "Trà dâu", price: 40000 },
+        { id: "te6", name: "Trà ổi hồng", price: 40000 },
+        { id: "te7", name: "Lục trà tắc mật ong", price: 40000 },
+        // SODA
+        { id: "sd1", name: "Soda kiwi", price: 40000 },
+        { id: "sd2", name: "Soda blue", price: 40000 },
+        { id: "sd3", name: "Soda chanh", price: 40000 },
+        { id: "sd4", name: "Soda bạc hà", price: 40000 },
+        { id: "sd5", name: "Soda việt quất", price: 40000 },
+        // NƯỚC NGỌT
+        { id: "nn1", name: "Coca-7up", price: 40000 },
+        { id: "nn2", name: "Sting", price: 40000 },
+        { id: "nn3", name: "Nước suối", price: 30000 },
+        // YOGURT
+        { id: "yg1", name: "Sữa chua đá", price: 40000 },
+        { id: "yg2", name: "Sữa chua trân châu đường đen", price: 40000 },
+        { id: "yg3", name: "Sữa chua cà phê", price: 40000 },
+        { id: "yg4", name: "Sữa chua hoa quả", price: 40000 },
+        { id: "yg5", name: "Sữa chua việt quất", price: 40000 },
+        // ICE BLENDED
+        { id: "ib1", name: "Sinh tố việt quất", price: 40000 },
+        { id: "ib2", name: "Matcha blend", price: 40000 },
+        { id: "ib3", name: "Matcha cookie blend", price: 40000 },
+        { id: "ib4", name: "Matcha chocolate blend", price: 40000 },
+        { id: "ib5", name: "Chocolate blend", price: 40000 },
+        { id: "ib6", name: "Chocolate mint blend", price: 40000 },
+        { id: "ib7", name: "Chocolate cookie", price: 40000 },
+        // MILK
+        { id: "mk1", name: "Sữa tươi chocolate", price: 40000 },
+        { id: "mk2", name: "Sữa tươi matcha", price: 40000 },
+        { id: "mk3", name: "Sữa tươi cacao", price: 40000 },
+        { id: "mk4", name: "Sữa tươi bạc hà", price: 40000 },
+        { id: "mk5", name: "Sữa tươi trân châu đường đen", price: 40000 },
+        // MILK TEA
+        { id: "mt1", name: "Trà sữa truyền thống", price: 40000 },
+        { id: "mt2", name: "Trà sữa trân châu đường đen", price: 40000 },
+        { id: "mt3", name: "Trà sữa matcha", price: 40000 },
+        { id: "mt4", name: "Trà sữa chocolate", price: 40000 },
+        { id: "mt5", name: "Trà sữa chocolate mint", price: 40000 }
+    ];
+
+    let orderState = {
+        name: '',
+        phone: '',
+        ticketGreen: 0,
+        ticketRed: 0,
+        drinks: {} // Lưu cấu trúc: { drinkId: số_lượng }
+    };
+
+    // Hàm tiện ích: chuyển chuỗi có dấu thành không dấu, xóa khoảng trắng và ký tự đặc biệt
+    function formatToCleanString(str) {
+        return str
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "") // Loại bỏ các dấu tiếng Việt
+            .replace(/đ/g, "d").replace(/Đ/g, "d") // Chuyển chữ đ thành d
+            .toLowerCase() // Chuyển thành chữ thường
+            .replace(/[^a-z0-9]/g, ""); // Chỉ giữ lại các chữ cái và số (xóa khoảng trắng, gạch ngang, ngoặc...)
+    }
+
+    // Hàm tìm kiếm và lọc món nước theo từ khóa nhập vào (Đã nâng cấp chuẩn hóa chuỗi)
+    function filterDrinks() {
+        const rawKeyword = document.getElementById('search-drink-input').value.trim();
+        const cleanKeyword = formatToCleanString(rawKeyword);
+        const resultsContainer = document.getElementById('search-results');
+        
+        if (!rawKeyword) {
+            resultsContainer.innerHTML = '';
+            return;
+        }
+
+        // Lọc các món dựa trên chuỗi đã được loại bỏ dấu và khoảng trắng
+        const matchedDrinks = allDrinks.filter(drink => {
+            const cleanDrinkName = formatToCleanString(drink.name);
+            return cleanDrinkName.includes(cleanKeyword);
+        });
+
+        if (matchedDrinks.length === 0) {
+            resultsContainer.innerHTML = `<div style="padding: 10px; font-size:13px; color:#a1a1a1; text-align:center;">Không tìm thấy món nước nào khớp từ khóa 🔍</div>`;
+            return;
+        }
+
+        let html = '';
+        matchedDrinks.forEach(drink => {
+            const currentQty = orderState.drinks[drink.id] || 0;
+            html += `
+                <div class="drink-search-item">
+                    <div>
+                        <span class="drink-search-name">${drink.name}</span>
+                        <span class="drink-search-price">${(drink.price/1000)}k</span>
+                    </div>
+                    <div class="quantity-selector">
+                        <button class="qty-btn" onclick="changeDrinkQty('${drink.id}', -1)">-</button>
+                        <input type="number" id="search-qty-${drink.id}" class="qty-input" value="${currentQty}" min="0" readonly>
+                        <button class="qty-btn" onclick="changeDrinkQty('${drink.id}', 1)">+</button>
+                    </div>
+                </div>
+            `;
+        });
+        resultsContainer.innerHTML = html;
+    }
+
+    // Thay đổi số lượng đồ uống và cập nhật giao diện
+    function changeDrinkQty(drinkId, val) {
+        let currentVal = orderState.drinks[drinkId] || 0;
+        currentVal += val;
+        
+        if (currentVal <= 0) {
+            delete orderState.drinks[drinkId];
+            currentVal = 0;
+        } else {
+            orderState.drinks[drinkId] = currentVal;
+        }
+
+        // Cập nhật ngay lập tức ô nhập số lượng trong danh sách tìm kiếm nếu đang hiển thị
+        const searchInput = document.getElementById(`search-qty-${drinkId}`);
+        if (searchInput) searchInput.value = currentVal;
+
+        // Cập nhật khu vực Giỏ hàng nhỏ gọn phía dưới ô tìm kiếm
+        updateSelectedCart();
+        updateTotalCost();
+    }
+
+    // Hiển thị tóm tắt các món nước đã chọn ở dưới thanh tìm kiếm
+    function updateSelectedCart() {
+        const cartContainer = document.getElementById('selected-cart');
+        const listContainer = document.getElementById('cart-items-list');
+        const activeDrinkIds = Object.keys(orderState.drinks);
+
+        if (activeDrinkIds.length === 0) {
+            cartContainer.style.display = 'none';
+            return;
+        }
+
+        cartContainer.style.display = 'block';
+        let html = '';
+        activeDrinkIds.forEach(id => {
+            const drink = allDrinks.find(d => d.id === id);
+            if (drink) {
+                html += `
+                    <div style="display:flex; justify-content:space-between; font-size:13.5px; margin-top:5px; color:#5c5552;">
+                        <span>🥤 <strong>${drink.name}</strong> (x${orderState.drinks[id]})</span>
+                        <span style="font-weight:700; color:#ff758f;">${(drink.price * orderState.drinks[id]).toLocaleString('vi-VN')}đ</span>
+                    </div>
+                `;
+            }
+        });
+        listContainer.innerHTML = html;
+    }
+
+    // Tăng giảm số lượng Vé vào cửa
+    function changeTicketQty(type, val) {
+        const input = document.getElementById(`qty-${type}`);
+        let currentVal = parseInt(input.value) || 0;
+        currentVal += val;
+        if (currentVal < 0) currentVal = 0;
+        input.value = currentVal;
+
+        if (type === 'green') orderState.ticketGreen = currentVal;
+        if (type === 'red') orderState.ticketRed = currentVal;
+
+        updateTotalCost();
+    }
+
+    // Tính toán tổng tiền thời gian thực
+    function calculateTotal() {
+        let total = 0;
+        total += orderState.ticketGreen * 80000;  // Vé xanh: 80k
+        total += orderState.ticketRed * 110000;  // Vé đỏ: 110k
+
+        for (const [drinkId, qty] of Object.entries(orderState.drinks)) {
+            const drink = allDrinks.find(d => d.id === drinkId);
+            if (drink) {
+                total += drink.price * qty;
+            }
+        }
+        return total;
+    }
+
+    function updateTotalCost() {
+        const total = calculateTotal();
+        document.getElementById('realtime-total').innerText = total.toLocaleString('vi-VN') + 'đ';
+    }
+
+    // Các hàm chuyển bước giao diện chuyển đổi mượt
+    function switchStep(currentId, nextId, animationIn = 'animate__fadeInRight') {
+        const currentStep = document.getElementById(currentId);
+        const nextStep = document.getElementById(nextId);
+        
+        currentStep.style.display = 'none';
+        currentStep.classList.remove('active');
+        
+        nextStep.style.display = 'block';
+        nextStep.classList.add('active', 'animate__animated', animationIn);
+        
+        setTimeout(() => {
+            nextStep.classList.remove('animate__animated', animationIn);
+        }, 600);
+    }
+
+    function triggerErrorShake() {
+        const container = document.querySelector('.container');
+        container.classList.add('animate__animated', 'animate__shakeX');
+        setTimeout(() => container.classList.remove('animate__animated', 'animate__shakeX'), 600);
+    }
+
+    function goToStep2() {
+        const name = document.getElementById('fullname').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+
+        if (!name || !phone) {
+            triggerErrorShake();
+            alert('Bạn vui lòng nhập đầy đủ Họ tên và Số điện thoại nhé! 🥰');
+            return;
+        }
+
+        if (!phoneRegex.test(phone)) {
+            triggerErrorShake();
+            alert('Số điện thoại không đúng cấu trúc rồi ạ (Yêu cầu 10 số, bắt đầu bằng số 0)! 📱');
+            return;
+        }
+
+        orderState.name = name;
+        orderState.phone = phone;
+        switchStep('step-1', 'step-2');
+    }
+
+    function toggleRuleBtn() {
+        const checkbox = document.getElementById('agree-checkbox');
+        const nextBtn = document.getElementById('btn-rule-next');
+        nextBtn.disabled = !checkbox.checked;
+    }
+
+    function goToStep3() {
+        switchStep('step-2', 'step-3');
+    }
+
+    function openMenuModal() {
+        document.getElementById('menu-modal').style.display = 'flex';
+    }
+
+    function closeMenuModal() {
+        document.getElementById('menu-modal').style.display = 'none';
+    }
+
+    // Hiển thị hóa đơn xác nhận thành công
+    function showConfirmation() {
+        // Vé vào cổng là bắt buộc
+        if (orderState.ticketGreen === 0 && orderState.ticketRed === 0) {
+            alert('Vé vào cổng là bắt buộc mua nè bạn ơi, vui lòng lựa chọn loại vé nhé! 🎟️');
+            return;
+        }
+
+        // Tự động lấy thời điểm hiện tại chính xác
+        const now = new Date();
+        const dateString = now.toLocaleDateString('vi-VN');
+        const timeString = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+
+        document.getElementById('summary-name').innerText = orderState.name;
+        document.getElementById('summary-phone').innerText = orderState.phone;
+        document.getElementById('summary-time').innerText = `${timeString} - ngày ${dateString}`;
+
+        // Xây dựng hóa đơn chi tiết
+        const billContainer = document.getElementById('bill-items-container');
+        let billHtml = '';
+
+        if (orderState.ticketGreen > 0) {
+            billHtml += `
+                <div class="bill-row">
+                    <span>🌿 Vé Xanh (Combo 1) x ${orderState.ticketGreen}</span>
+                    <span>${(orderState.ticketGreen * 80000).toLocaleString('vi-VN')}đ</span>
+                </div>
+            `;
+        }
+
+        if (orderState.ticketRed > 0) {
+            billHtml += `
+                <div class="bill-row">
+                    <span>👑 Vé Đỏ (Combo 2) x ${orderState.ticketRed}</span>
+                    <span>${(orderState.ticketRed * 110000).toLocaleString('vi-VN')}đ</span>
+                </div>
+            `;
+        }
+
+        // Thêm các món nước
+        for (const [drinkId, qty] of Object.entries(orderState.drinks)) {
+            const drink = allDrinks.find(d => d.id === drinkId);
+            if (drink) {
+                billHtml += `
+                    <div class="bill-row">
+                        <span>🍹 ${drink.name} x ${qty}</span>
+                        <span>${(drink.price * qty).toLocaleString('vi-VN')}đ</span>
+                    </div>
+                `;
+            }
+        }
+
+        billContainer.innerHTML = billHtml;
+
+        const grandTotal = calculateTotal();
+        document.getElementById('summary-grand-total').innerText = grandTotal.toLocaleString('vi-VN') + 'đ';
+
+        switchStep('step-3', 'step-success', 'animate__zoomIn');
+    }
+
+    // Làm mới form quay về ban đầu
+    function resetForm() {
+        document.getElementById('fullname').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('agree-checkbox').checked = false;
+        document.getElementById('btn-rule-next').disabled = true;
+        document.getElementById('search-drink-input').value = '';
+        document.getElementById('search-results').innerHTML = '';
+
+        orderState = {
+            name: '',
+            phone: '',
+            ticketGreen: 0,
+            ticketRed: 0,
+            drinks: {}
+        };
+
+        document.getElementById('qty-green').value = '0';
+        document.getElementById('qty-red').value = '0';
+        document.getElementById('realtime-total').innerText = '0đ';
+        document.getElementById('selected-cart').style.display = 'none';
+
+        switchStep('step-success', 'step-1', 'animate__fadeInLeft');
+    }
+</script>
+
+</body>
+</html>
