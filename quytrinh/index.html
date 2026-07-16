@@ -99,7 +99,8 @@
         }
 
         input[type="text"],
-        input[type="tel"] {
+        input[type="tel"],
+        input[type="number"].pin-input {
             width: 100%;
             padding: 14px 18px;
             border: 2px solid #ffe5ec;
@@ -118,23 +119,24 @@
             box-shadow: 0 0 0 4px rgba(255, 143, 163, 0.15);
         }
 
-        /* Khung nội quy */
-        .rules-box {
-            background-color: #fff5f6;
-            border: 2px dashed #ffb3c1;
+        /* Khung nội quy hình ảnh mới */
+        .rules-img-container {
+            width: 100%;
             border-radius: 18px;
-            padding: 18px;
-            max-height: 220px;
-            overflow-y: auto;
-            font-size: 14px;
-            line-height: 1.6;
+            overflow: hidden;
+            border: 2px dashed #ffb3c1;
+            padding: 6px;
+            background-color: #fff5f6;
             margin-bottom: 22px;
-            text-align: justify;
-            color: #5e548e;
+            cursor: zoom-in;
+            text-align: center;
         }
 
-        .rules-box strong {
-            color: #ff4d6d;
+        .rules-img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
         }
 
         .checkbox-container {
@@ -372,7 +374,7 @@
         }
         .price-sticky-bar span { color: #ff4d6d; font-size: 20px; }
 
-        /* Modal phóng to ảnh */
+        /* Modal phóng to ảnh và Modal xác nhận */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -381,9 +383,62 @@
             z-index: 9999;
             justify-content: center;
             align-items: center;
+        }
+        .modal-overlay.zoom-mode {
             cursor: zoom-out;
         }
         .modal-overlay img { max-width: 95%; max-height: 90%; border-radius: 12px; }
+
+        /* Khung bảng xác nhận giữa màn hình */
+        .confirm-alert-box {
+            background: #ffffff;
+            width: 85%;
+            max-width: 380px;
+            border-radius: 24px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            border: 3px solid var(--primary-pink);
+        }
+        .confirm-alert-box h3 {
+            font-size: 20px;
+            color: #d90429;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+        .confirm-alert-box p {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #4a4e69;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-confirm-yes {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, #4ef084 0%, #10b981 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .btn-confirm-no {
+            flex: 1;
+            padding: 12px;
+            background: #6d6875;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+        }
 
         /* Màn hình thành công */
         .success-card { text-align: center; }
@@ -435,6 +490,20 @@
             margin-top: 10px;
         }
         .note-staff { font-size: 13px; color: #8d99ae; margin-top: 15px; font-style: italic; }
+
+        /* Khu vực mã pin nhân viên */
+        .staff-pin-box {
+            background: #fff8f9;
+            border: 2px solid #ffccd5;
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .pin-wrapper {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -463,13 +532,12 @@
         <button class="btn" onclick="goToStep2()">Tiếp tục nhận vé ➔</button>
     </div>
 
-    <!-- BƯỚC 2: NỘI QUY & ĐIỀU KHOẢN -->
+    <!-- BƯỚC 2: NỘI QUY & ĐIỀU KHOẢN (Đã đổi thành ẢNH luuy.png) -->
     <div id="step-2" class="step">
         <h2>Nội Quy Quán Nhỏ 📋</h2>
-        <div class="rules-box">
-            <p><strong>Lưu ý quan trọng:</strong></p>
-            <p style="margin-top: 8px;">Tất cả thú cưng tại quán đều được tiêm phòng đầy đủ các bệnh theo định kỳ và luôn khỏe mạnh khi đón khách. Chúng tôi rất mong quý khách <strong>cân nhắc kỹ</strong> trước khi sử dụng dịch vụ.</p>
-            <p style="margin-top: 12px;">Vé sau khi mua <strong>không hoàn trả lại</strong>. Tuy nhiên, quán cam kết sẽ hỗ trợ nhiệt tình và chu đáo hết mình trong suốt quá trình trải nghiệm của quý khách!</p>
+        <div class="rules-img-container" onclick="openRulesModal()">
+            <img src="luuy.png" class="rules-img" alt="Lưu ý quan trọng" onerror="this.src='luuy.jpg'">
+            <p style="font-size: 11px; color:#a1a1a1; margin-top:5px; font-weight:bold;">🔍 Bấm vào ảnh để xem lưu ý rõ hơn</p>
         </div>
 
         <label class="checkbox-container">
@@ -552,7 +620,7 @@
             <span id="realtime-total">0đ</span>
         </div>
 
-        <button class="btn" style="background: linear-gradient(135deg, #4ef084 0%, #10b981 100%); box-shadow: 0 8px 20px rgba(16,185,129,0.3);" onclick="showConfirmation()">Xác nhận đơn hàng ➔</button>
+        <button class="btn" style="background: linear-gradient(135deg, #4ef084 0%, #10b981 100%); box-shadow: 0 8px 20px rgba(16,185,129,0.3);" onclick="triggerRiskModal()">Xác nhận đơn hàng ➔</button>
     </div>
 
     <!-- BƯỚC THÀNH CÔNG -->
@@ -578,14 +646,39 @@
             </div>
         </div>
 
+        <!-- KHU VỰC NHẬP MÃ PIN XÁC NHẬN CỦA NHÂN VIÊN -->
+        <div class="staff-pin-box" id="pin-area">
+            <label for="staff-pin" style="color: #ff4d6d; text-align: left; display: block;">🔑 Nhân viên nhập mã PIN để xác nhận món:</label>
+            <div class="pin-wrapper">
+                <input type="number" id="staff-pin" class="pin-input" placeholder="Nhập 2 số PIN..." oninput="checkStaffPin()">
+            </div>
+            <p id="pin-message" style="font-size: 13px; font-weight: 700; margin-top: 6px; text-align: left; display: none;"></p>
+        </div>
+
         <p class="note-staff">Hãy xuất trình màn hình hóa đơn này cho nhân viên quầy để đối chiếu và nhận vòng tay nha! ✨</p>
-        <!-- <button class="btn" style="margin-top: 20px; background: #6d6875; box-shadow: none;" onclick="resetForm()">Quay lại ban đầu</button> -->
     </div>
 </div>
 
-<!-- Modal xem ảnh lớn -->
-<div id="menu-modal" class="modal-overlay" onclick="closeMenuModal()">
+<!-- Modal xem ảnh lớn menu -->
+<div id="menu-modal" class="modal-overlay zoom-mode" onclick="closeMenuModal()">
     <img src="menu.png" alt="Menu Phóng To" onerror="this.src='menu.jpg'">
+</div>
+
+<!-- Modal xem ảnh lớn lưu ý -->
+<div id="rules-modal" class="modal-overlay zoom-mode" onclick="closeRulesModal()">
+    <img src="luuy.png" alt="Lưu ý Phóng To" onerror="this.src='luuy.jpg'">
+</div>
+
+<!-- BẢNG HIỂN THỊ GIỮA MÀN HÌNH XÁC NHẬN RỦI RO BỊ CẮN -->
+<div id="risk-confirm-modal" class="modal-overlay" style="background: rgba(0,0,0,0.6);">
+    <div class="confirm-alert-box animate__animated animate__bounceIn">
+        <h3>⚠️ XÁC NHẬN RỦI RO</h3>
+        <p>Bạn đồng ý chịu mọi rủi ro khi bị thú cưng cắn hoặc cào trầy xước trong quá trình vui chơi tại quán nhé?</p>
+        <div class="confirm-buttons">
+            <button class="btn-confirm-no" onclick="closeRiskModal()">Hủy bỏ</button>
+            <button class="btn-confirm-yes" onclick="confirmRiskAndSubmit()">Đồng ý</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -651,20 +744,18 @@
         phone: '',
         ticketGreen: 0,
         ticketRed: 0,
-        drinks: {} // Lưu cấu trúc: { drinkId: số_lượng }
+        drinks: {} 
     };
 
-    // Hàm tiện ích: chuyển chuỗi có dấu thành không dấu, xóa khoảng trắng và ký tự đặc biệt
     function formatToCleanString(str) {
         return str
             .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "") // Loại bỏ các dấu tiếng Việt
-            .replace(/đ/g, "d").replace(/Đ/g, "d") // Chuyển chữ đ thành d
-            .toLowerCase() // Chuyển thành chữ thường
-            .replace(/[^a-z0-9]/g, ""); // Chỉ giữ lại các chữ cái và số (xóa khoảng trắng, gạch ngang, ngoặc...)
+            .replace(/[\u0300-\u036f]/g, "") 
+            .replace(/đ/g, "d").replace(/Đ/g, "d") 
+            .toLowerCase() 
+            .replace(/[^a-z0-9]/g, ""); 
     }
 
-    // Hàm tìm kiếm và lọc món nước theo từ khóa nhập vào (Đã nâng cấp chuẩn hóa chuỗi)
     function filterDrinks() {
         const rawKeyword = document.getElementById('search-drink-input').value.trim();
         const cleanKeyword = formatToCleanString(rawKeyword);
@@ -675,7 +766,6 @@
             return;
         }
 
-        // Lọc các món dựa trên chuỗi đã được loại bỏ dấu và khoảng trắng
         const matchedDrinks = allDrinks.filter(drink => {
             const cleanDrinkName = formatToCleanString(drink.name);
             return cleanDrinkName.includes(cleanKeyword);
@@ -706,7 +796,6 @@
         resultsContainer.innerHTML = html;
     }
 
-    // Thay đổi số lượng đồ uống và cập nhật giao diện
     function changeDrinkQty(drinkId, val) {
         let currentVal = orderState.drinks[drinkId] || 0;
         currentVal += val;
@@ -718,16 +807,13 @@
             orderState.drinks[drinkId] = currentVal;
         }
 
-        // Cập nhật ngay lập tức ô nhập số lượng trong danh sách tìm kiếm nếu đang hiển thị
         const searchInput = document.getElementById(`search-qty-${drinkId}`);
         if (searchInput) searchInput.value = currentVal;
 
-        // Cập nhật khu vực Giỏ hàng nhỏ gọn phía dưới ô tìm kiếm
         updateSelectedCart();
         updateTotalCost();
     }
 
-    // Hiển thị tóm tắt các món nước đã chọn ở dưới thanh tìm kiếm
     function updateSelectedCart() {
         const cartContainer = document.getElementById('selected-cart');
         const listContainer = document.getElementById('cart-items-list');
@@ -754,7 +840,6 @@
         listContainer.innerHTML = html;
     }
 
-    // Tăng giảm số lượng Vé vào cửa
     function changeTicketQty(type, val) {
         const input = document.getElementById(`qty-${type}`);
         let currentVal = parseInt(input.value) || 0;
@@ -768,11 +853,10 @@
         updateTotalCost();
     }
 
-    // Tính toán tổng tiền thời gian thực
     function calculateTotal() {
         let total = 0;
-        total += orderState.ticketGreen * 80000;  // Vé xanh: 80k
-        total += orderState.ticketRed * 110000;  // Vé đỏ: 110k
+        total += orderState.ticketGreen * 80000;  
+        total += orderState.ticketRed * 110000;  
 
         for (const [drinkId, qty] of Object.entries(orderState.drinks)) {
             const drink = allDrinks.find(d => d.id === drinkId);
@@ -788,7 +872,6 @@
         document.getElementById('realtime-total').innerText = total.toLocaleString('vi-VN') + 'đ';
     }
 
-    // Các hàm chuyển bước giao diện chuyển đổi mượt
     function switchStep(currentId, nextId, animationIn = 'animate__fadeInRight') {
         const currentStep = document.getElementById(currentId);
         const nextStep = document.getElementById(nextId);
@@ -850,15 +933,34 @@
         document.getElementById('menu-modal').style.display = 'none';
     }
 
-    // Hiển thị hóa đơn xác nhận thành công
-    function showConfirmation() {
-        // Vé vào cổng là bắt buộc
+    function openRulesModal() {
+        document.getElementById('rules-modal').style.display = 'flex';
+    }
+
+    function closeRulesModal() {
+        document.getElementById('rules-modal').style.display = 'none';
+    }
+
+    // Các hàm xử lý Bảng xác nhận rủi ro thú cưng cắn giữa màn hình
+    function triggerRiskModal() {
         if (orderState.ticketGreen === 0 && orderState.ticketRed === 0) {
             alert('Vé vào cổng là bắt buộc mua nè bạn ơi, vui lòng lựa chọn loại vé nhé! 🎟️');
             return;
         }
+        document.getElementById('risk-confirm-modal').style.display = 'flex';
+    }
 
-        // Tự động lấy thời điểm hiện tại chính xác
+    function closeRiskModal() {
+        document.getElementById('risk-confirm-modal').style.display = 'none';
+    }
+
+    function confirmRiskAndSubmit() {
+        closeRiskModal();
+        showConfirmation();
+    }
+
+    // Hiển thị hóa đơn xác nhận thành công
+    function showConfirmation() {
         const now = new Date();
         const dateString = now.toLocaleDateString('vi-VN');
         const timeString = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
@@ -867,7 +969,6 @@
         document.getElementById('summary-phone').innerText = orderState.phone;
         document.getElementById('summary-time').innerText = `${timeString} - ngày ${dateString}`;
 
-        // Xây dựng hóa đơn chi tiết
         const billContainer = document.getElementById('bill-items-container');
         let billHtml = '';
 
@@ -889,7 +990,6 @@
             `;
         }
 
-        // Thêm các món nước
         for (const [drinkId, qty] of Object.entries(orderState.drinks)) {
             const drink = allDrinks.find(d => d.id === drinkId);
             if (drink) {
@@ -907,32 +1007,31 @@
         const grandTotal = calculateTotal();
         document.getElementById('summary-grand-total').innerText = grandTotal.toLocaleString('vi-VN') + 'đ';
 
+        // Khôi phục ô mã pin nếu trước đó từng nhập
+        document.getElementById('staff-pin').value = '';
+        document.getElementById('staff-pin').disabled = false;
+        document.getElementById('pin-message').style.display = 'none';
+
         switchStep('step-3', 'step-success', 'animate__zoomIn');
     }
 
-    // Làm mới form quay về ban đầu
-    function resetForm() {
-        document.getElementById('fullname').value = '';
-        document.getElementById('phone').value = '';
-        document.getElementById('agree-checkbox').checked = false;
-        document.getElementById('btn-rule-next').disabled = true;
-        document.getElementById('search-drink-input').value = '';
-        document.getElementById('search-results').innerHTML = '';
-
-        orderState = {
-            name: '',
-            phone: '',
-            ticketGreen: 0,
-            ticketRed: 0,
-            drinks: {}
-        };
-
-        document.getElementById('qty-green').value = '0';
-        document.getElementById('qty-red').value = '0';
-        document.getElementById('realtime-total').innerText = '0đ';
-        document.getElementById('selected-cart').style.display = 'none';
-
-        switchStep('step-success', 'step-1', 'animate__fadeInLeft');
+    // Hàm kiểm tra mã PIN nhân viên (2 số: 29)
+    function checkStaffPin() {
+        const pinInput = document.getElementById('staff-pin');
+        const pinMessage = document.getElementById('pin-message');
+        
+        if (pinInput.value === '29') {
+            pinMessage.style.display = 'block';
+            pinMessage.style.color = '#2e7d32';
+            pinMessage.innerText = '✅ Mã PIN chính xác! Đơn hàng đã được xác nhận.';
+            pinInput.disabled = true; // Khóa luôn ô nhập sau khi thành công
+        } else if (pinInput.value.length >= 2) {
+            pinMessage.style.display = 'block';
+            pinMessage.style.color = '#d90429';
+            pinMessage.innerText = '❌ Mã PIN không đúng, vui lòng thử lại.';
+        } else {
+            pinMessage.style.display = 'none';
+        }
     }
 </script>
 
