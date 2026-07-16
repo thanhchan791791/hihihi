@@ -2,9 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Đặt Vé Trải Nghiệm & Gọi Món</title>
-    <!-- Animate.css tạo hiệu ứng mượt mà -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         :root {
@@ -25,6 +24,7 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         body {
@@ -38,7 +38,6 @@
             overflow-x: hidden;
         }
 
-        /* Container chuẩn iOS Card */
         .container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
@@ -50,6 +49,11 @@
             padding: 30px 20px;
             position: relative;
             border: 4px solid #fff;
+        }
+
+        /* Thêm khoảng đệm ở dưới container để nội dung không bị nút bấm fixed đè lên */
+        .container.has-sticky-btn {
+            padding-bottom: 110px;
         }
 
         .decor-bubble {
@@ -105,7 +109,7 @@
             padding: 14px 18px;
             border: 2px solid #ffe5ec;
             border-radius: 18px;
-            font-size: 15px;
+            font-size: 16px;
             outline: none;
             background-color: #fffafb;
             color: var(--text-dark);
@@ -119,7 +123,6 @@
             box-shadow: 0 0 0 4px rgba(255, 143, 163, 0.15);
         }
 
-        /* Khung nội quy hình ảnh mới */
         .rules-img-container {
             width: 100%;
             border-radius: 18px;
@@ -160,7 +163,6 @@
             cursor: pointer;
         }
 
-        /* Nút nhấn */
         .btn {
             display: block;
             width: 100%;
@@ -193,7 +195,27 @@
             cursor: not-allowed;
         }
 
-        /* Thông báo lưu ý bắt buộc */
+        /* Hộp cố định nút bấm xác nhận dưới màn hình di động */
+        .sticky-confirm-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(0deg, rgba(255,255,255,1) 70%, rgba(255,255,255,0) 100%);
+            padding: 20px 15px 25px 15px;
+            box-sizing: border-box;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .sticky-confirm-wrapper .btn-sticky {
+            width: 100%;
+            max-width: 440px; /* Thụt lề cân bằng theo giao diện Container */
+            background: linear-gradient(135deg, #4ef084 0%, #10b981 100%);
+            box-shadow: 0 8px 25px rgba(16,185,129,0.4);
+        }
+
         .notice-box {
             background-color: #fff3cd;
             border: 1px solid #ffeeba;
@@ -207,7 +229,6 @@
             text-align: center;
         }
 
-        /* Vé Option */
         .ticket-option {
             background: #fff;
             border: 3px solid #f0f0f0;
@@ -244,6 +265,11 @@
             border-bottom-left-radius: 12px;
         }
 
+        .ticket-info {
+            flex: 1;
+            padding-right: 10px;
+        }
+
         .ticket-info h3 {
             font-size: 18px;
             font-weight: 800;
@@ -253,7 +279,16 @@
         .ticket-info.red h3 { color: #d90429; }
         .ticket-price { font-size: 14px; font-weight: 700; color: #6d6875; }
 
-        .included-animals { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+        .ticket-description {
+            font-size: 12px;
+            margin-top: 6px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .ticket-option.green .ticket-description { color: #52796f; }
+        .ticket-option.red .ticket-description { color: #b7094c; }
+
+        .included-animals { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
         .animal-tag {
             font-size: 11px;
             padding: 2px 8px;
@@ -264,7 +299,6 @@
         .ticket-option.green .animal-tag { background: #e8f5e9; color: #2e7d32; }
         .ticket-option.red .animal-tag { background: #ffebee; color: #c62828; }
 
-        /* Bộ tăng giảm số lượng */
         .quantity-selector {
             display: flex;
             align-items: center;
@@ -273,6 +307,7 @@
             padding: 4px 8px;
             border-radius: 30px;
             border: 1px solid #e9ecef;
+            flex-shrink: 0;
         }
 
         .qty-btn {
@@ -284,7 +319,6 @@
         }
         .qty-input { width: 26px; text-align: center; border: none; font-size: 16px; font-weight: 800; background: transparent; }
 
-        /* KHU VỰC MENU NƯỚC UỐNG TRÊN CÙNG */
         .menu-top-section {
             background: #fff8f9;
             border: 2px solid #ffe5ec;
@@ -308,7 +342,6 @@
             display: block;
         }
 
-        /* Khu vực Tìm kiếm & Gợi ý nước uống thông minh */
         .search-drink-box {
             background: #fff;
             border: 2px solid #ffe5ec;
@@ -317,15 +350,60 @@
             margin-bottom: 20px;
         }
 
-        .search-input-wrapper {
-            position: relative;
+        .category-item {
+            margin-bottom: 10px;
+            border: 1.5px solid #ffe5ec;
+            border-radius: 14px;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .search-results-container {
-            margin-top: 10px;
-            max-height: 180px;
+        .category-header {
+            background: #fffafb;
+            padding: 12px 16px;
+            font-weight: 800;
+            font-size: 15px;
+            color: #4a4e69;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.3s;
+        }
+
+        .category-header:hover {
+            background: #fff0f3;
+        }
+
+        .category-header::after {
+            content: '▾';
+            font-size: 16px;
+            color: #ff758f;
+            transition: transform 0.3s;
+        }
+
+        .category-item.active {
+            border-color: #ff8fa3;
+            box-shadow: 0 4px 12px rgba(255, 143, 163, 0.1);
+        }
+
+        .category-item.active .category-header {
+            background: #fff0f3;
+            color: #ff758f;
+        }
+
+        .category-item.active .category-header::after {
+            transform: rotate(-180deg);
+        }
+
+        .category-content {
+            display: none;
+            background: #fff;
+            padding: 5px 10px;
+            border-top: 1px solid #ffe5ec;
+            max-height: 250px;
             overflow-y: auto;
-            border-radius: 12px;
         }
 
         .drink-search-item {
@@ -334,22 +412,20 @@
             align-items: center;
             padding: 10px 8px;
             border-bottom: 1px solid #fff0f3;
-            background: #fffafb;
-            transition: background 0.2s;
+            background: #fff;
         }
-        .drink-search-item:hover {
-            background: #fff0f3;
+        .drink-search-item:last-child {
+            border-bottom: none;
         }
         .drink-search-name { font-size: 14px; font-weight: 700; color: #4a4e69; }
         .drink-search-price { font-size: 13px; color: #ff758f; font-weight: 700; margin-left: 5px; }
 
-        /* Giỏ hàng các món nước đã chọn */
         .selected-drinks-cart {
             margin-top: 15px;
             background: #fdf2f4;
             border-radius: 16px;
             padding: 12px;
-            display: none; /* Chỉ hiện khi có món */
+            display: none;
         }
         .cart-title {
             font-size: 13px;
@@ -360,7 +436,6 @@
             padding-bottom: 4px;
         }
 
-        /* Thanh tính tổng tiền trực quan Realtime */
         .price-sticky-bar {
             background: #fff0f3;
             border: 2px solid #ffccd5;
@@ -374,7 +449,6 @@
         }
         .price-sticky-bar span { color: #ff4d6d; font-size: 20px; }
 
-        /* Modal phóng to ảnh và Modal xác nhận */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -389,7 +463,6 @@
         }
         .modal-overlay img { max-width: 95%; max-height: 90%; border-radius: 12px; }
 
-        /* Khung bảng xác nhận giữa màn hình */
         .confirm-alert-box {
             background: #ffffff;
             width: 85%;
@@ -440,7 +513,6 @@
             cursor: pointer;
         }
 
-        /* Màn hình thành công */
         .success-card { text-align: center; }
         .success-icon { font-size: 45px; color: #2e7d32; animation: heartBeat 1.5s infinite; margin-bottom: 15px; }
 
@@ -491,7 +563,6 @@
         }
         .note-staff { font-size: 13px; color: #8d99ae; margin-top: 15px; font-style: italic; }
 
-        /* Khu vực mã pin nhân viên */
         .staff-pin-box {
             background: #fff8f9;
             border: 2px solid #ffccd5;
@@ -508,68 +579,61 @@
 </head>
 <body>
 
-<div class="container animate__animated animate__fadeInUp">
-    <!-- Icon trang trí -->
+<div class="container animate__animated animate__fadeInUp" id="main-container">
     <div class="decor-bubble" style="top: 10px; left: 15px;">🐾</div>
     <div class="decor-bubble" style="top: 40px; right: 20px;">🐱</div>
     <div class="decor-bubble" style="bottom: 20px; left: 20px;">🐶</div>
 
-    <!-- BƯỚC 1: THÔNG TIN KHÁCH HÀNG -->
+    <!-- BƯỚC 1 -->
     <div id="step-1" class="step active">
         <h2>Chào Bạn Nhỏ! ✨</h2>
         <p style="text-align: center; font-size: 14px; color: #8d99ae; margin-bottom: 20px;">Điền thông tin đặt lịch hẹn với các bé thú cưng nha!</p>
-        
         <div class="form-group">
             <label for="fullname">Họ tên của bạn</label>
             <input type="text" id="fullname" placeholder="Ví dụ: Nguyễn Văn A" autocomplete="off">
         </div>
-        
         <div class="form-group">
             <label for="phone">Số điện thoại (Nhập đúng 10 số)</label>
             <input type="tel" id="phone" placeholder="Ví dụ: 0912345678" autocomplete="off" maxlength="10">
         </div>
-
         <button class="btn" onclick="goToStep2()">Tiếp tục nhận vé ➔</button>
     </div>
 
-    <!-- BƯỚC 2: NỘI QUY & ĐIỀU KHOẢN (Đã đổi thành ẢNH luuy.png) -->
+    <!-- BƯỚC 2 -->
     <div id="step-2" class="step">
         <h2>Nội Quy Quán Nhỏ 📋</h2>
         <div class="rules-img-container" onclick="openRulesModal()">
             <img src="luuy.png" class="rules-img" alt="Lưu ý quan trọng" onerror="this.src='luuy.jpg'">
             <p style="font-size: 11px; color:#a1a1a1; margin-top:5px; font-weight:bold;">🔍 Bấm vào ảnh để xem lưu ý rõ hơn</p>
         </div>
-
         <label class="checkbox-container">
             <input type="checkbox" id="agree-checkbox" onchange="toggleRuleBtn()">
             <span>Tôi chấp nhận rủi ro và tiếp tục</span>
         </label>
-
         <button class="btn" id="btn-rule-next" disabled onclick="goToStep3()">Đồng ý & Tiếp tục ➔</button>
     </div>
 
-    <!-- BƯỚC 3: XEM MENU, CHỌN VÉ & TÌM KIẾM ĐỒ UỐNG -->
+    <!-- BƯỚC 3 -->
     <div id="step-3" class="step">
         <h2>Chọn Vé & Gọi Món 🍕</h2>
-
-        <!-- MENU HÌNH ẢNH NẰM TRÊN CÙNG -->
         <div class="menu-top-section">
             <div class="menu-img-container" onclick="openMenuModal()">
                 <img src="menu.png" class="menu-img" alt="Menu Nước Uống" onerror="this.src='menu.jpg'">
                 <p style="font-size: 11px; color:#a1a1a1; margin-top:5px; font-weight:bold;">🔍 Bấm vào ảnh để xem toàn màn hình</p>
             </div>
         </div>
-
-        <!-- DÒNG LƯU Ý BẮT BUỘC MUA VÉ, NƯỚC THÌ TÙY CHỌN -->
         <div class="notice-box">
             📌 Vé vào cửa là BẮT BUỘC mua.<br>Nước uống KHÔNG BẮT BUỘC, bạn tùy ý lựa chọn nhé!
         </div>
 
-        <!-- Khu vực chọn Vé -->
+        <!-- VÉ XANH (COMBO 1) -->
         <div class="ticket-option green animate__animated animate__fadeInLeft">
             <div class="ticket-info green">
                 <h3>Vé Xanh 🌱 (Combo 1)</h3>
                 <span class="ticket-price">80.000đ / vé</span>
+                <p class="ticket-description">
+                    📍 Trải nghiệm: Tham quan tự do, vuốt ve và chơi đùa thoải mái cùng các bé Chó, bé Mèo siêu thân thiện tại sảnh chính của quán.
+                </p>
                 <div class="included-animals">
                     <span class="animal-tag">Chó</span><span class="animal-tag">Mèo</span>
                 </div>
@@ -581,11 +645,15 @@
             </div>
         </div>
 
+        <!-- VÉ ĐỎ (COMBO 2) -->
         <div class="ticket-option red animate__animated animate__fadeInRight">
             <div class="badge-hot">🔥 HOT</div>
             <div class="ticket-info red">
                 <h3>Vé Đỏ 👑 (Combo 2)</h3>
                 <span class="ticket-price">110.000đ / vé</span>
+                <p class="ticket-description">
+                    📍 Trải nghiệm: Đầy đủ khu vực Vé Xanh + Được vào khu VIP vui chơi, ôm ấp "bộ trưởng ngoại giao" Capybara và cho các bé Gấu Mèo (Raccoon) tinh nghịch ăn!
+                </p>
                 <div class="included-animals">
                     <span class="animal-tag">Chó</span><span class="animal-tag">Mèo</span><span class="animal-tag">Capybara</span><span class="animal-tag">Gấu Mèo</span>
                 </div>
@@ -597,56 +665,38 @@
             </div>
         </div>
 
-        <!-- KHU VỰC NHẬP TÊN ĐỂ GỢI Ý MÓN -->
         <div class="search-drink-box">
-            <label for="search-drink-input" style="color: #ff758f;">🍹 Gõ tên món nước muốn uống:</label>
-            <div class="search-input-wrapper">
-                <input type="text" id="search-drink-input" placeholder="Ví dụ: tradao, caphesuada, matcha..." oninput="filterDrinks()" autocomplete="off">
-            </div>
-            
-            <!-- Nơi hiển thị các món khớp với từ khóa tìm kiếm -->
-            <div class="search-results-container" id="search-results"></div>
-
-            <!-- Giỏ hàng hiển thị các món nước đã được chọn số lượng > 0 -->
+            <label style="color: #ff758f; margin-bottom: 12px; display: block;">🍹 Nhấn vào danh mục để chọn nước uống:</label>
+            <div id="categories-container"></div>
             <div class="selected-drinks-cart" id="selected-cart">
                 <div class="cart-title">🛒 Món nước bạn đã chọn:</div>
                 <div id="cart-items-list"></div>
             </div>
         </div>
 
-        <!-- Tổng tiền Realtime -->
         <div class="price-sticky-bar">
             <span>TỔNG CỘNG:</span>
             <span id="realtime-total">0đ</span>
         </div>
-
-        <button class="btn" style="background: linear-gradient(135deg, #4ef084 0%, #10b981 100%); box-shadow: 0 8px 20px rgba(16,185,129,0.3);" onclick="triggerRiskModal()">Xác nhận đơn hàng ➔</button>
     </div>
 
     <!-- BƯỚC THÀNH CÔNG -->
     <div id="step-success" class="step success-card">
         <div class="success-icon">❤️</div>
         <h2>Đặt Vé Thành Công!</h2>
-        
         <div class="customer-summary">
             <p><strong>👤 Khách hàng:</strong> <span id="summary-name" style="color:#ff758f; font-weight:700;"></span></p>
             <p><strong>📞 Số điện thoại:</strong> <span id="summary-phone" style="font-weight:600;"></span></p>
             <p><strong>⏰ Thời gian đặt vé:</strong> <span id="summary-time" style="color: #4f46e5; font-weight:700;"></span></p>
         </div>
-
-        <!-- Chi tiết hóa đơn rõ ràng -->
         <div class="bill-details">
             <div class="bill-title">🧾 CHI TIẾT HÓA ĐƠN</div>
-            <div id="bill-items-container">
-                <!-- Danh sách các mặt hàng đã chọn mua -->
-            </div>
+            <div id="bill-items-container"></div>
             <div class="bill-total-row">
                 <span>Tổng tiền thanh toán:</span>
                 <span id="summary-grand-total">0đ</span>
             </div>
         </div>
-
-        <!-- KHU VỰC NHẬP MÃ PIN XÁC NHẬN CỦA NHÂN VIÊN -->
         <div class="staff-pin-box" id="pin-area">
             <label for="staff-pin" style="color: #ff4d6d; text-align: left; display: block;">🔑 Nhân viên nhập mã PIN để xác nhận món:</label>
             <div class="pin-wrapper">
@@ -654,22 +704,24 @@
             </div>
             <p id="pin-message" style="font-size: 13px; font-weight: 700; margin-top: 6px; text-align: left; display: none;"></p>
         </div>
-
         <p class="note-staff">Hãy xuất trình màn hình hóa đơn này cho nhân viên quầy để đối chiếu và nhận vòng tay nha! ✨</p>
     </div>
 </div>
 
-<!-- Modal xem ảnh lớn menu -->
+<!-- THANH CỐ ĐỊNH NÚT XÁC NHẬN ĐƠN HÀNG (STICKY BOTTOM) -->
+<div id="sticky-confirm-bar" class="sticky-confirm-wrapper" style="display: none;">
+    <button class="btn btn-sticky" onclick="triggerRiskModal()">Xác nhận đơn hàng ➔</button>
+</div>
+
+<!-- MODALS -->
 <div id="menu-modal" class="modal-overlay zoom-mode" onclick="closeMenuModal()">
     <img src="menu.png" alt="Menu Phóng To" onerror="this.src='menu.jpg'">
 </div>
 
-<!-- Modal xem ảnh lớn lưu ý -->
 <div id="rules-modal" class="modal-overlay zoom-mode" onclick="closeRulesModal()">
     <img src="luuy.png" alt="Lưu ý Phóng To" onerror="this.src='luuy.jpg'">
 </div>
 
-<!-- BẢNG HIỂN THỊ GIỮA MÀN HÌNH XÁC NHẬN RỦI RO BỊ CẮN -->
 <div id="risk-confirm-modal" class="modal-overlay" style="background: rgba(0,0,0,0.6);">
     <div class="confirm-alert-box animate__animated animate__bounceIn">
         <h3>⚠️ XÁC NHẬN RỦI RO</h3>
@@ -682,62 +734,95 @@
 </div>
 
 <script>
-    // Toàn bộ cơ sở dữ liệu menu nước của quán
-    const allDrinks = [
-        // COFFEE
-        { id: "cf1", name: "Espresso đá", price: 40000 },
-        { id: "cf2", name: "Cà phê sữa đá", price: 40000 },
-        { id: "cf3", name: "Caramel coffee", price: 40000 },
-        { id: "cf4", name: "Chocolate latte", price: 40000 },
-        { id: "cf5", name: "Matcha latte", price: 40000 },
-        { id: "cf6", name: "Cam ép", price: 40000 },
-        { id: "cf7", name: "Bạc xỉu", price: 40000 },
-        { id: "cf8", name: "Americano (nóng/lạnh)", price: 40000 },
-        // TEA
-        { id: "te1", name: "Trà đào", price: 40000 },
-        { id: "te2", name: "Trà đào cam sả", price: 40000 },
-        { id: "te3", name: "Trà kiwi", price: 40000 },
-        { id: "te4", name: "Trà vải", price: 40000 },
-        { id: "te5", name: "Trà dâu", price: 40000 },
-        { id: "te6", name: "Trà ổi hồng", price: 40000 },
-        { id: "te7", name: "Lục trà tắc mật ong", price: 40000 },
-        // SODA
-        { id: "sd1", name: "Soda kiwi", price: 40000 },
-        { id: "sd2", name: "Soda blue", price: 40000 },
-        { id: "sd3", name: "Soda chanh", price: 40000 },
-        { id: "sd4", name: "Soda bạc hà", price: 40000 },
-        { id: "sd5", name: "Soda việt quất", price: 40000 },
-        // NƯỚC NGỌT
-        { id: "nn1", name: "Coca-7up", price: 40000 },
-        { id: "nn2", name: "Sting", price: 40000 },
-        { id: "nn3", name: "Nước suối", price: 30000 },
-        // YOGURT
-        { id: "yg1", name: "Sữa chua đá", price: 40000 },
-        { id: "yg2", name: "Sữa chua trân châu đường đen", price: 40000 },
-        { id: "yg3", name: "Sữa chua cà phê", price: 40000 },
-        { id: "yg4", name: "Sữa chua hoa quả", price: 40000 },
-        { id: "yg5", name: "Sữa chua việt quất", price: 40000 },
-        // ICE BLENDED
-        { id: "ib1", name: "Sinh tố việt quất", price: 40000 },
-        { id: "ib2", name: "Matcha blend", price: 40000 },
-        { id: "ib3", name: "Matcha cookie blend", price: 40000 },
-        { id: "ib4", name: "Matcha chocolate blend", price: 40000 },
-        { id: "ib5", name: "Chocolate blend", price: 40000 },
-        { id: "ib6", name: "Chocolate mint blend", price: 40000 },
-        { id: "ib7", name: "Chocolate cookie", price: 40000 },
-        // MILK
-        { id: "mk1", name: "Sữa tươi chocolate", price: 40000 },
-        { id: "mk2", name: "Sữa tươi matcha", price: 40000 },
-        { id: "mk3", name: "Sữa tươi cacao", price: 40000 },
-        { id: "mk4", name: "Sữa tươi bạc hà", price: 40000 },
-        { id: "mk5", name: "Sữa tươi trân châu đường đen", price: 40000 },
-        // MILK TEA
-        { id: "mt1", name: "Trà sữa truyền thống", price: 40000 },
-        { id: "mt2", name: "Trà sữa trân châu đường đen", price: 40000 },
-        { id: "mt3", name: "Trà sữa matcha", price: 40000 },
-        { id: "mt4", name: "Trà sữa chocolate", price: 40000 },
-        { id: "mt5", name: "Trà sữa chocolate mint", price: 40000 }
+    const drinkCategories = [
+        {
+            categoryName: "☕ CÀ PHÊ (COFFEE)",
+            drinks: [
+                { id: "cf1", name: "Espresso đá", price: 40000 },
+                { id: "cf2", name: "Cà phê sữa đá", price: 40000 },
+                { id: "cf3", name: "Caramel coffee", price: 40000 },
+                { id: "cf4", name: "Chocolate latte", price: 40000 },
+                { id: "cf5", name: "Matcha latte", price: 40000 },
+                { id: "cf6", name: "Cam ép", price: 40000 },
+                { id: "cf7", name: "Bạc xỉu", price: 40000 },
+                { id: "cf8", name: "Americano (nóng/lạnh)", price: 40000 }
+            ]
+        },
+        {
+            categoryName: "🍵 CÁC LOẠI TRÀ (TEA)",
+            drinks: [
+                { id: "te1", name: "Trà đào", price: 40000 },
+                { id: "te2", name: "Trà đào cam sả", price: 40000 },
+                { id: "te3", name: "Trà kiwi", price: 40000 },
+                { id: "te4", name: "Trà vải", price: 40000 },
+                { id: "te5", name: "Trà dâu", price: 40000 },
+                { id: "te6", name: "Trà ổi hồng", price: 40000 },
+                { id: "te7", name: "Lục trà tắc mật ong", price: 40000 }
+            ]
+        },
+        {
+            categoryName: "🥤 SODA SẢNG KHOÁI",
+            drinks: [
+                { id: "sd1", name: "Soda kiwi", price: 40000 },
+                { id: "sd2", name: "Soda blue", price: 40000 },
+                { id: "sd3", name: "Soda chanh", price: 40000 },
+                { id: "sd4", name: "Soda bạc hà", price: 40000 },
+                { id: "sd5", name: "Soda việt quất", price: 40000 }
+            ]
+        },
+        {
+            categoryName: "🍧 SỮA CHUA (YOGURT)",
+            drinks: [
+                { id: "yg1", name: "Sữa chua đá", price: 40000 },
+                { id: "yg2", name: "Sữa chua trân châu đường đen", price: 40000 },
+                { id: "yg3", name: "Sữa chua cà phê", price: 40000 },
+                { id: "yg4", name: "Sữa chua hoa quả", price: 40000 },
+                { id: "yg5", name: "Sữa chua việt quất", price: 40000 }
+            ]
+        },
+        {
+            categoryName: "❄️ ĐÁ XAY (ICE BLENDED)",
+            drinks: [
+                { id: "ib1", name: "Sinh tố việt quất", price: 40000 },
+                { id: "ib2", name: "Matcha blend", price: 40000 },
+                { id: "ib3", name: "Matcha cookie blend", price: 40000 },
+                { id: "ib4", name: "Matcha chocolate blend", price: 40000 },
+                { id: "ib5", name: "Chocolate blend", price: 40000 },
+                { id: "ib6", name: "Chocolate mint blend", price: 40000 },
+                { id: "ib7", name: "Chocolate cookie", price: 40000 }
+            ]
+        },
+        {
+            categoryName: "🥛 SỮA TƯƠI (MILK)",
+            drinks: [
+                { id: "mk1", name: "Sữa tươi chocolate", price: 40000 },
+                { id: "mk2", name: "Sữa tươi matcha", price: 40000 },
+                { id: "mk3", name: "Sữa tươi cacao", price: 40000 },
+                { id: "mk4", name: "Sữa tươi bạc hà", price: 40000 },
+                { id: "mk5", name: "Sữa tươi trân châu đường đen", price: 40000 }
+            ]
+        },
+        {
+            categoryName: "🧋 TRÀ SỮA (MILK TEA)",
+            drinks: [
+                { id: "mt1", name: "Trà sữa truyền thống", price: 40000 },
+                { id: "mt2", name: "Trà sữa trân châu đường đen", price: 40000 },
+                { id: "mt3", name: "Trà sữa matcha", price: 40000 },
+                { id: "mt4", name: "Trà sữa chocolate", price: 40000 },
+                { id: "mt5", name: "Trà sữa chocolate mint", price: 40000 }
+            ]
+        },
+        {
+            categoryName: "🥫 NƯỚC NGỌT & NƯỚC SUỐI",
+            drinks: [
+                { id: "nn1", name: "Coca-7up", price: 40000 },
+                { id: "nn2", name: "Sting", price: 40000 },
+                { id: "nn3", name: "Nước suối", price: 30000 }
+            ]
+        }
     ];
+
+    const allDrinks = drinkCategories.reduce((acc, cat) => acc.concat(cat.drinks), []);
 
     let orderState = {
         name: '',
@@ -747,56 +832,60 @@
         drinks: {} 
     };
 
-    function formatToCleanString(str) {
-        return str
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "") 
-            .replace(/đ/g, "d").replace(/Đ/g, "d") 
-            .toLowerCase() 
-            .replace(/[^a-z0-9]/g, ""); 
-    }
-
-    function filterDrinks() {
-        const rawKeyword = document.getElementById('search-drink-input').value.trim();
-        const cleanKeyword = formatToCleanString(rawKeyword);
-        const resultsContainer = document.getElementById('search-results');
-        
-        if (!rawKeyword) {
-            resultsContainer.innerHTML = '';
-            return;
-        }
-
-        const matchedDrinks = allDrinks.filter(drink => {
-            const cleanDrinkName = formatToCleanString(drink.name);
-            return cleanDrinkName.includes(cleanKeyword);
-        });
-
-        if (matchedDrinks.length === 0) {
-            resultsContainer.innerHTML = `<div style="padding: 10px; font-size:13px; color:#a1a1a1; text-align:center;">Không tìm thấy món nước nào khớp từ khóa 🔍</div>`;
-            return;
-        }
-
+    function initDrinkCategories() {
+        const container = document.getElementById('categories-container');
         let html = '';
-        matchedDrinks.forEach(drink => {
-            const currentQty = orderState.drinks[drink.id] || 0;
-            html += `
-                <div class="drink-search-item">
-                    <div>
-                        <span class="drink-search-name">${drink.name}</span>
-                        <span class="drink-search-price">${(drink.price/1000)}k</span>
+
+        drinkCategories.forEach((cat, catIdx) => {
+            let itemsHtml = '';
+            cat.drinks.forEach(drink => {
+                itemsHtml += `
+                    <div class="drink-search-item">
+                        <div>
+                            <span class="drink-search-name">${drink.name}</span>
+                            <span class="drink-search-price">${(drink.price/1000)}k</span>
+                        </div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn" onclick="changeDrinkQty('${drink.id}', -1, event)">-</button>
+                            <input type="number" id="qty-${drink.id}" class="qty-input" value="0" min="0" readonly>
+                            <button class="qty-btn" onclick="changeDrinkQty('${drink.id}', 1, event)">+</button>
+                        </div>
                     </div>
-                    <div class="quantity-selector">
-                        <button class="qty-btn" onclick="changeDrinkQty('${drink.id}', -1)">-</button>
-                        <input type="number" id="search-qty-${drink.id}" class="qty-input" value="${currentQty}" min="0" readonly>
-                        <button class="qty-btn" onclick="changeDrinkQty('${drink.id}', 1)">+</button>
+                `;
+            });
+
+            html += `
+                <div class="category-item" id="cat-item-${catIdx}">
+                    <div class="category-header" onclick="toggleCategory(${catIdx})">
+                        <span>${cat.categoryName}</span>
+                    </div>
+                    <div class="category-content" id="cat-content-${catIdx}">
+                        ${itemsHtml}
                     </div>
                 </div>
             `;
         });
-        resultsContainer.innerHTML = html;
+
+        container.innerHTML = html;
     }
 
-    function changeDrinkQty(drinkId, val) {
+    function toggleCategory(index) {
+        const item = document.getElementById(`cat-item-${index}`);
+        const content = document.getElementById(`cat-content-${index}`);
+        const isActive = item.classList.contains('active');
+
+        document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.category-content').forEach(el => el.style.display = 'none');
+
+        if (!isActive) {
+            item.classList.add('active');
+            content.style.display = 'block';
+        }
+    }
+
+    function changeDrinkQty(drinkId, val, event) {
+        if (event) event.stopPropagation();
+
         let currentVal = orderState.drinks[drinkId] || 0;
         currentVal += val;
         
@@ -807,8 +896,8 @@
             orderState.drinks[drinkId] = currentVal;
         }
 
-        const searchInput = document.getElementById(`search-qty-${drinkId}`);
-        if (searchInput) searchInput.value = currentVal;
+        const qtyInputs = document.querySelectorAll(`#qty-${drinkId}`);
+        qtyInputs.forEach(input => input.value = currentVal);
 
         updateSelectedCart();
         updateTotalCost();
@@ -875,12 +964,23 @@
     function switchStep(currentId, nextId, animationIn = 'animate__fadeInRight') {
         const currentStep = document.getElementById(currentId);
         const nextStep = document.getElementById(nextId);
+        const mainContainer = document.getElementById('main-container');
+        const stickyBar = document.getElementById('sticky-confirm-bar');
         
         currentStep.style.display = 'none';
         currentStep.classList.remove('active');
         
         nextStep.style.display = 'block';
         nextStep.classList.add('active', 'animate__animated', animationIn);
+
+        // Hiển thị và xử lý bố cục nút ghim cố định cho riêng Bước 3
+        if (nextId === 'step-3') {
+            stickyBar.style.display = 'flex';
+            mainContainer.classList.add('has-sticky-btn');
+        } else {
+            stickyBar.style.display = 'none';
+            mainContainer.classList.remove('has-sticky-btn');
+        }
         
         setTimeout(() => {
             nextStep.classList.remove('animate__animated', animationIn);
@@ -921,6 +1021,21 @@
         nextBtn.disabled = !checkbox.checked;
     }
 
+    document.addEventListener('touchstart', function (event) {
+        if (event.touches.length > 1) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+
     function goToStep3() {
         switchStep('step-2', 'step-3');
     }
@@ -941,7 +1056,6 @@
         document.getElementById('rules-modal').style.display = 'none';
     }
 
-    // Các hàm xử lý Bảng xác nhận rủi ro thú cưng cắn giữa màn hình
     function triggerRiskModal() {
         if (orderState.ticketGreen === 0 && orderState.ticketRed === 0) {
             alert('Vé vào cổng là bắt buộc mua nè bạn ơi, vui lòng lựa chọn loại vé nhé! 🎟️');
@@ -959,7 +1073,6 @@
         showConfirmation();
     }
 
-    // Hiển thị hóa đơn xác nhận thành công
     function showConfirmation() {
         const now = new Date();
         const dateString = now.toLocaleDateString('vi-VN');
@@ -1007,7 +1120,6 @@
         const grandTotal = calculateTotal();
         document.getElementById('summary-grand-total').innerText = grandTotal.toLocaleString('vi-VN') + 'đ';
 
-        // Khôi phục ô mã pin nếu trước đó từng nhập
         document.getElementById('staff-pin').value = '';
         document.getElementById('staff-pin').disabled = false;
         document.getElementById('pin-message').style.display = 'none';
@@ -1015,7 +1127,6 @@
         switchStep('step-3', 'step-success', 'animate__zoomIn');
     }
 
-    // Hàm kiểm tra mã PIN nhân viên (2 số: 29)
     function checkStaffPin() {
         const pinInput = document.getElementById('staff-pin');
         const pinMessage = document.getElementById('pin-message');
@@ -1024,7 +1135,7 @@
             pinMessage.style.display = 'block';
             pinMessage.style.color = '#2e7d32';
             pinMessage.innerText = '✅ Mã PIN chính xác! Đơn hàng đã được xác nhận.';
-            pinInput.disabled = true; // Khóa luôn ô nhập sau khi thành công
+            pinInput.disabled = true;
         } else if (pinInput.value.length >= 2) {
             pinMessage.style.display = 'block';
             pinMessage.style.color = '#d90429';
@@ -1033,6 +1144,10 @@
             pinMessage.style.display = 'none';
         }
     }
+
+    window.onload = function() {
+        initDrinkCategories();
+    };
 </script>
 
 </body>
