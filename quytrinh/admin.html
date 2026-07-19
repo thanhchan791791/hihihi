@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Đơn Hàng - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        :root {
+            --primary-pink: #ff8fa3;
+            --primary-pink-hover: #ff758f;
+            --bg-pastel: #fff0f3;
+            --text-dark: #4a4e69;
+            --green-pastel: #a7c957;
+            --red-pastel: #ff4d6d;
+            --ios-radius: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .admin-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            max-width: 1200px;
+            margin: 0 auto;
+            border-radius: var(--ios-radius);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            border: 4px solid #fff;
+            padding: 25px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px dashed #ffccd5;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #5c5552;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            border: 1px solid #ffe5ec;
+        }
+
+        .stat-card p {
+            font-size: 13px;
+            font-weight: 700;
+            color: #8d99ae;
+        }
+
+        .stat-card h3 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-top: 5px;
+        }
+
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 18px;
+            padding: 20px;
+            border: 2px solid #f0f0f0;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.02);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s;
+        }
+
+        .order-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .order-header {
+            border-bottom: 1px solid #fff0f3;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .cust-name {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .cust-phone {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ff758f;
+            margin-top: 2px;
+        }
+
+        .order-time {
+            font-size: 11px;
+            color: #a1a1a1;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .items-section {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px dashed #fafafa;
+        }
+
+        .item-row.ticket {
+            font-weight: 700;
+            color: #52796f;
+        }
+
+        .item-row.ticket-red {
+            font-weight: 700;
+            color: #d90429;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 800;
+            color: #d90429;
+            border-top: 2px dashed #ffe5ec;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .actions-wrapper {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+            transition: opacity 0.2s;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+
+        .btn-edit {
+            background: #e3f2fd;
+            color: #1e88e5;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #e53935;
+        }
+
+        /* BANNER MODAL CHỈNH SỬA */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .edit-modal-box {
+            background: white;
+            width: 90%;
+            max-width: 450px;
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #6d6875;
+            margin-bottom: 4px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ffe5ec;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            font-weight: 600;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-pink);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-save {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, #4ef084 0%, #10b981 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            background: #6d6875;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .loading-text {
+            text-align: center;
+            font-weight: 700;
+            color: #8d99ae;
+            padding: 40px;
+            grid-column: 1 / -1;
+        }
+    </style>
+
+    <!-- FIREBASE COMPAT SDK VIA CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<div class="admin-container animate__animated animate__fadeIn">
+    <header>
+        <h1>🛠️ Dashboard Quản Lý Đơn Hàng</h1>
+    </header>
+
+    <!-- THANH THỐNG KÊ NHANH -->
+    <div class="stats-bar">
+        <div class="stat-card">
+            <p>Tổng Đơn Hàng</p>
+            <h3 id="stat-total-orders">0</h3>
+        </div>
+        <div class="stat-card">
+            <p>Tổng Doanh Thu</p>
+            <h3 id="stat-total-revenue" style="color: #10b981;">0đ</h3>
+        </div>
+        <div class="stat-card">
+            <p>Tổng Vé Xanh bán ra</p>
+            <h3 id="stat-green-tickets" style="color: #52796f;">0</h3>
+        </div>
+        <div class="stat-card">
+            <p>Tổng Vé Đỏ bán ra</p>
+            <h3 id="stat-red-tickets" style="color: #d90429;">0</h3>
+        </div>
+    </div>
+
+    <!-- MẠNG LƯỚI HIỂN THỊ ĐƠN HÀNG -->
+    <div class="orders-grid" id="orders-display-grid">
+        <div class="loading-text">🔄 Đang tải dữ liệu từ hệ thống Firebase...</div>
+    </div>
+</div>
+
+<!-- POPUP MODAL CHỈNH SỬA CHI TIẾT -->
+<div id="edit-modal" class="modal-overlay">
+    <div class="edit-modal-box animate__animated animate__zoomIn">
+        <div class="modal-title">✏️ Chỉnh Sửa Đơn Hàng</div>
+        <input type="hidden" id="edit-order-id">
+        
+        <div class="form-group">
+            <label>Họ tên khách hàng</label>
+            <input type="text" id="edit-cust-name">
+        </div>
+        <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="text" id="edit-cust-phone">
+        </div>
+        <div class="form-group">
+            <label>Số lượng Vé Xanh (80k)</label>
+            <input type="number" id="edit-ticket-green" min="0">
+        </div>
+        <div class="form-group">
+            <label>Số lượng Vé Đỏ (110k)</label>
+            <input type="number" id="edit-ticket-red" min="0">
+        </div>
+
+        <div style="border-top: 1px solid #ffe5ec; margin: 15px 0; padding-top: 10px;">
+            <p style="font-size: 13px; font-weight: 700; color: #ff758f; margin-bottom: 10px;">🍹 Lưu ý về nước uống:</p>
+            <p style="font-size: 12px; color: #8d99ae; font-weight: 600;">Để chỉnh sửa chi tiết các loại nước uống phức tạp, bạn hãy quản lý trực tiếp trên Firebase Console nhé!</p>
+        </div>
+
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeEditModal()">Hủy bỏ</button>
+            <button class="btn-save" onclick="saveOrderEdits()">Cập nhật dữ liệu</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // CẤU HÌNH HỆ THỐNG FIREBASE REALTIME CỦA BẠN
+    const firebaseConfig = {
+        apiKey: "AIzaSyAV7r-rjXo6U62LX1AA7c7DAHb8GhOOOsg",
+        authDomain: "saigon-dalat.firebaseapp.com",
+        databaseURL: "https://saigon-dalat-default-rtdb.firebaseio.com",
+        projectId: "saigon-dalat",
+        storageBucket: "saigon-dalat.firebasestorage.app",
+        messagingSenderId: "339735183485",
+        appId: "1:339735183485:web:bc23cd740104d272577114",
+        measurementId: "G-FDLZXR2X8P"
+    };
+
+    // Khởi tạo Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let localOrdersCache = {}; // Lưu trữ tạm data local để chỉnh sửa nhanh
+
+    // LẮNG NGHE DỮ LIỆU REALTIME TỪ NODE 'orders'
+    function listenToOrders() {
+        database.ref('orders').on('value', (snapshot) => {
+            const data = snapshot.val();
+            const gridContainer = document.getElementById('orders-display-grid');
+            
+            if (!data) {
+                gridContainer.innerHTML = `<div class="loading-text">📭 Hiện tại chưa có đơn hàng nào được ghi nhận.</div>`;
+                updateStatistics({});
+                return;
+            }
+
+            localOrdersCache = data;
+            updateStatistics(data);
+
+            let html = '';
+            // Chuyển object Firebase thành mảng và đảo ngược để đơn hàng mới nhất hiện lên đầu
+            const sortedKeys = Object.keys(data).reverse();
+
+            sortedKeys.forEach(key => {
+                const order = data[key];
+                let itemsHtml = '';
+
+                // Hiển thị Vé Xanh
+                if (order.ticketGreenQty > 0) {
+                    itemsHtml += `
+                        <div class="item-row ticket">
+                            <span>🌿 Vé Xanh (Combo 1)</span>
+                            <span>x${order.ticketGreenQty}</span>
+                        </div>
+                    `;
+                }
+
+                // Hiển thị Vé Đỏ
+                if (order.ticketRedQty > 0) {
+                    itemsHtml += `
+                        <div class="item-row ticket-red">
+                            <span>👑 Vé Đỏ (Combo 2)</span>
+                            <span>x${order.ticketRedQty}</span>
+                        </div>
+                    `;
+                }
+
+                // Hiển thị danh sách nước uống nếu có
+                if (order.drinks) {
+                    Object.keys(order.drinks).forEach(drinkId => {
+                        const drink = order.drinks[drinkId];
+                        itemsHtml += `
+                            <div class="item-row">
+                                <span>🍹 ${drink.name}</span>
+                                <span>x${drink.quantity}</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                if (itemsHtml === '') {
+                    itemsHtml = `<div style="text-align:center; font-style:italic; color:#a1a1a1; font-size:13px;">Khách chưa chọn vé & món</div>`;
+                }
+
+                html += `
+                    <div class="order-card animate__animated animate__fadeIn">
+                        <div>
+                            <div class="order-header">
+                                <div class="cust-name">${escapeHtml(order.customerName)}</div>
+                                <div class="cust-phone">📱 ${escapeHtml(order.customerPhone)}</div>
+                                <div class="order-time">⏰ ${order.createdAt || 'Không rõ thời gian'}</div>
+                            </div>
+                            <div class="items-section">
+                                ${itemsHtml}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="total-row">
+                                <span>TỔNG CỘNG:</span>
+                                <span>${parseInt(order.totalAmount || 0).toLocaleString('vi-VN')}đ</span>
+                            </div>
+                            <div class="actions-wrapper">
+                                <button class="btn-action btn-edit" onclick="openEditModal('${key}')">Sửa thông tin</button>
+                                <button class="btn-action btn-delete" onclick="deleteOrder('${key}')">Xóa đơn</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            gridContainer.innerHTML = html;
+        }, (error) => {
+            console.error("Lỗi đồng bộ Realtime: ", error);
+        });
+    }
+
+    // TÍNH TOÁN & CẬP NHẬT THANH THỐNG KÊ
+    function updateStatistics(data) {
+        let totalOrders = 0;
+        let totalRevenue = 0;
+        let totalGreen = 0;
+        let totalRed = 0;
+
+        Object.keys(data).forEach(key => {
+            const order = data[key];
+            totalOrders++;
+            totalRevenue += parseInt(order.totalAmount || 0);
+            totalGreen += parseInt(order.ticketGreenQty || 0);
+            totalRed += parseInt(order.ticketRedQty || 0);
+        });
+
+        document.getElementById('stat-total-orders').innerText = totalOrders;
+        document.getElementById('stat-total-revenue').innerText = totalRevenue.toLocaleString('vi-VN') + 'đ';
+        document.getElementById('stat-green-tickets').innerText = totalGreen;
+        document.getElementById('stat-red-tickets').innerText = totalRed;
+    }
+
+    // XÓA ĐƠN HÀNG
+    function deleteOrder(key) {
+        if (confirm("Bạn có chắc chắn muốn xóa đơn hàng này khỏi hệ thống không? Đã xóa là không thể hoàn tác! 🚨")) {
+            database.ref('orders/' + key).remove()
+                .then(() => alert("Đã xóa đơn hàng thành công!"))
+                .catch(err => alert("Có lỗi xảy ra khi xóa: " + err));
+        }
+    }
+
+    // MỞ BẢNG CHỈNH SỬA CHI TIẾT ĐƠN HÀNG
+    function openEditModal(key) {
+        const order = localOrdersCache[key];
+        if (!order) return;
+
+        document.getElementById('edit-order-id').value = key;
+        document.getElementById('edit-cust-name').value = order.customerName;
+        document.getElementById('edit-cust-phone').value = order.customerPhone;
+        document.getElementById('edit-ticket-green').value = order.ticketGreenQty || 0;
+        document.getElementById('edit-ticket-red').value = order.ticketRedQty || 0;
+
+        document.getElementById('edit-modal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('edit-modal').style.display = 'none';
+    }
+
+    // LƯU CÁC THAY ĐỔI NGƯỢC LÊN FIREBASE
+    function saveOrderEdits() {
+        const key = document.getElementById('edit-order-id').value;
+        const currentOrder = localOrdersCache[key];
+        if (!currentOrder) return;
+
+        const updatedName = document.getElementById('edit-cust-name').value.trim();
+        const updatedPhone = document.getElementById('edit-cust-phone').value.trim();
+        const updatedGreen = parseInt(document.getElementById('edit-ticket-green').value) || 0;
+        const updatedRed = parseInt(document.getElementById('edit-ticket-red').value) || 0;
+
+        if (!updatedName || !updatedPhone) {
+            alert("Tên và số điện thoại không được để trống!");
+            return;
+        }
+
+        // Tính toán lại tổng tiền dựa trên số lượng vé mới + giá trị tiền nước đã lưu trước đó
+        let drinksCost = 0;
+        if (currentOrder.drinks) {
+            Object.keys(currentOrder.drinks).forEach(dId => {
+                drinksCost += parseInt(currentOrder.drinks[dId].subtotal || 0);
+            });
+        }
+        const newTotalAmount = (updatedGreen * 80000) + (updatedRed * 110000) + drinksCost;
+
+        // Tiến hành cập nhật các node chỉ định lên Firebase
+        const updates = {};
+        updates[`/orders/${key}/customerName`] = updatedName;
+        updates[`/orders/${key}/customerPhone`] = updatedPhone;
+        updates[`/orders/${key}/ticketGreenQty`] = updatedGreen;
+        updates[`/orders/${key}/ticketRedQty`] = updatedRed;
+        updates[`/orders/${key}/totalAmount`] = newTotalAmount;
+
+        database.ref().update(updates)
+            .then(() => {
+                alert("Cập nhật thông tin đơn hàng thành công! ✨");
+                closeEditModal();
+            })
+            .catch(err => {
+                alert("Lỗi khi cập nhật dữ liệu: " + err);
+            });
+    }
+
+    // Bảo mật chống XSS mã độc khi render text
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    // Chạy tải hệ thống khi mở trang
+    window.onload = function() {
+        listenToOrders();
+    };
+</script>
+
+</body>
+</html>
