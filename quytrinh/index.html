@@ -68,6 +68,32 @@
             100% { transform: translateY(-10px) rotate(15deg); }
         }
 
+        /* KHU VỰC THÀNH PHẦN LOGO QUÁN */
+        .logo-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .shop-logo {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: #fff;
+            padding: 4px;
+            box-shadow: 0 8px 16px rgba(255, 117, 143, 0.15);
+            border: 2px solid #fff0f3;
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.04) rotate(3deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
         h2 {
             text-align: center;
             margin-bottom: 22px;
@@ -576,6 +602,9 @@
             margin-top: 8px;
         }
     </style>
+    <!-- THÊM SDK FIREBASE QUA CDN (VERSION 9 COMPAT ĐỂ DỄ SỬ DỤNG TRÊN SCRIPT TRUYỀN THỐNG) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -586,6 +615,10 @@
 
     <!-- BƯỚC 1 -->
     <div id="step-1" class="step active">
+        <!-- KHU VỰC THÀNH PHẦN LOGO HIỂN THỊ -->
+        <div class="logo-wrapper">
+            <img src="logo.png" class="shop-logo" alt="Logo Quán">
+        </div>
         <h2>Chào Bạn Nhỏ! ✨</h2>
         <p style="text-align: center; font-size: 14px; color: #8d99ae; margin-bottom: 20px;">Điền thông tin đặt lịch hẹn với các bé thú cưng nha!</p>
         <div class="form-group">
@@ -623,7 +656,7 @@
             </div>
         </div>
         <div class="notice-box">
-            📌 Vé vào cửa là BẮT BUỘC mua.<br>Nước uống KHÔNG BẮT BUỘC, bạn tùy ý lựa chọn nhé!
+            📌 Vé vào cửa KHÔNG BẮT BUỘC mua trước.<br>Nước uống KHÔNG BẮT BUỘC, bạn tùy ý lựa chọn nhé!
         </div>
 
         <!-- VÉ XANH (COMBO 1) -->
@@ -711,7 +744,7 @@
 
 <!-- THANH CỐ ĐỊNH NÚT XÁC NHẬN ĐƠN HÀNG (STICKY BOTTOM) -->
 <div id="sticky-confirm-bar" class="sticky-confirm-wrapper" style="display: none;">
-    <button class="btn btn-sticky" onclick="triggerRiskModal()">Xác nhận đơn hàng ➔</button>
+    <button class="btn btn-sticky" onclick="handleOrderConfirmation()">Xác nhận đơn hàng ➔</button>
 </div>
 
 <!-- MODALS -->
@@ -721,6 +754,18 @@
 
 <div id="rules-modal" class="modal-overlay zoom-mode" onclick="closeRulesModal()">
     <img src="luuy.png" alt="Lưu ý Phóng To" onerror="this.src='luuy.jpg'">
+</div>
+
+<!-- MODAL CẢNH BÁO CHƯA MUA VÉ TRƯỚC -->
+<div id="ticket-check-modal" class="modal-overlay" style="background: rgba(0,0,0,0.6);">
+    <div class="confirm-alert-box animate__animated animate__bounceIn">
+        <h3>💬 Bạn ơi lưu ý nha!</h3>
+        <p>Bạn có chắc chắn là mình đã mua vé chưa? Nhấn "Đúng vậy" nếu bạn đã mua vé trước đó, hoặc muốn vào trong rồi order thêm sau nha!</p>
+        <div class="confirm-buttons">
+            <button class="btn-confirm-no" onclick="closeTicketCheckModal()">Quay lại</button>
+            <button class="btn-confirm-yes" onclick="acceptNoTicketAndContinue()">Đúng vậy</button>
+        </div>
+    </div>
 </div>
 
 <div id="risk-confirm-modal" class="modal-overlay" style="background: rgba(0,0,0,0.6);">
@@ -735,6 +780,22 @@
 </div>
 
 <script>
+    // KHỞI TẠO FIREBASE CONFIG CỦA BẠN
+    const firebaseConfig = {
+        apiKey: "AIzaSyAV7r-rjXo6U62LX1AA7c7DAHb8GhOOOsg",
+        authDomain: "saigon-dalat.firebaseapp.com",
+        databaseURL: "https://saigon-dalat-default-rtdb.firebaseio.com",
+        projectId: "saigon-dalat",
+        storageBucket: "saigon-dalat.firebasestorage.app",
+        messagingSenderId: "339735183485",
+        appId: "1:339735183485:web:bc23cd740104d272577114",
+        measurementId: "G-FDLZXR2X8P"
+    };
+
+    // Initialize Firebase Compat
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
     const drinkCategories = [
         {
             categoryName: "☕ CÀ PHÊ (COFFEE)",
@@ -962,7 +1023,6 @@
         document.getElementById('realtime-total').innerText = total.toLocaleString('vi-VN') + 'đ';
     }
 
-    // Cập nhật kiểu định dạng cho ô input PIN
     function switchStep(currentId, nextId, animationIn = 'animate__fadeInRight') {
         const currentStep = document.getElementById(currentId);
         const nextStep = document.getElementById(nextId);
@@ -1059,11 +1119,27 @@
         document.getElementById('rules-modal').style.display = 'none';
     }
 
-    function triggerRiskModal() {
+    // Điều hướng khi bấm nút Xác nhận đơn hàng để check xem đã chọn vé chưa
+    function handleOrderConfirmation() {
         if (orderState.ticketGreen === 0 && orderState.ticketRed === 0) {
-            alert('Vé vào cổng là bắt buộc mua nè bạn ơi, vui lòng lựa chọn loại vé nhé! 🎟️');
-            return;
+            // Nếu chưa chọn vé, hiện thông báo xác nhận nhắc nhở ra giữa màn hình
+            document.getElementById('ticket-check-modal').style.display = 'flex';
+        } else {
+            // Nếu đã chọn vé, chuyển sang bước hỏi rủi ro như bình thường
+            triggerRiskModal();
         }
+    }
+
+    function closeTicketCheckModal() {
+        document.getElementById('ticket-check-modal').style.display = 'none';
+    }
+
+    function acceptNoTicketAndContinue() {
+        closeTicketCheckModal();
+        triggerRiskModal(); // Tiếp tục qua phần rủi ro
+    }
+
+    function triggerRiskModal() {
         document.getElementById('risk-confirm-modal').style.display = 'flex';
     }
 
@@ -1118,6 +1194,11 @@
             }
         }
 
+        // Trường hợp không mua vé và không chọn nước luôn
+        if (billHtml === '') {
+            billHtml = `<div class="bill-row" style="justify-content: center; font-style: italic;">Chưa chọn vé & món (Sẽ gọi thêm khi vào trong)</div>`;
+        }
+
         billContainer.innerHTML = billHtml;
 
         const grandTotal = calculateTotal();
@@ -1130,6 +1211,47 @@
         switchStep('step-3', 'step-success', 'animate__zoomIn');
     }
 
+    // THỰC HIỆN LƯU DỮ LIỆU ĐƠN HÀNG LÊN FIREBASE REALTIME DATABASE
+    function saveOrderToFirebase() {
+        const now = new Date();
+        const timestamp = now.getTime();
+        
+        // Chuẩn hóa danh sách nước uống đã chọn để đẩy lên DB dạng mảng rõ ràng
+        let orderedDrinks = {};
+        for (const [drinkId, qty] of Object.entries(orderState.drinks)) {
+            const drink = allDrinks.find(d => d.id === drinkId);
+            if (drink) {
+                orderedDrinks[drinkId] = {
+                    name: drink.name,
+                    quantity: qty,
+                    price: drink.price,
+                    subtotal: drink.price * qty
+                };
+            }
+        }
+
+        // Cấu trúc đối tượng đơn hàng đồng bộ lên Realtime Database
+        const orderData = {
+            customerName: orderState.name,
+            customerPhone: orderState.phone,
+            ticketGreenQty: orderState.ticketGreen,
+            ticketRedQty: orderState.ticketRed,
+            drinks: orderedDrinks,
+            totalAmount: calculateTotal(),
+            createdAt: now.toLocaleString('vi-VN'),
+            timestamp: timestamp
+        };
+
+        // Đẩy đơn hàng lên node 'orders' tự sinh ID ngẫu nhiên bằng push()
+        database.ref('orders').push(orderData)
+            .then(() => {
+                console.log("Đơn hàng đã được đồng bộ lên Firebase thành công!");
+            })
+            .catch((error) => {
+                console.error("Lỗi khi lưu đơn hàng lên Firebase: ", error);
+            });
+    }
+
     function checkStaffPin() {
         const pinInput = document.getElementById('staff-pin');
         const pinMessage = document.getElementById('pin-message');
@@ -1139,6 +1261,10 @@
             pinMessage.style.color = '#2e7d32';
             pinMessage.innerText = '✅ Mã PIN chính xác! Đơn hàng đã được xác nhận.';
             pinInput.disabled = true;
+
+            // Gọi hàm lưu dữ liệu chi tiết lên Firebase Realtime
+            saveOrderToFirebase();
+
         } else if (pinInput.value.length >= 2) {
             pinMessage.style.display = 'block';
             pinMessage.style.color = '#d90429';
