@@ -2,20 +2,19 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Đặt Vé Trải Nghiệm & Gọi Món</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Đơn Hàng - Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         :root {
             --primary-pink: #ff8fa3;
             --primary-pink-hover: #ff758f;
             --bg-pastel: #fff0f3;
-            --card-bg: #ffffff;
-            --text-dark: #4a4e69;
-            --green-pastel: #a7c957;
-            --red-pastel: #f35b04;
-            --accent-yellow: #fee440;
-            --ios-radius: 24px;
+            --text-dark: #333d29;
+            --text-muted: #6c757d;
+            --green-pastel: #52796f;
+            --red-pastel: #d90429;
+            --ios-radius: 16px;
         }
 
         * {
@@ -23,803 +22,493 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
         }
 
         body {
             background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
             color: var(--text-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            padding: 20px 15px;
-            overflow-x: hidden;
+            padding: 30px 20px;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.95);
+        .admin-container {
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            width: 100%;
-            max-width: 480px;
+            max-width: 1200px;
+            margin: 0 auto;
             border-radius: var(--ios-radius);
-            box-shadow: 0 20px 40px rgba(255, 117, 143, 0.2);
-            padding: 30px 20px;
-            position: relative;
-            border: 4px solid #fff;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+            border: 1px solid #ffffff;
+            padding: 25px;
         }
 
-        /* Thêm khoảng đệm ở dưới container để nội dung không bị nút bấm fixed đè lên */
-        .container.has-sticky-btn {
-            padding-bottom: 110px;
-        }
-
-        .decor-bubble {
-            position: absolute;
-            font-size: 24px;
-            opacity: 0.3;
-            animation: float 4s ease-in-out infinite alternate;
-            pointer-events: none;
-        }
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-10px) rotate(15deg); }
-        }
-
-        /* KHU VỰC THÀNH PHẦN LOGO QUÁN */
-        .logo-wrapper {
+        header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .shop-logo {
-            width: 90px;
-            height: 90px;
-            object-fit: contain;
-            border-radius: 50%;
-            background: #fff;
-            padding: 4px;
-            box-shadow: 0 8px 16px rgba(255, 117, 143, 0.15);
-            border: 2px solid #fff0f3;
-            animation: logoPulse 3s ease-in-out infinite;
-        }
-
-        @keyframes logoPulse {
-            0% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.04) rotate(3deg); }
-            100% { transform: scale(1) rotate(0deg); }
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 22px;
-            color: #5c5552;
-            font-size: 24px;
-            font-weight: 800;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            text-shadow: 1px 1px 0px #fff;
-        }
-
-        .step {
-            display: none;
-        }
-
-        .step.active {
-            display: block;
-        }
-
-        .lang-option-btn {
-            width: 100%;
-            padding: 16px;
-            margin-bottom: 15px;
-            background: #ffffff;
-            border: 2px solid #ffe5ec;
-            border-radius: 20px;
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--text-dark);
-            cursor: pointer;
-            box-shadow: 0 6px 15px rgba(255, 117, 143, 0.1);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .lang-option-btn:hover {
-            border-color: var(--primary-pink);
-            background: #fff0f3;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 117, 143, 0.2);
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 700;
-            font-size: 14px;
-            color: #6d6875;
-            padding-left: 4px;
-        }
-
-        input[type="text"],
-        input[type="tel"],
-        input[type="password"].pin-input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #ffe5ec;
-            border-radius: 18px;
-            font-size: 16px;
-            outline: none;
-            background-color: #fffafb;
-            color: var(--text-dark);
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        input:focus {
-            border-color: var(--primary-pink);
-            background-color: #fff;
-            box-shadow: 0 0 0 4px rgba(255, 143, 163, 0.15);
-        }
-
-        .rules-img-container {
-            width: 100%;
-            border-radius: 18px;
-            overflow: hidden;
-            border: 2px dashed #ffb3c1;
-            padding: 6px;
-            background-color: #fff5f6;
-            margin-bottom: 22px;
-            cursor: zoom-in;
-            text-align: center;
-        }
-
-        .rules-img {
-            width: 100%;
-            height: auto;
-            border-radius: 12px;
-            display: block;
-        }
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            border-bottom: 1px solid #ffe5ec;
+            padding-bottom: 20px;
             margin-bottom: 25px;
-            cursor: pointer;
-            font-size: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            font-size: 22px;
             font-weight: 700;
-            color: #ff758f;
-            background: #fff0f3;
-            padding: 12px 16px;
-            border-radius: 16px;
+            color: #2b2d42;
+            letter-spacing: -0.3px;
         }
 
-        .checkbox-container input {
-            width: 22px;
-            height: 22px;
-            accent-color: var(--primary-pink);
-            cursor: pointer;
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #ff8fa3 0%, #ff758f 100%);
+        .btn-manage-staff {
+            background: #2b2d42;
             color: white;
             border: none;
-            border-radius: 20px;
-            font-size: 17px;
-            font-weight: 800;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 117, 143, 0.3);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-align: center;
+            transition: background 0.2s;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(255, 117, 143, 0.4);
+        .btn-manage-staff:hover {
+            background: #1d1e2c;
         }
 
-        .btn:active {
-            transform: translateY(1px) scale(0.98);
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        .btn:disabled {
-            background: #e0e0e0;
-            color: #a1a1a1;
-            box-shadow: none;
-            cursor: not-allowed;
+        .stat-card {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid #f0f0f0;
         }
 
-        /* Hộp cố định nút bấm xác nhận dưới màn hình di động */
-        .sticky-confirm-wrapper {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: linear-gradient(0deg, rgba(255,255,255,1) 70%, rgba(255,255,255,0) 100%);
-            padding: 20px 15px 25px 15px;
-            box-sizing: border-box;
-            z-index: 999;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .sticky-confirm-wrapper .btn-sticky {
-            width: 100%;
-            max-width: 440px; /* Thụt lề cân bằng theo giao diện Container */
-            background: linear-gradient(135deg, #4ef084 0%, #10b981 100%);
-            box-shadow: 0 8px 25px rgba(16,185,129,0.4);
+        .stat-card p {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .notice-box {
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
-            padding: 12px 14px;
-            border-radius: 16px;
-            font-size: 13.5px;
+        .stat-card h3 {
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 15px;
-            line-height: 1.4;
-            text-align: center;
+            color: #2b2d42;
+            margin-top: 6px;
         }
 
-        .ticket-option {
-            background: #fff;
-            border: 3px solid #f0f0f0;
-            border-radius: 22px;
-            padding: 18px;
-            margin-bottom: 14px;
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid #eef0f2;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.02);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+        }
+
+        .order-header {
+            border-bottom: 1px solid #f8f9fa;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .cust-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: #2b2d42;
+        }
+
+        .cust-phone {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #ff758f;
+            margin-top: 3px;
+        }
+
+        .staff-tag {
+            display: inline-block;
+            background: #f1f3f9;
+            color: #4a5568;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-top: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .order-time {
+            font-size: 11px;
+            color: #a0aec0;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* Nút toggle mở rộng chi tiết */
+        .btn-toggle-details {
+            width: 100%;
+            padding: 9px 12px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            color: #495057;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12.5px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: all 0.2s;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.03);
         }
 
-        .ticket-option::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0; width: 8px;
+        .btn-toggle-details:hover {
+            background: #ffe5ec;
+            color: #ff758f;
+            border-color: #ffccd5;
         }
 
-        .ticket-option.green { border-color: #e2f0d9; }
-        .ticket-option.green::before { background-color: var(--green-pastel); }
-        
-        .ticket-option.red { border-color: #ffdad3; background: linear-gradient(180deg, #ffffff 0%, #fff5f3 100%); }
-        .ticket-option.red::before { background-color: var(--red-pastel); }
-
-        .badge-hot {
-            position: absolute;
-            top: 0; right: 0;
-            background: linear-gradient(135deg, #ff4d6d 0%, #ff758f 100%);
-            color: white;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 4px 12px;
-            border-bottom-left-radius: 12px;
-        }
-
-        .ticket-info {
-            flex: 1;
-            padding-right: 10px;
-        }
-
-        .ticket-info h3 {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 4px;
-        }
-        .ticket-info.green h3 { color: #52796f; }
-        .ticket-info.red h3 { color: #d90429; }
-        .ticket-price { font-size: 14px; font-weight: 700; color: #6d6875; }
-
-        .ticket-description {
-            font-size: 12px;
-            margin-top: 6px;
-            font-weight: 600;
-            line-height: 1.4;
-        }
-        .ticket-option.green .ticket-description { color: #52796f; }
-        .ticket-option.red .ticket-description { color: #b7094c; }
-
-        .included-animals { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
-        .animal-tag {
-            font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: 700;
-            background: #f1f5f9;
-        }
-        .ticket-option.green .animal-tag { background: #e8f5e9; color: #2e7d32; }
-        .ticket-option.red .animal-tag { background: #ffebee; color: #c62828; }
-
-        .quantity-selector {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #f8f9fa;
-            padding: 4px 8px;
-            border-radius: 30px;
-            border: 1px solid #e9ecef;
-            flex-shrink: 0;
-        }
-
-        .qty-btn {
-            width: 32px; height: 32px;
-            border-radius: 50%; border: none;
-            background: white; font-size: 18px; font-weight: bold;
-            cursor: pointer; display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
-        .qty-input { width: 26px; text-align: center; border: none; font-size: 16px; font-weight: 800; background: transparent; }
-
-        .menu-top-section {
-            background: #fff8f9;
-            border: 2px solid #ffe5ec;
-            border-radius: 20px;
+        /* Khung chứa các món chi tiết xổ xuống */
+        .items-section {
+            font-size: 13.5px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: none;
+            background: #fafafa;
             padding: 12px;
-            margin-bottom: 18px;
-            text-align: center;
+            border-radius: 8px;
+            border: 1px solid #f0f0f0;
         }
 
-        .menu-img-container {
-            width: 100%;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            cursor: zoom-in;
-        }
-
-        .menu-img {
-            width: 100%;
-            height: auto;
+        .items-section.expanded {
             display: block;
         }
 
-        .search-drink-box {
-            background: #fff;
-            border: 2px solid #ffe5ec;
-            border-radius: 20px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .category-item {
-            margin-bottom: 10px;
-            border: 1.5px solid #ffe5ec;
-            border-radius: 14px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .category-header {
-            background: #fffafb;
-            padding: 12px 16px;
-            font-weight: 800;
-            font-size: 15px;
-            color: #4a4e69;
+        .item-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            transition: background 0.3s;
+            padding: 5px 0;
+            border-bottom: 1px dashed #e9ecef;
         }
 
-        .category-header:hover {
-            background: #fff0f3;
-        }
-
-        .category-header::after {
-            content: '▾';
-            font-size: 16px;
-            color: #ff758f;
-            transition: transform 0.3s;
-        }
-
-        .category-item.active {
-            border-color: #ff8fa3;
-            box-shadow: 0 4px 12px rgba(255, 143, 163, 0.1);
-        }
-
-        .category-item.active .category-header {
-            background: #fff0f3;
-            color: #ff758f;
-        }
-
-        .category-item.active .category-header::after {
-            transform: rotate(-180deg);
-        }
-
-        .category-content {
-            display: none;
-            background: #fff;
-            padding: 5px 10px;
-            border-top: 1px solid #ffe5ec;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .drink-search-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 8px;
-            border-bottom: 1px solid #fff0f3;
-            background: #fff;
-        }
-        .drink-search-item:last-child {
+        .item-row:last-child {
             border-bottom: none;
         }
-        .drink-search-name { font-size: 14px; font-weight: 700; color: #4a4e69; }
-        .drink-search-price { font-size: 13px; color: #ff758f; font-weight: 700; margin-left: 5px; }
 
-        .selected-drinks-cart {
-            margin-top: 15px;
-            background: #fdf2f4;
-            border-radius: 16px;
-            padding: 12px;
-            display: none;
-        }
-        .cart-title {
-            font-size: 13px;
-            font-weight: 800;
-            color: #ff758f;
-            margin-bottom: 8px;
-            border-bottom: 1px dashed #ffccd5;
-            padding-bottom: 4px;
+        .item-row.ticket {
+            font-weight: 600;
+            color: #2b6cb0;
         }
 
-        .price-sticky-bar {
-            background: #fff0f3;
-            border: 2px solid #ffccd5;
-            border-radius: 18px;
-            padding: 14px 18px;
+        .item-row.ticket-red {
+            font-weight: 600;
+            color: #c53030;
+        }
+
+        .total-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            font-weight: 800;
+            font-size: 15px;
+            font-weight: 700;
+            color: #2b2d42;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 12px;
+            margin-top: 8px;
         }
-        .price-sticky-bar span { color: #ff4d6d; font-size: 20px; }
 
+        .actions-wrapper {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12.5px;
+            cursor: pointer;
+            text-align: center;
+            transition: opacity 0.2s;
+        }
+
+        .btn-action:hover {
+            opacity: 0.85;
+        }
+
+        .btn-edit {
+            background: #edf2f7;
+            color: #2b6cb0;
+        }
+
+        .btn-delete {
+            background: #fff5f5;
+            color: #c53030;
+        }
+
+        /* MODAL OVERLAY */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.4);
             z-index: 9999;
             justify-content: center;
             align-items: center;
         }
-        .modal-overlay.zoom-mode {
-            cursor: zoom-out;
-        }
-        .modal-overlay img { max-width: 95%; max-height: 90%; border-radius: 12px; }
 
-        .confirm-alert-box {
-            background: #ffffff;
-            width: 85%;
-            max-width: 380px;
-            border-radius: 24px;
-            padding: 25px 20px;
+        .edit-modal-box {
+            background: white;
+            width: 90%;
+            max-width: 440px;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: #2b2d42;
             text-align: center;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-            border: 3px solid var(--primary-pink);
         }
-        .confirm-alert-box h3 {
-            font-size: 20px;
-            color: #d90429;
-            margin-bottom: 12px;
-            font-weight: 800;
+
+        .form-group {
+            margin-bottom: 14px;
         }
-        .confirm-alert-box p {
-            font-size: 15px;
-            line-height: 1.5;
-            color: #4a4e69;
-            margin-bottom: 20px;
+
+        .form-group label {
+            display: block;
+            font-size: 12.5px;
             font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 6px;
         }
-        .confirm-buttons {
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            font-weight: 500;
+            background: white;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary-pink);
+        }
+
+        .modal-buttons {
             display: flex;
             gap: 10px;
-        }
-        .btn-confirm-yes {
-            flex: 1;
-            padding: 12px;
-            background: linear-gradient(135deg, #4ef084 0%, #10b981 100%);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-weight: 800;
-            font-size: 15px;
-            cursor: pointer;
-        }
-        .btn-confirm-no {
-            flex: 1;
-            padding: 12px;
-            background: #6d6875;
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-weight: 800;
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        .success-card { text-align: center; }
-        .success-icon { font-size: 45px; color: #2e7d32; animation: heartBeat 1.5s infinite; margin-bottom: 15px; }
-
-        .customer-summary {
-            background: #fdf0f2;
-            padding: 16px;
-            border-radius: 20px;
-            margin: 15px 0;
-            font-size: 14px;
-            text-align: left;
-            border: 1px solid #ffe3e8;
-            line-height: 1.6;
-        }
-
-        .bill-details {
-            background: #fff;
-            border: 2px dashed #ffccd5;
-            border-radius: 20px;
-            padding: 16px;
-            margin: 18px 0;
-            text-align: left;
-        }
-        .bill-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: #ff758f;
-            border-bottom: 1px solid #ffe5ec;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .bill-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13.5px;
-            margin-bottom: 6px;
-            color: #6d6875;
-        }
-        .bill-total-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 18px;
-            font-weight: 800;
-            color: #d90429;
-            border-top: 2px dashed #ffccd5;
-            padding-top: 10px;
-            margin-top: 10px;
-        }
-        .note-staff { font-size: 13px; color: #8d99ae; margin-top: 15px; font-style: italic; }
-
-        .staff-pin-box {
-            background: #fff8f9;
-            border: 2px solid #ffccd5;
-            border-radius: 20px;
-            padding: 15px;
             margin-top: 20px;
         }
-        .pin-wrapper {
+
+        .btn-save {
+            flex: 1;
+            padding: 11px;
+            background: #2b2d42;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 11px;
+            background: #edf2f7;
+            color: #4a5568;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .loading-text {
+            text-align: center;
+            font-weight: 600;
+            color: #a0aec0;
+            padding: 40px;
+            grid-column: 1 / -1;
+            font-size: 14px;
+        }
+
+        .staff-code-list {
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .staff-code-item {
             display: flex;
-            gap: 10px;
-            margin-top: 8px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-bottom: 1px solid #f7fafc;
+            font-size: 13.5px;
+        }
+
+        .staff-code-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn-del-code {
+            background: #fff5f5;
+            color: #c53030;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11.5px;
+            font-weight: 600;
         }
     </style>
-    <!-- THÊM SDK FIREBASE QUA CDN -->
+
+    <!-- FIREBASE COMPAT SDK VIA CDN -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-<div class="container animate__animated animate__fadeInUp" id="main-container">
-    <div class="decor-bubble" style="top: 10px; left: 15px;">🐾</div>
-    <div class="decor-bubble" style="top: 40px; right: 20px;">🐱</div>
-    <div class="decor-bubble" style="bottom: 20px; left: 20px;">🐶</div>
+<div class="admin-container animate__animated animate__fadeIn">
+    <header>
+        <h1>Dashboard Quản Lý Đơn Hàng</h1>
+        <button class="btn-manage-staff" onclick="openStaffModal()">Quản Lý Mã Nhân Viên</button>
+    </header>
 
-    <!-- BƯỚC 0: CHỌN NGÔN NGỮ -->
-    <div id="step-0" class="step active">
-        <div class="logo-wrapper">
-            <img src="logo.png" class="shop-logo" alt="Logo Quán">
+    <!-- THANH THỐNG KÊ NHANH -->
+    <div class="stats-bar">
+        <div class="stat-card">
+            <p>Tổng Đơn Hàng</p>
+            <h3 id="stat-total-orders">0</h3>
         </div>
-        <h2>Chọn Ngôn Ngữ / Language ✨</h2>
-        <p style="text-align: center; font-size: 14px; color: #8d99ae; margin-bottom: 25px;">Vui lòng chọn ngôn ngữ của bạn / Please select your language</p>
-        <button class="lang-option-btn" onclick="selectLanguage('vi')">
-            <span>🇻🇳</span> Tiếng Việt
-        </button>
-        <button class="lang-option-btn" onclick="selectLanguage('en')">
-            <span>🇬🇧</span> English
-        </button>
+        <div class="stat-card">
+            <p>Tổng Doanh Thu</p>
+            <h3 id="stat-total-revenue" style="color: #2b2d42;">0đ</h3>
+        </div>
+        <div class="stat-card">
+            <p>Vé Xanh Bán Ra</p>
+            <h3 id="stat-green-tickets" style="color: #2b6cb0;">0</h3>
+        </div>
+        <div class="stat-card">
+            <p>Vé Đỏ Bán Ra</p>
+            <h3 id="stat-red-tickets" style="color: #c53030;">0</h3>
+        </div>
     </div>
 
-    <!-- BƯỚC 1 -->
-    <div id="step-1" class="step">
-        <div class="logo-wrapper">
-            <img src="logo.png" class="shop-logo" alt="Logo Quán">
-        </div>
-        <h2 id="txt-step1-title">Chào Bạn Nhỏ! ✨</h2>
-        <p id="txt-step1-sub" style="text-align: center; font-size: 14px; color: #8d99ae; margin-bottom: 20px;">Điền thông tin đặt lịch hẹn với các bé thú cưng nha!</p>
+    <!-- MẠNG LƯỚI HIỂN THỊ ĐƠN HÀNG -->
+    <div class="orders-grid" id="orders-display-grid">
+        <div class="loading-text">Đang tải dữ liệu từ hệ thống...</div>
+    </div>
+</div>
+
+<!-- POPUP MODAL CHỈNH SỬA CHI TIẾT ĐƠN HÀNG -->
+<div id="edit-modal" class="modal-overlay">
+    <div class="edit-modal-box animate__animated animate__zoomIn">
+        <div class="modal-title">Chỉnh Sửa Đơn Hàng</div>
+        <input type="hidden" id="edit-order-id">
+        
         <div class="form-group">
-            <label for="fullname" id="lbl-fullname">Họ tên của bạn</label>
-            <input type="text" id="fullname" placeholder="Ví dụ: Nguyễn Văn A" autocomplete="off">
+            <label>Họ tên khách hàng</label>
+            <input type="text" id="edit-cust-name">
         </div>
         <div class="form-group">
-            <label for="phone" id="lbl-phone">Số điện thoại (Nhập đúng 10 số)</label>
-            <input type="tel" id="phone" placeholder="Ví dụ: 0912345678" autocomplete="off" maxlength="10">
+            <label>Số điện thoại</label>
+            <input type="text" id="edit-cust-phone">
         </div>
-        <button class="btn" id="btn-step1-next" onclick="goToStep2()">Tiếp tục nhận vé ➔</button>
-    </div>
-
-    <!-- BƯỚC 2 -->
-    <div id="step-2" class="step">
-        <h2 id="txt-step2-title">Nội Quy Quán Nhỏ 📋</h2>
-        <div class="rules-img-container" onclick="openRulesModal()">
-            <img id="rules-img-element" src="luuy.png" class="rules-img" alt="Lưu ý quan trọng" onerror="this.src='luuy.jpg'">
-            <p id="txt-rules-zoom-note" style="font-size: 11px; color:#a1a1a1; margin-top:5px; font-weight:bold;">🔍 Bấm vào ảnh để xem lưu ý rõ hơn</p>
+        <div class="form-group">
+            <label>Mã / Tên Nhân Viên Order</label>
+            <input type="text" id="edit-staff-code" placeholder="Nhập mã hoặc tên nhân viên">
         </div>
-        <label class="checkbox-container">
-            <input type="checkbox" id="agree-checkbox" onchange="toggleRuleBtn()">
-            <span id="txt-agree-rules">TÔI ĐÃ ĐỌC VÀ HIỂU NỘI QUY</span>
-        </label>
-        <button class="btn" id="btn-rule-next" disabled onclick="goToStep3()">Đồng ý & Tiếp tục ➔</button>
-    </div>
-
-    <!-- BƯỚC 3 -->
-    <div id="step-3" class="step">
-        <h2 id="txt-step3-title">Chọn Vé & Gọi Món 🍕</h2>
-        <div class="menu-top-section">
-            <div class="menu-img-container" onclick="openMenuModal()">
-                <img id="menu-img-element" src="menu.png" class="menu-img" alt="Menu Nước Uống" onerror="this.src='menu.jpg'">
-                <p id="txt-menu-zoom-note" style="font-size: 11px; color:#a1a1a1; margin-top:5px; font-weight:bold;">🔍 Bấm vào ảnh để xem toàn màn hình</p>
-            </div>
+        <div class="form-group">
+            <label>Số lượng Vé Xanh (80k)</label>
+            <input type="number" id="edit-ticket-green" min="0">
         </div>
-        <div class="notice-box" id="txt-notice-box">
-            📌 Vé vào cửa KHÔNG BẮT BUỘC mua trước.<br>Nước uống KHÔNG BẮT BUỘC, bạn tùy ý lựa chọn nhé!
+        <div class="form-group">
+            <label>Số lượng Vé Đỏ (110k)</label>
+            <input type="number" id="edit-ticket-red" min="0">
         </div>
 
-        <!-- VÉ XANH (COMBO 1) -->
-        <div class="ticket-option green animate__animated animate__fadeInLeft">
-            <div class="ticket-info green">
-                <h3 id="txt-ticket-green-title">Vé Xanh 🌱 (Combo 1)</h3>
-                <span class="ticket-price" id="txt-ticket-green-price">80.000đ / vé</span>
-                <p class="ticket-description" id="txt-ticket-green-desc">
-                    📍 Trải nghiệm: Tham quan tự do, vuốt ve và chơi đùa thoải mái cùng các bé Chó, bé Mèo siêu thân thiện tại sảnh chính của quán.
-                </p>
-                <div class="included-animals">
-                    <span class="animal-tag" id="tag-dog">Chó</span><span class="animal-tag" id="tag-cat">Mèo</span>
-                </div>
-            </div>
-            <div class="quantity-selector">
-                <button class="qty-btn" onclick="changeTicketQty('green', -1)">-</button>
-                <input type="number" id="qty-green" class="qty-input" value="0" min="0" readonly>
-                <button class="qty-btn" onclick="changeTicketQty('green', 1)">+</button>
-            </div>
+        <div style="border-top: 1px solid #edf2f7; margin: 15px 0; padding-top: 10px;">
+            <p style="font-size: 12px; color: #a0aec0; font-weight: 500;">Lưu ý: Để chỉnh sửa chi tiết món nước, vui lòng thao tác trên Firebase Console.</p>
         </div>
 
-        <!-- VÉ ĐỎ (COMBO 2) -->
-        <div class="ticket-option red animate__animated animate__fadeInRight">
-            <div class="badge-hot">🔥 HOT</div>
-            <div class="ticket-info red">
-                <h3 id="txt-ticket-red-title">Vé Đỏ 👑 (Combo 2)</h3>
-                <span class="ticket-price" id="txt-ticket-red-price">110.000đ / vé</span>
-                <p class="ticket-description" id="txt-ticket-red-desc">
-                    📍 Trải nghiệm: Đầy đủ khu vực Vé Xanh + Được vào khu VIP vui chơi, ôm ấp "bộ trưởng ngoại giao" Capybara và cho các bé Gấu Mèo (Raccoon) tinh nghịch ăn!
-                </p>
-                <div class="included-animals">
-                    <span class="animal-tag" id="tag-dog2">Chó</span><span class="animal-tag" id="tag-cat2">Mèo</span><span class="animal-tag">Capybara</span><span class="animal-tag" id="tag-raccoon">Gấu Mèo</span>
-                </div>
-            </div>
-            <div class="quantity-selector">
-                <button class="qty-btn" onclick="changeTicketQty('red', -1)">-</button>
-                <input type="number" id="qty-red" class="qty-input" value="0" min="0" readonly>
-                <button class="qty-btn" onclick="changeTicketQty('red', 1)">+</button>
-            </div>
-        </div>
-
-        <div class="search-drink-box">
-            <label style="color: #ff758f; margin-bottom: 12px; display: block;" id="lbl-select-drink">🍹 Nhấn vào danh mục để chọn nước uống:</label>
-            <div id="categories-container"></div>
-            <div class="selected-drinks-cart" id="selected-cart">
-                <div class="cart-title" id="txt-cart-title">🛒 Món nước bạn đã chọn:</div>
-                <div id="cart-items-list"></div>
-            </div>
-        </div>
-
-        <div class="price-sticky-bar">
-            <span id="txt-total-label">TỔNG CỘNG:</span>
-            <span id="realtime-total">0đ</span>
-        </div>
-    </div>
-
-    <!-- BƯỚC THÀNH CÔNG -->
-    <div id="step-success" class="step success-card">
-        <div class="success-icon">❤️</div>
-        <h2 id="txt-success-title">Đặt Vé Thành Công!</h2>
-        <div class="customer-summary">
-            <p><strong id="lbl-sum-name">👤 Khách hàng:</strong> <span id="summary-name" style="color:#ff758f; font-weight:700;"></span></p>
-            <p><strong id="lbl-sum-phone">📞 Số điện thoại:</strong> <span id="summary-phone" style="font-weight:600;"></span></p>
-            <p><strong id="lbl-sum-time">⏰ Thời gian đặt vé:</strong> <span id="summary-time" style="color: #4f46e5; font-weight:700;"></span></p>
-        </div>
-        <div class="bill-details">
-            <div class="bill-title" id="txt-bill-title">🧾 CHI TIẾT HÓA ĐƠN</div>
-            <div id="bill-items-container"></div>
-            <div class="bill-total-row">
-                <span id="lbl-sum-grand-total">Tổng tiền thanh toán:</span>
-                <span id="summary-grand-total">0đ</span>
-            </div>
-        </div>
-        <div class="staff-pin-box" id="pin-area">
-            <label for="staff-pin" style="color: #ff4d6d; text-align: left; display: block;" id="lbl-staff-pin">🔑 Nhân viên nhập mã PIN để xác nhận món:</label>
-            <div class="pin-wrapper">
-                <input type="password" id="staff-pin" class="pin-input" placeholder="Nhập số PIN..." pattern="[0-9]*" inputmode="numeric" oninput="checkStaffPin()">
-            </div>
-            <p id="pin-message" style="font-size: 13px; font-weight: 700; margin-top: 6px; text-align: left; display: none;"></p>
-            <button class="btn" id="btn-back-order" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); margin-top: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" onclick="goBackToOrder()">⬅ Quay lại chọn thêm vé/món</button>
-        </div>
-        <p class="note-staff" id="txt-note-staff">Hãy xuất trình màn hình hóa đơn này cho nhân viên quầy để đối chiếu và nhận vòng tay nha! ✨</p>
-    </div>
-</div>
-
-<!-- THANH CỐ ĐỊNH NÚT XÁC NHẬN ĐƠN HÀNG (STICKY BOTTOM) -->
-<div id="sticky-confirm-bar" class="sticky-confirm-wrapper" style="display: none;">
-    <button class="btn btn-sticky" id="btn-sticky-confirm" onclick="handleOrderConfirmation()">Xác nhận đơn hàng ➔</button>
-</div>
-
-<!-- MODALS -->
-<div id="menu-modal" class="modal-overlay zoom-mode" onclick="closeMenuModal()">
-    <img id="modal-menu-img" src="menu.png" alt="Menu Phóng To" onerror="this.src='menu.jpg'">
-</div>
-
-<div id="rules-modal" class="modal-overlay zoom-mode" onclick="closeRulesModal()">
-    <img id="modal-rules-img" src="luuy.png" alt="Lưu ý Phóng To" onerror="this.src='luuy.jpg'">
-</div>
-
-<!-- MODAL CẢNH BÁO CHƯA MUA VÉ TRƯỚC -->
-<div id="ticket-check-modal" class="modal-overlay" style="background: rgba(0,0,0,0.6);">
-    <div class="confirm-alert-box animate__animated animate__bounceIn">
-        <h3 id="txt-modal-tcheck-title">💬 Bạn ơi lưu ý nha!</h3>
-        <p id="txt-modal-tcheck-desc">Bạn có chắc chắn là mình đã mua vé chưa? Nhấn "Đúng vậy" nếu bạn đã mua vé trước đó, hoặc muốn vào trong rồi order thêm sau nha!</p>
-        <div class="confirm-buttons">
-            <button class="btn-confirm-no" id="btn-tcheck-no" onclick="closeTicketCheckModal()">Quay lại</button>
-            <button class="btn-confirm-yes" id="btn-tcheck-yes" onclick="acceptNoTicketAndContinue()">Đúng vậy</button>
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeEditModal()">Hủy bỏ</button>
+            <button class="btn-save" onclick="saveOrderEdits()">Cập nhật</button>
         </div>
     </div>
 </div>
 
-<div id="risk-confirm-modal" class="modal-overlay" style="background: rgba(0,0,0,0.6);">
-    <div class="confirm-alert-box animate__animated animate__bounceIn">
-        <h3 id="txt-modal-risk-title">⚠️Một chút lưu ý nhỏ bạn nha!</h3>
-        <p id="txt-modal-risk-desc">Các bé thú cưng đôi lúc sẽ vô tình cào nhẹ hoặc phản ứng tự vệ nếu chúng ta tương tác sai cách (không đúng nội quy). Để đảm bảo an toàn, bạn vui lòng tự lưu ý và đồng ý chịu trách nhiệm cho các rủi ro va quẹt, trầy xước ngoài ý muốn trong quá trình vui chơi nhé.</p>
-        <div class="confirm-buttons">
-            <button class="btn-confirm-no" id="btn-risk-no" onclick="closeRiskModal()">Hủy bỏ</button>
-            <button class="btn-confirm-yes" id="btn-risk-yes" onclick="confirmRiskAndSubmit()">Tớ đồng ý</button>
+<!-- POPUP MODAL QUẢN LÝ MÃ NHÂN VIÊN -->
+<div id="staff-modal" class="modal-overlay">
+    <div class="edit-modal-box animate__animated animate__zoomIn">
+        <div class="modal-title">Danh Sách Mã Nhân Viên</div>
+        
+        <div class="form-group">
+            <label>Mã Xác Nhận (VD: 001, NV01)</label>
+            <input type="text" id="new-staff-code" placeholder="Nhập mã">
+        </div>
+        <div class="form-group">
+            <label>Tên Nhân Viên</label>
+            <input type="text" id="new-staff-name" placeholder="Nhập tên">
+        </div>
+        <button class="btn-save" style="width: 100%; margin-top: 5px;" onclick="addStaffCode()">Thêm Mã Mới</button>
+
+        <div style="margin-top: 20px;">
+            <label style="font-size: 12.5px; font-weight: 600; color: #4a5568;">Mã Đã Tạo:</label>
+            <div class="staff-code-list" id="staff-code-list-container">
+                <div style="text-align: center; color: #a0aec0; font-size: 13px;">Đang tải danh sách...</div>
+            </div>
+        </div>
+
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeStaffModal()">Đóng</button>
         </div>
     </div>
 </div>
 
 <script>
+    // CẤU HÌNH HỆ THỐNG FIREBASE REALTIME CỦA BẠN
     const firebaseConfig = {
         apiKey: "AIzaSyAV7r-rjXo6U62LX1AA7c7DAHb8GhOOOsg",
         authDomain: "saigon-dalat.firebaseapp.com",
@@ -831,765 +520,307 @@
         measurementId: "G-FDLZXR2X8P"
     };
 
+    // Khởi tạo Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    let currentLang = 'vi';
+    let localOrdersCache = {}; // Lưu trữ tạm data local để chỉnh sửa nhanh
+    let localStaffCodes = {}; // Lưu danh sách mã nhân viên
 
-    const drinkCategoriesData = {
-        vi: [
-            {
-                categoryName: "☕ CÀ PHÊ (COFFEE)",
-                drinks: [
-                    { id: "cf1", name: "Espresso đá", price: 40000 },
-                    { id: "cf2", name: "Cà phê sữa đá", price: 40000 },
-                    { id: "cf3", name: "Caramel coffee", price: 40000 },
-                    { id: "cf4", name: "Chocolate latte", price: 40000 },
-                    { id: "cf5", name: "Matcha latte", price: 40000 },
-                    { id: "cf6", name: "Cam ép", price: 40000 },
-                    { id: "cf7", name: "Bạc xỉu", price: 40000 },
-                    { id: "cf8", name: "Americano (nóng/lạnh)", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🍵 CÁC LOẠI TRÀ (TEA)",
-                drinks: [
-                    { id: "te1", name: "Trà đào", price: 40000 },
-                    { id: "te2", name: "Trà đào cam sả", price: 40000 },
-                    { id: "te3", name: "Trà kiwi", price: 40000 },
-                    { id: "te4", name: "Trà vải", price: 40000 },
-                    { id: "te5", name: "Trà dâu", price: 40000 },
-                    { id: "te6", name: "Trà ổi hồng", price: 40000 },
-                    { id: "te7", name: "Lục trà tắc mật ong", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🥤 SODA SẢNG KHOÁI",
-                drinks: [
-                    { id: "sd1", name: "Soda kiwi", price: 40000 },
-                    { id: "sd2", name: "Soda blue", price: 40000 },
-                    { id: "sd3", name: "Soda chanh", price: 40000 },
-                    { id: "sd4", name: "Soda bạc hà", price: 40000 },
-                    { id: "sd5", name: "Soda việt quất", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🍧 SỮA CHUA (YOGURT)",
-                drinks: [
-                    { id: "yg1", name: "Sữa chua đá", price: 40000 },
-                    { id: "yg2", name: "Sữa chua trân châu đường đen", price: 40000 },
-                    { id: "yg3", name: "Sữa chua cà phê", price: 40000 },
-                    { id: "yg4", name: "Sữa chua hoa quả", price: 40000 },
-                    { id: "yg5", name: "Sữa chua việt quất", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "❄️ ĐÁ XAY (ICE BLENDED)",
-                drinks: [
-                    { id: "ib1", name: "Sinh tố việt quất", price: 40000 },
-                    { id: "ib2", name: "Matcha blend", price: 40000 },
-                    { id: "ib3", name: "Matcha cookie blend", price: 40000 },
-                    { id: "ib4", name: "Matcha chocolate blend", price: 40000 },
-                    { id: "ib5", name: "Chocolate blend", price: 40000 },
-                    { id: "ib6", name: "Chocolate mint blend", price: 40000 },
-                    { id: "ib7", name: "Chocolate cookie", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🥛 SỮA TƯƠI (MILK)",
-                drinks: [
-                    { id: "mk1", name: "Sữa tươi chocolate", price: 40000 },
-                    { id: "mk2", name: "Sữa tươi matcha", price: 40000 },
-                    { id: "mk3", name: "Sữa tươi cacao", price: 40000 },
-                    { id: "mk4", name: "Sữa tươi bạc hà", price: 40000 },
-                    { id: "mk5", name: "Sữa tươi trân châu đường đen", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🧋 TRÀ SỮA (MILK TEA)",
-                drinks: [
-                    { id: "mt1", name: "Trà sữa truyền thống", price: 40000 },
-                    { id: "mt2", name: "Trà sữa trân châu đường đen", price: 40000 },
-                    { id: "mt3", name: "Trà sữa matcha", price: 40000 },
-                    { id: "mt4", name: "Trà sữa chocolate", price: 40000 },
-                    { id: "mt5", name: "Trà sữa chocolate mint", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🥫 NƯỚC NGỌT & NƯỚC SUỐI",
-                drinks: [
-                    { id: "nn1", name: "Coca-7up", price: 40000 },
-                    { id: "nn2", name: "Sting", price: 40000 },
-                    { id: "nn3", name: "Nước suối", price: 30000 }
-                ]
+    // LẮNG NGHE DỮ LIỆU REALTIME TỪ NODE 'orders'
+    function listenToOrders() {
+        database.ref('orders').on('value', (snapshot) => {
+            const data = snapshot.val();
+            const gridContainer = document.getElementById('orders-display-grid');
+            
+            if (!data) {
+                gridContainer.innerHTML = `<div class="loading-text">Hiện tại chưa có đơn hàng nào được ghi nhận.</div>`;
+                updateStatistics({});
+                return;
             }
-        ],
-        en: [
-            {
-                categoryName: "☕ COFFEE",
-                drinks: [
-                    { id: "cf1", name: "Iced Espresso", price: 40000 },
-                    { id: "cf2", name: "Iced Condensed Milk Coffee", price: 40000 },
-                    { id: "cf3", name: "Caramel Coffee", price: 40000 },
-                    { id: "cf4", name: "Chocolate Latte", price: 40000 },
-                    { id: "cf5", name: "Matcha Latte", price: 40000 },
-                    { id: "cf6", name: "Fresh Orange Juice", price: 40000 },
-                    { id: "cf7", name: "Bac Xiu Coffee", price: 40000 },
-                    { id: "cf8", name: "Americano (Hot/Iced)", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🍵 TEA SELECTION",
-                drinks: [
-                    { id: "te1", name: "Peach Tea", price: 40000 },
-                    { id: "te2", name: "Peach Orange Lemongrass Tea", price: 40000 },
-                    { id: "te3", name: "Kiwi Tea", price: 40000 },
-                    { id: "te4", name: "Lychee Tea", price: 40000 },
-                    { id: "te5", name: "Strawberry Tea", price: 40000 },
-                    { id: "te6", name: "Pink Guava Tea", price: 40000 },
-                    { id: "te7", name: "Honey Kumquat Green Tea", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🥤 REFRESHING SODA",
-                drinks: [
-                    { id: "sd1", name: "Kiwi Soda", price: 40000 },
-                    { id: "sd2", name: "Blue Curacao Soda", price: 40000 },
-                    { id: "sd3", name: "Lemon Soda", price: 40000 },
-                    { id: "sd4", name: "Mint Soda", price: 40000 },
-                    { id: "sd5", name: "Blueberry Soda", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🍧 YOGURT",
-                drinks: [
-                    { id: "yg1", name: "Iced Yogurt", price: 40000 },
-                    { id: "yg2", name: "Yogurt with Black Sugar Boba", price: 40000 },
-                    { id: "yg3", name: "Coffee Yogurt", price: 40000 },
-                    { id: "yg4", name: "Fresh Fruit Yogurt", price: 40000 },
-                    { id: "yg5", name: "Blueberry Yogurt", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "❄️ ICE BLENDED",
-                drinks: [
-                    { id: "ib1", name: "Blueberry Smoothie", price: 40000 },
-                    { id: "ib2", name: "Matcha Blend", price: 40000 },
-                    { id: "ib3", name: "Matcha Cookie Blend", price: 40000 },
-                    { id: "ib4", name: "Matcha Chocolate Blend", price: 40000 },
-                    { id: "ib5", name: "Chocolate Blend", price: 40000 },
-                    { id: "ib6", name: "Chocolate Mint Blend", price: 40000 },
-                    { id: "ib7", name: "Chocolate Cookie Blend", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🥛 FRESH MILK",
-                drinks: [
-                    { id: "mk1", name: "Chocolate Fresh Milk", price: 40000 },
-                    { id: "mk2", name: "Matcha Fresh Milk", price: 40000 },
-                    { id: "mk3", name: "Cocoa Fresh Milk", price: 40000 },
-                    { id: "mk4", name: "Mint Fresh Milk", price: 40000 },
-                    { id: "mk5", name: "Fresh Milk with Black Sugar Boba", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🧋 MILK TEA",
-                drinks: [
-                    { id: "mt1", name: "Traditional Milk Tea", price: 40000 },
-                    { id: "mt2", name: "Black Sugar Boba Milk Tea", price: 40000 },
-                    { id: "mt3", name: "Matcha Milk Tea", price: 40000 },
-                    { id: "mt4", name: "Chocolate Milk Tea", price: 40000 },
-                    { id: "mt5", name: "Chocolate Mint Milk Tea", price: 40000 }
-                ]
-            },
-            {
-                categoryName: "🥫 SOFT DRINKS & WATER",
-                drinks: [
-                    { id: "nn1", name: "Coca-Cola / 7Up", price: 40000 },
-                    { id: "nn2", name: "Sting Energy Drink", price: 40000 },
-                    { id: "nn3", name: "Mineral Water", price: 30000 }
-                ]
-            }
-        ]
-    };
 
-    let drinkCategories = drinkCategoriesData['vi'];
-    let allDrinks = drinkCategories.reduce((acc, cat) => acc.concat(cat.drinks), []);
+            localOrdersCache = data;
+            updateStatistics(data);
 
-    const translations = {
-        vi: {
-            rulesImg: "luuy.png",
-            menuImg: "menu.png",
-            step1Title: "Chào Bạn Nhỏ! ✨",
-            step1Sub: "Điền thông tin đặt lịch hẹn với các bé thú cưng nha!",
-            lblFullname: "Họ tên của bạn",
-            placeholderName: "Ví dụ: Nguyễn Văn A",
-            lblPhone: "Số điện thoại (Nhập đúng 10 số)",
-            placeholderPhone: "Ví dụ: 0912345678",
-            btnStep1Next: "Tiếp tục nhận vé ➔",
-            step2Title: "Nội Quy Quán Nhỏ 📋",
-            rulesZoomNote: "🔍 Bấm vào ảnh để xem lưu ý rõ hơn",
-            agreeRules: "TÔI ĐÃ ĐỌC VÀ HIỂU NỘI QUY",
-            btnRuleNext: "Đồng ý & Tiếp tục ➔",
-            step3Title: "Chọn Vé & Gọi Món 🍕",
-            menuZoomNote: "🔍 Bấm vào ảnh để xem toàn màn hình",
-            noticeBox: "📌 Vé vào cửa KHÔNG BẮT BUỘC mua trước.<br>Nước uống KHÔNG BẮT BUỘC, bạn tùy ý lựa chọn nhé!",
-            ticketGreenTitle: "Vé Xanh 🌱 (Combo 1)",
-            ticketGreenPrice: "80.000đ / vé",
-            ticketGreenDesc: "📍 Trải nghiệm: Tham quan tự do, vuốt ve và chơi đùa thoải mái cùng các bé Chó, bé Mèo siêu thân thiện tại sảnh chính của quán.",
-            tagDog: "Chó",
-            tagCat: "Mèo",
-            tagRaccoon: "Gấu Mèo",
-            ticketRedTitle: "Vé Đỏ 👑 (Combo 2)",
-            ticketRedPrice: "110.000đ / vé",
-            ticketRedDesc: "📍 Trải nghiệm: Đầy đủ khu vực Vé Xanh + Được vào khu VIP vui chơi, ôm ấp \"bộ trưởng ngoại giao\" Capybara và cho các bé Gấu Mèo (Raccoon) tinh nghịch ăn!",
-            selectDrink: "🍹 Nhấn vào danh mục để chọn nước uống:",
-            cartTitle: "🛒 Món nước bạn đã chọn:",
-            totalLabel: "TỔNG CỘNG:",
-            stickyConfirm: "Xác nhận đơn hàng ➔",
-            successTitle: "Đặt Vé Thành Công!",
-            sumName: "👤 Khách hàng:",
-            sumPhone: "📞 Số điện thoại:",
-            sumTime: "⏰ Thời gian đặt vé:",
-            billTitle: "🧾 CHI TIẾT HÓA ĐƠN",
-            sumGrandTotal: "Tổng tiền thanh toán:",
-            staffPin: "🔑 Nhân viên nhập mã PIN để xác nhận món:",
-            pinPlaceholder: "Nhập số PIN...",
-            btnBackOrder: "⬅ Quay lại chọn thêm vé/món",
-            noteStaff: "Hãy xuất trình màn hình hóa đơn này cho nhân viên quầy để đối chiếu và nhận vòng tay nha! ✨",
-            tcheckTitle: "💬 Bạn ơi lưu ý nha!",
-            tcheckDesc: "Bạn có chắc chắn là mình đã mua vé chưa? Nhấn \"Đúng vậy\" nếu bạn đã mua vé trước đó, hoặc muốn vào trong rồi order thêm sau nha!",
-            tcheckNo: "Quay lại",
-            tcheckYes: "Đúng vậy",
-            riskTitle: "⚠️Một chút lưu ý nhỏ bạn nha!",
-            riskDesc: "Các bé thú cưng đôi lúc sẽ vô tình cào nhẹ hoặc phản ứng tự vệ nếu chúng ta tương tác sai cách (không đúng nội quy). Để đảm bảo an toàn, bạn vui lòng tự lưu ý và đồng ý chịu trách nhiệm cho các rủi ro va quẹt, trầy xước ngoài ý muốn trong quá trình vui chơi nhé.",
-            riskNo: "Hủy bỏ",
-            riskYes: "Tớ đồng ý",
-            alertFillInfo: "Bạn vui lòng nhập đầy đủ Họ tên và Số điện thoại nhé! 🥰",
-            alertPhoneFormat: "Số điện thoại không đúng cấu trúc rồi ạ (Yêu cầu 10 số, bắt đầu bằng số 0)! 📱",
-            ticketGreenBillName: "🌿 Vé Xanh (Combo 1)",
-            ticketRedBillName: "👑 Vé Đỏ (Combo 2)",
-            noTicketBillNote: "Chưa chọn vé & món (Sẽ gọi thêm khi vào trong)",
-            pinSuccess: "✅ Mã PIN chính xác! Đơn hàng đã được xác nhận.",
-            pinError: "❌ Mã PIN không đúng, vui lòng thử lại."
-        },
-        en: {
-            rulesImg: "luuy2.png",
-            menuImg: "menu2.png",
-            step1Title: "Welcome Friend! ✨",
-            step1Sub: "Please fill in your information to book a date with our pets!",
-            lblFullname: "Your Full Name",
-            placeholderName: "Example: John Doe",
-            lblPhone: "Phone Number (10 digits)",
-            placeholderPhone: "Example: 0912345678",
-            btnStep1Next: "Continue to Tickets ➔",
-            step2Title: "House Rules 📋",
-            rulesZoomNote: "🔍 Tap on the image to enlarge guidelines",
-            agreeRules: "I HAVE READ & AGREE TO THE RULES",
-            btnRuleNext: "Agree & Continue ➔",
-            step3Title: "Select Tickets & Drinks 🍕",
-            menuZoomNote: "🔍 Tap on the image to view full screen menu",
-            noticeBox: "📌 Entrance tickets are NOT required in advance.<br>Drinks are OPTIONAL, feel free to choose!",
-            ticketGreenTitle: "Green Ticket 🌱 (Combo 1)",
-            ticketGreenPrice: "80,000 VND / ticket",
-            ticketGreenDesc: "📍 Experience: Free walk-through, pet and play with friendly Dogs and Cats in the main lobby.",
-            tagDog: "Dog",
-            tagCat: "Cat",
-            tagRaccoon: "Raccoon",
-            ticketRedTitle: "Red Ticket 👑 (Combo 2)",
-            ticketRedPrice: "110,000 VND / ticket",
-            ticketRedDesc: "📍 Experience: Includes all Green Ticket areas + VIP area access to hug Capybaras and feed playful Raccoons!",
-            selectDrink: "🍹 Tap categories below to order drinks:",
-            cartTitle: "🛒 Selected Drinks:",
-            totalLabel: "TOTAL:",
-            stickyConfirm: "Confirm Order ➔",
-            successTitle: "Booking Successful!",
-            sumName: "👤 Customer:",
-            sumPhone: "📞 Phone Number:",
-            sumTime: "⏰ Booking Time:",
-            billTitle: "🧾 BILL DETAILS",
-            sumGrandTotal: "Total Amount Due:",
-            staffPin: "🔑 Staff PIN verification:",
-            pinPlaceholder: "Enter PIN...",
-            btnBackOrder: "⬅ Go back to modify order",
-            noteStaff: "Please present this invoice screen to our staff at the counter to get your wristband! ✨",
-            tcheckTitle: "💬 Friendly Reminder!",
-            tcheckDesc: "Are you sure you haven't selected any tickets? Tap \"Yes\" if you bought tickets earlier or wish to order inside later!",
-            tcheckNo: "Go Back",
-            tcheckYes: "Yes, I understand",
-            riskTitle: "⚠️ Important Safety Note!",
-            riskDesc: "Our pets may accidentally scratch or react defensively if handled incorrectly. For safety, please be careful and accept personal responsibility for any accidental scratches during playtime.",
-            riskNo: "Cancel",
-            riskYes: "I Agree",
-            alertFillInfo: "Please enter your full Name and Phone number! 🥰",
-            alertPhoneFormat: "Invalid phone number format (10 digits required, starting with 0)! 📱",
-            ticketGreenBillName: "🌿 Green Ticket (Combo 1)",
-            ticketRedBillName: "👑 Red Ticket (Combo 2)",
-            noTicketBillNote: "No ticket/drink selected (Will order inside)",
-            pinSuccess: "✅ Correct PIN! Order verified successfully.",
-            pinError: "❌ Incorrect PIN, please try again."
-        }
-    };
+            let html = '';
+            // Chuyển object Firebase thành mảng và đảo ngược để đơn hàng mới nhất hiện lên đầu
+            const sortedKeys = Object.keys(data).reverse();
 
-    let orderState = {
-        name: '',
-        phone: '',
-        ticketGreen: 0,
-        ticketRed: 0,
-        drinks: {} 
-    };
+            sortedKeys.forEach(key => {
+                const order = data[key];
+                let itemsHtml = '';
 
-    function selectLanguage(lang) {
-        currentLang = lang;
-        const t = translations[lang];
-
-        drinkCategories = drinkCategoriesData[lang];
-        allDrinks = drinkCategories.reduce((acc, cat) => acc.concat(cat.drinks), []);
-
-        document.getElementById('rules-img-element').src = t.rulesImg;
-        document.getElementById('modal-rules-img').src = t.rulesImg;
-        document.getElementById('menu-img-element').src = t.menuImg;
-        document.getElementById('modal-menu-img').src = t.menuImg;
-
-        document.getElementById('txt-step1-title').innerText = t.step1Title;
-        document.getElementById('txt-step1-sub').innerText = t.step1Sub;
-        document.getElementById('lbl-fullname').innerText = t.lblFullname;
-        document.getElementById('fullname').placeholder = t.placeholderName;
-        document.getElementById('lbl-phone').innerText = t.lblPhone;
-        document.getElementById('phone').placeholder = t.placeholderPhone;
-        document.getElementById('btn-step1-next').innerText = t.btnStep1Next;
-
-        document.getElementById('txt-step2-title').innerText = t.step2Title;
-        document.getElementById('txt-rules-zoom-note').innerText = t.rulesZoomNote;
-        document.getElementById('txt-agree-rules').innerText = t.agreeRules;
-        document.getElementById('btn-rule-next').innerText = t.btnRuleNext;
-
-        document.getElementById('txt-step3-title').innerText = t.step3Title;
-        document.getElementById('txt-menu-zoom-note').innerText = t.menuZoomNote;
-        document.getElementById('txt-notice-box').innerHTML = t.noticeBox;
-        document.getElementById('txt-ticket-green-title').innerText = t.ticketGreenTitle;
-        document.getElementById('txt-ticket-green-price').innerText = t.ticketGreenPrice;
-        document.getElementById('txt-ticket-green-desc').innerText = t.ticketGreenDesc;
-        document.getElementById('tag-dog').innerText = t.tagDog;
-        document.getElementById('tag-cat').innerText = t.tagCat;
-        document.getElementById('tag-dog2').innerText = t.tagDog;
-        document.getElementById('tag-cat2').innerText = t.tagCat;
-        document.getElementById('tag-raccoon').innerText = t.tagRaccoon;
-        document.getElementById('txt-ticket-red-title').innerText = t.ticketRedTitle;
-        document.getElementById('txt-ticket-red-price').innerText = t.ticketRedPrice;
-        document.getElementById('txt-ticket-red-desc').innerText = t.ticketRedDesc;
-        document.getElementById('lbl-select-drink').innerText = t.selectDrink;
-        document.getElementById('txt-cart-title').innerText = t.cartTitle;
-        document.getElementById('txt-total-label').innerText = t.totalLabel;
-        document.getElementById('btn-sticky-confirm').innerText = t.stickyConfirm;
-
-        document.getElementById('txt-success-title').innerText = t.successTitle;
-        document.getElementById('lbl-sum-name').innerText = t.sumName;
-        document.getElementById('lbl-sum-phone').innerText = t.sumPhone;
-        document.getElementById('lbl-sum-time').innerText = t.sumTime;
-        document.getElementById('txt-bill-title').innerText = t.billTitle;
-        document.getElementById('lbl-sum-grand-total').innerText = t.sumGrandTotal;
-        document.getElementById('lbl-staff-pin').innerText = t.staffPin;
-        document.getElementById('staff-pin').placeholder = t.pinPlaceholder;
-        document.getElementById('btn-back-order').innerText = t.btnBackOrder;
-        document.getElementById('txt-note-staff').innerText = t.noteStaff;
-
-        document.getElementById('txt-modal-tcheck-title').innerText = t.tcheckTitle;
-        document.getElementById('txt-modal-tcheck-desc').innerText = t.tcheckDesc;
-        document.getElementById('btn-tcheck-no').innerText = t.tcheckNo;
-        document.getElementById('btn-tcheck-yes').innerText = t.tcheckYes;
-
-        document.getElementById('txt-modal-risk-title').innerText = t.riskTitle;
-        document.getElementById('txt-modal-risk-desc').innerText = t.riskDesc;
-        document.getElementById('btn-risk-no').innerText = t.riskNo;
-        document.getElementById('btn-risk-yes').innerText = t.riskYes;
-
-        initDrinkCategories();
-        updateSelectedCart();
-
-        switchStep('step-0', 'step-1');
-    }
-
-    function initDrinkCategories() {
-        const container = document.getElementById('categories-container');
-        let html = '';
-
-        drinkCategories.forEach((cat, catIdx) => {
-            let itemsHtml = '';
-            cat.drinks.forEach(drink => {
-                const currentQty = orderState.drinks[drink.id] || 0;
-                itemsHtml += `
-                    <div class="drink-search-item">
-                        <div>
-                            <span class="drink-search-name">${drink.name}</span>
-                            <span class="drink-search-price">${(drink.price/1000)}k</span>
+                // Hiển thị Vé Xanh
+                if (order.ticketGreenQty > 0) {
+                    itemsHtml += `
+                        <div class="item-row ticket">
+                            <span>Vé Xanh (Combo 1)</span>
+                            <span>x${order.ticketGreenQty}</span>
                         </div>
-                        <div class="quantity-selector">
-                            <button class="qty-btn" onclick="changeDrinkQty('${drink.id}', -1, event)">-</button>
-                            <input type="number" id="qty-${drink.id}" class="qty-input" value="${currentQty}" min="0" readonly>
-                            <button class="qty-btn" onclick="changeDrinkQty('${drink.id}', 1, event)">+</button>
+                    `;
+                }
+
+                // Hiển thị Vé Đỏ
+                if (order.ticketRedQty > 0) {
+                    itemsHtml += `
+                        <div class="item-row ticket-red">
+                            <span>Vé Đỏ (Combo 2)</span>
+                            <span>x${order.ticketRedQty}</span>
+                        </div>
+                    `;
+                }
+
+                // Hiển thị danh sách nước uống nếu có
+                if (order.drinks) {
+                    Object.keys(order.drinks).forEach(drinkId => {
+                        const drink = order.drinks[drinkId];
+                        itemsHtml += `
+                            <div class="item-row">
+                                <span>${escapeHtml(drink.name)}</span>
+                                <span>x${drink.quantity}</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                if (itemsHtml === '') {
+                    itemsHtml = `<div style="text-align:center; font-style:italic; color:#a0aec0; font-size:12.5px;">Khách chưa chọn vé & món</div>`;
+                }
+
+                // Kiểm tra tên / mã nhân viên thực hiện đơn
+                let staffDisplay = order.confirmedBy || order.confirmedByCode || order.staffName || order.staffCode || 'Chưa ghi nhận';
+
+                html += `
+                    <div class="order-card animate__animated animate__fadeIn">
+                        <div>
+                            <div class="order-header">
+                                <div class="cust-name">${escapeHtml(order.customerName)}</div>
+                                <div class="cust-phone">${escapeHtml(order.customerPhone)}</div>
+                                <div class="staff-tag">Nhân viên: ${escapeHtml(staffDisplay)}</div>
+                                <div class="order-time">${order.createdAt || 'Không rõ thời gian'}</div>
+                            </div>
+                            
+                            <!-- Nút bấm Xổ xuống / Thu gọn chi tiết -->
+                            <button class="btn-toggle-details" onclick="toggleOrderDetails('${key}')">
+                                <span>Chi tiết món order</span>
+                                <span id="arrow-${key}">▼</span>
+                            </button>
+
+                            <!-- Khu vực chứa chi tiết (ẩn mặc định) -->
+                            <div class="items-section" id="details-${key}">
+                                ${itemsHtml}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="total-row">
+                                <span>TỔNG CỘNG:</span>
+                                <span>${parseInt(order.totalAmount || 0).toLocaleString('vi-VN')}đ</span>
+                            </div>
+                            <div class="actions-wrapper">
+                                <button class="btn-action btn-edit" onclick="openEditModal('${key}')">Sửa thông tin</button>
+                                <button class="btn-action btn-delete" onclick="deleteOrder('${key}')">Xóa đơn</button>
+                            </div>
                         </div>
                     </div>
                 `;
             });
 
+            gridContainer.innerHTML = html;
+        }, (error) => {
+            console.error("Lỗi đồng bộ Realtime: ", error);
+        });
+    }
+
+    // HÀM TOGGLE ĐỂ XỔ XUỐNG HOẶC THU GỌN CHI TIẾT ĐƠN HÀNG
+    function toggleOrderDetails(key) {
+        const detailsContainer = document.getElementById(`details-${key}`);
+        const arrow = document.getElementById(`arrow-${key}`);
+        
+        if (detailsContainer.classList.contains('expanded')) {
+            detailsContainer.classList.remove('expanded');
+            arrow.innerText = '▼';
+        } else {
+            detailsContainer.classList.add('expanded');
+            arrow.innerText = '▲';
+        }
+    }
+
+    // LẮNG NGHE DANH SÁCH MÃ NHÂN VIÊN
+    function listenToStaffCodes() {
+        database.ref('staff_codes').on('value', (snapshot) => {
+            localStaffCodes = snapshot.val() || {};
+            renderStaffCodeList();
+        });
+    }
+
+    function renderStaffCodeList() {
+        const container = document.getElementById('staff-code-list-container');
+        if (!localStaffCodes || Object.keys(localStaffCodes).length === 0) {
+            container.innerHTML = `<div style="text-align: center; color: #a0aec0; font-size: 13px;">Chưa có mã nhân viên nào.</div>`;
+            return;
+        }
+
+        let html = '';
+        Object.keys(localStaffCodes).forEach(codeKey => {
+            const item = localStaffCodes[codeKey];
             html += `
-                <div class="category-item" id="cat-item-${catIdx}">
-                    <div class="category-header" onclick="toggleCategory(${catIdx})">
-                        <span>${cat.categoryName}</span>
+                <div class="staff-code-item">
+                    <div>
+                        <strong style="color: #2b2d42;">${escapeHtml(item.code || codeKey)}</strong> - 
+                        <span>${escapeHtml(item.name)}</span>
                     </div>
-                    <div class="category-content" id="cat-content-${catIdx}">
-                        ${itemsHtml}
-                    </div>
+                    <button class="btn-del-code" onclick="deleteStaffCode('${codeKey}')">Xóa</button>
                 </div>
             `;
         });
-
         container.innerHTML = html;
     }
 
-    function toggleCategory(index) {
-        const item = document.getElementById(`cat-item-${index}`);
-        const content = document.getElementById(`cat-content-${index}`);
-        const isActive = item.classList.contains('active');
-
-        document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.category-content').forEach(el => el.style.display = 'none');
-
-        if (!isActive) {
-            item.classList.add('active');
-            content.style.display = 'block';
-        }
-    }
-
-    function changeDrinkQty(drinkId, val, event) {
-        if (event) event.stopPropagation();
-
-        let currentVal = orderState.drinks[drinkId] || 0;
-        currentVal += val;
+    // THÊM MÃ NHÂN VIÊN MỚI
+    function addStaffCode() {
+        const codeInput = document.getElementById('new-staff-code');
+        const nameInput = document.getElementById('new-staff-name');
         
-        if (currentVal <= 0) {
-            delete orderState.drinks[drinkId];
-            currentVal = 0;
-        } else {
-            orderState.drinks[drinkId] = currentVal;
-        }
+        const code = codeInput.value.trim().toUpperCase();
+        const name = nameInput.value.trim();
 
-        const qtyInputs = document.querySelectorAll(`#qty-${drinkId}`);
-        qtyInputs.forEach(input => input.value = currentVal);
-
-        updateSelectedCart();
-        updateTotalCost();
-    }
-
-    function updateSelectedCart() {
-        const cartContainer = document.getElementById('selected-cart');
-        const listContainer = document.getElementById('cart-items-list');
-        const activeDrinkIds = Object.keys(orderState.drinks);
-
-        if (activeDrinkIds.length === 0) {
-            cartContainer.style.display = 'none';
+        if (!code || !name) {
+            alert("Vui lòng nhập đầy đủ Mã và Tên nhân viên!");
             return;
         }
 
-        cartContainer.style.display = 'block';
-        let html = '';
-        activeDrinkIds.forEach(id => {
-            const drink = allDrinks.find(d => d.id === id);
-            if (drink) {
-                html += `
-                    <div style="display:flex; justify-content:space-between; font-size:13.5px; margin-top:5px; color:#5c5552;">
-                        <span>🥤 <strong>${drink.name}</strong> (x${orderState.drinks[id]})</span>
-                        <span style="font-weight:700; color:#ff758f;">${(drink.price * orderState.drinks[id]).toLocaleString('vi-VN')}đ</span>
-                    </div>
-                `;
-            }
+        database.ref('staff_codes/' + code).set({
+            code: code,
+            name: name,
+            createdAt: new Date().toLocaleString('vi-VN')
+        }).then(() => {
+            codeInput.value = '';
+            nameInput.value = '';
+            alert("Đã thêm mã nhân viên thành công!");
+        }).catch(err => alert("Lỗi: " + err));
+    }
+
+    // XÓA MÃ NHÂN VIÊN
+    function deleteStaffCode(codeKey) {
+        if (confirm(`Bạn có chắc muốn xóa mã ${codeKey}?`)) {
+            database.ref('staff_codes/' + codeKey).remove();
+        }
+    }
+
+    // TÍNH TOÁN & CẬP NHẬT THANH THỐNG KÊ
+    function updateStatistics(data) {
+        let totalOrders = 0;
+        let totalRevenue = 0;
+        let totalGreen = 0;
+        let totalRed = 0;
+
+        Object.keys(data).forEach(key => {
+            const order = data[key];
+            totalOrders++;
+            totalRevenue += parseInt(order.totalAmount || 0);
+            totalGreen += parseInt(order.ticketGreenQty || 0);
+            totalRed += parseInt(order.ticketRedQty || 0);
         });
-        listContainer.innerHTML = html;
+
+        document.getElementById('stat-total-orders').innerText = totalOrders;
+        document.getElementById('stat-total-revenue').innerText = totalRevenue.toLocaleString('vi-VN') + 'đ';
+        document.getElementById('stat-green-tickets').innerText = totalGreen;
+        document.getElementById('stat-red-tickets').innerText = totalRed;
     }
 
-    function changeTicketQty(type, val) {
-        const input = document.getElementById(`qty-${type}`);
-        let currentVal = parseInt(input.value) || 0;
-        currentVal += val;
-        if (currentVal < 0) currentVal = 0;
-        input.value = currentVal;
-
-        if (type === 'green') orderState.ticketGreen = currentVal;
-        if (type === 'red') orderState.ticketRed = currentVal;
-
-        updateTotalCost();
-    }
-
-    function calculateTotal() {
-        let total = 0;
-        total += orderState.ticketGreen * 80000;  
-        total += orderState.ticketRed * 110000;  
-
-        for (const [drinkId, qty] of Object.entries(orderState.drinks)) {
-            const drink = allDrinks.find(d => d.id === drinkId);
-            if (drink) {
-                total += drink.price * qty;
-            }
+    // XÓA ĐƠN HÀNG
+    function deleteOrder(key) {
+        if (confirm("Bạn có chắc chắn muốn xóa đơn hàng này khỏi hệ thống không? Đã xóa là không thể hoàn tác!")) {
+            database.ref('orders/' + key).remove()
+                .then(() => alert("Đã xóa đơn hàng thành công!"))
+                .catch(err => alert("Có lỗi xảy ra khi xóa: " + err));
         }
-        return total;
     }
 
-    function updateTotalCost() {
-        const total = calculateTotal();
-        document.getElementById('realtime-total').innerText = total.toLocaleString('vi-VN') + 'đ';
+    // MỞ BẢNG CHỈNH SỬA CHI TIẾT ĐƠN HÀNG
+    function openEditModal(key) {
+        const order = localOrdersCache[key];
+        if (!order) return;
+
+        document.getElementById('edit-order-id').value = key;
+        document.getElementById('edit-cust-name').value = order.customerName || '';
+        document.getElementById('edit-cust-phone').value = order.customerPhone || '';
+        document.getElementById('edit-staff-code').value = order.confirmedBy || order.confirmedByCode || order.staffName || order.staffCode || '';
+        document.getElementById('edit-ticket-green').value = order.ticketGreenQty || 0;
+        document.getElementById('edit-ticket-red').value = order.ticketRedQty || 0;
+
+        document.getElementById('edit-modal').style.display = 'flex';
     }
 
-    function switchStep(currentId, nextId, animationIn = 'animate__fadeInRight') {
-        const currentStep = document.getElementById(currentId);
-        const nextStep = document.getElementById(nextId);
-        const mainContainer = document.getElementById('main-container');
-        const stickyBar = document.getElementById('sticky-confirm-bar');
-        
-        currentStep.style.display = 'none';
-        currentStep.classList.remove('active');
-        
-        nextStep.style.display = 'block';
-        nextStep.classList.add('active', 'animate__animated', animationIn);
-
-        if (nextId === 'step-3') {
-            stickyBar.style.display = 'flex';
-            mainContainer.classList.add('has-sticky-btn');
-        } else {
-            stickyBar.style.display = 'none';
-            mainContainer.classList.remove('has-sticky-btn');
-        }
-        
-        setTimeout(() => {
-            nextStep.classList.remove('animate__animated', animationIn);
-        }, 600);
+    function closeEditModal() {
+        document.getElementById('edit-modal').style.display = 'none';
     }
 
-    function triggerErrorShake() {
-        const container = document.querySelector('.container');
-        container.classList.add('animate__animated', 'animate__shakeX');
-        setTimeout(() => container.classList.remove('animate__animated', 'animate__shakeX'), 600);
+    // MỞ / ĐÓNG MODAL QUẢN LÝ MÃ NHÂN VIÊN
+    function openStaffModal() {
+        document.getElementById('staff-modal').style.display = 'flex';
     }
 
-    function goToStep2() {
-        const t = translations[currentLang];
-        const name = document.getElementById('fullname').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+    function closeStaffModal() {
+        document.getElementById('staff-modal').style.display = 'none';
+    }
 
-        if (!name || !phone) {
-            triggerErrorShake();
-            alert(t.alertFillInfo);
+    // LƯU CÁC THAY ĐỔI NGƯỢC LÊN FIREBASE
+    function saveOrderEdits() {
+        const key = document.getElementById('edit-order-id').value;
+        const currentOrder = localOrdersCache[key];
+        if (!currentOrder) return;
+
+        const updatedName = document.getElementById('edit-cust-name').value.trim();
+        const updatedPhone = document.getElementById('edit-cust-phone').value.trim();
+        const updatedStaff = document.getElementById('edit-staff-code').value.trim();
+        const updatedGreen = parseInt(document.getElementById('edit-ticket-green').value) || 0;
+        const updatedRed = parseInt(document.getElementById('edit-ticket-red').value) || 0;
+
+        if (!updatedName || !updatedPhone) {
+            alert("Tên và số điện thoại không được để trống!");
             return;
         }
 
-        if (!phoneRegex.test(phone)) {
-            triggerErrorShake();
-            alert(t.alertPhoneFormat);
-            return;
+        // Tính toán lại tổng tiền dựa trên số lượng vé mới + giá trị tiền nước đã lưu trước đó
+        let drinksCost = 0;
+        if (currentOrder.drinks) {
+            Object.keys(currentOrder.drinks).forEach(dId => {
+                drinksCost += parseInt(currentOrder.drinks[dId].subtotal || 0);
+            });
         }
+        const newTotalAmount = (updatedGreen * 80000) + (updatedRed * 110000) + drinksCost;
 
-        orderState.name = name;
-        orderState.phone = phone;
-        switchStep('step-1', 'step-2');
-    }
+        // Tiến hành cập nhật các node chỉ định lên Firebase
+        const updates = {};
+        updates[`/orders/${key}/customerName`] = updatedName;
+        updates[`/orders/${key}/customerPhone`] = updatedPhone;
+        updates[`/orders/${key}/confirmedBy`] = updatedStaff;
+        updates[`/orders/${key}/staffName`] = updatedStaff;
+        updates[`/orders/${key}/ticketGreenQty`] = updatedGreen;
+        updates[`/orders/${key}/ticketRedQty`] = updatedRed;
+        updates[`/orders/${key}/totalAmount`] = newTotalAmount;
 
-    function toggleRuleBtn() {
-        const checkbox = document.getElementById('agree-checkbox');
-        const nextBtn = document.getElementById('btn-rule-next');
-        nextBtn.disabled = !checkbox.checked;
-    }
-
-    document.addEventListener('touchstart', function (event) {
-        if (event.touches.length > 1) {
-            event.preventDefault();
-        }
-    }, { passive: false });
-
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function (event) {
-        const now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300) {
-            event.preventDefault();
-        }
-        lastTouchEnd = now;
-    }, false);
-
-    function goToStep3() {
-        switchStep('step-2', 'step-3');
-    }
-
-    function openMenuModal() {
-        document.getElementById('menu-modal').style.display = 'flex';
-    }
-
-    function closeMenuModal() {
-        document.getElementById('menu-modal').style.display = 'none';
-    }
-
-    function openRulesModal() {
-        document.getElementById('rules-modal').style.display = 'flex';
-    }
-
-    function closeRulesModal() {
-        document.getElementById('rules-modal').style.display = 'none';
-    }
-
-    function handleOrderConfirmation() {
-        if (orderState.ticketGreen === 0 && orderState.ticketRed === 0) {
-            document.getElementById('ticket-check-modal').style.display = 'flex';
-        } else {
-            triggerRiskModal();
-        }
-    }
-
-    function closeTicketCheckModal() {
-        document.getElementById('ticket-check-modal').style.display = 'none';
-    }
-
-    function acceptNoTicketAndContinue() {
-        closeTicketCheckModal();
-        triggerRiskModal();
-    }
-
-    function triggerRiskModal() {
-        document.getElementById('risk-confirm-modal').style.display = 'flex';
-    }
-
-    function closeRiskModal() {
-        document.getElementById('risk-confirm-modal').style.display = 'none';
-    }
-
-    function confirmRiskAndSubmit() {
-        closeRiskModal();
-        showConfirmation();
-    }
-
-    function showConfirmation() {
-        const t = translations[currentLang];
-        const now = new Date();
-        const dateString = now.toLocaleDateString(currentLang === 'vi' ? 'vi-VN' : 'en-US');
-        const timeString = now.toLocaleTimeString(currentLang === 'vi' ? 'vi-VN' : 'en-US', { hour: '2-digit', minute: '2-digit' });
-
-        document.getElementById('summary-name').innerText = orderState.name;
-        document.getElementById('summary-phone').innerText = orderState.phone;
-        document.getElementById('summary-time').innerText = `${timeString} - ${dateString}`;
-
-        const billContainer = document.getElementById('bill-items-container');
-        let billHtml = '';
-
-        if (orderState.ticketGreen > 0) {
-            billHtml += `
-                <div class="bill-row">
-                    <span>${t.ticketGreenBillName} x ${orderState.ticketGreen}</span>
-                    <span>${(orderState.ticketGreen * 80000).toLocaleString('vi-VN')}đ</span>
-                </div>
-            `;
-        }
-
-        if (orderState.ticketRed > 0) {
-            billHtml += `
-                <div class="bill-row">
-                    <span>${t.ticketRedBillName} x ${orderState.ticketRed}</span>
-                    <span>${(orderState.ticketRed * 110000).toLocaleString('vi-VN')}đ</span>
-                </div>
-            `;
-        }
-
-        for (const [drinkId, qty] of Object.entries(orderState.drinks)) {
-            const drink = allDrinks.find(d => d.id === drinkId);
-            if (drink) {
-                billHtml += `
-                    <div class="bill-row">
-                        <span>🍹 ${drink.name} x ${qty}</span>
-                        <span>${(drink.price * qty).toLocaleString('vi-VN')}đ</span>
-                    </div>
-                `;
-            }
-        }
-
-        if (billHtml === '') {
-            billHtml = `<div class="bill-row" style="justify-content: center; font-style: italic;">${t.noTicketBillNote}</div>`;
-        }
-
-        billContainer.innerHTML = billHtml;
-
-        const grandTotal = calculateTotal();
-        document.getElementById('summary-grand-total').innerText = grandTotal.toLocaleString('vi-VN') + 'đ';
-
-        document.getElementById('staff-pin').value = '';
-        document.getElementById('staff-pin').disabled = false;
-        document.getElementById('pin-message').style.display = 'none';
-
-        switchStep('step-3', 'step-success', 'animate__zoomIn');
-    }
-
-    function saveOrderToFirebase() {
-        const now = new Date();
-        const timestamp = now.getTime();
-        
-        let orderedDrinks = {};
-        for (const [drinkId, qty] of Object.entries(orderState.drinks)) {
-            const drink = allDrinks.find(d => d.id === drinkId);
-            if (drink) {
-                orderedDrinks[drinkId] = {
-                    name: drink.name,
-                    quantity: qty,
-                    price: drink.price,
-                    subtotal: drink.price * qty
-                };
-            }
-        }
-
-        const orderData = {
-            customerName: orderState.name,
-            customerPhone: orderState.phone,
-            ticketGreenQty: orderState.ticketGreen,
-            ticketRedQty: orderState.ticketRed,
-            drinks: orderedDrinks,
-            totalAmount: calculateTotal(),
-            createdAt: now.toLocaleString('vi-VN'),
-            timestamp: timestamp,
-            language: currentLang
-        };
-
-        database.ref('orders').push(orderData)
+        database.ref().update(updates)
             .then(() => {
-                console.log("Đơn hàng đã được đồng bộ lên Firebase thành công!");
+                alert("Cập nhật thông tin đơn hàng thành công!");
+                closeEditModal();
             })
-            .catch((error) => {
-                console.error("Lỗi khi lưu đơn hàng lên Firebase: ", error);
+            .catch(err => {
+                alert("Lỗi khi cập nhật dữ liệu: " + err);
             });
     }
 
-    function checkStaffPin() {
-        const t = translations[currentLang];
-        const pinInput = document.getElementById('staff-pin');
-        const pinMessage = document.getElementById('pin-message');
-        
-        if (pinInput.value === '29') {
-            pinMessage.style.display = 'block';
-            pinMessage.style.color = '#2e7d32';
-            pinMessage.innerText = t.pinSuccess;
-            pinInput.disabled = true;
-
-            saveOrderToFirebase();
-
-        } else if (pinInput.value.length >= 2) {
-            pinMessage.style.display = 'block';
-            pinMessage.style.color = '#d90429';
-            pinMessage.innerText = t.pinError;
-        } else {
-            pinMessage.style.display = 'none';
-        }
+    // Bảo mật chống XSS mã độc khi render text
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    function goBackToOrder() {
-        switchStep('step-success', 'step-3', 'animate__fadeInLeft');
-    }
-
+    // Chạy tải hệ thống khi mở trang
     window.onload = function() {
-        initDrinkCategories();
+        listenToOrders();
+        listenToStaffCodes();
     };
 </script>
 
