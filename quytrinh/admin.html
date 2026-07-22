@@ -49,6 +49,8 @@
             border-bottom: 2px dashed #ffccd5;
             padding-bottom: 20px;
             margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         h1 {
@@ -58,6 +60,21 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .btn-manage-staff {
+            background: #4a4e69;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-manage-staff:hover {
+            background: #2b2d42;
         }
 
         .stats-bar {
@@ -128,6 +145,18 @@
             font-weight: 600;
             color: #ff758f;
             margin-top: 2px;
+        }
+
+        .staff-tag {
+            display: inline-block;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-top: 5px;
+            border: 1px solid #c7d2fe;
         }
 
         .order-time {
@@ -204,7 +233,7 @@
             color: #e53935;
         }
 
-        /* BANNER MODAL CHỈNH SỬA */
+        /* BANNER MODAL CHỈNH SỬA & QUẢN LÝ MÃ NHÂN VIÊN */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -218,7 +247,7 @@
         .edit-modal-box {
             background: white;
             width: 90%;
-            max-width: 450px;
+            max-width: 480px;
             border-radius: 24px;
             padding: 25px;
             box-shadow: 0 15px 30px rgba(0,0,0,0.2);
@@ -246,7 +275,7 @@
             margin-bottom: 4px;
         }
 
-        .form-group input {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 12px;
             border: 2px solid #ffe5ec;
@@ -254,9 +283,10 @@
             font-size: 15px;
             outline: none;
             font-weight: 600;
+            background: white;
         }
 
-        .form-group input:focus {
+        .form-group input:focus, .form-group select:focus {
             border-color: var(--primary-pink);
         }
 
@@ -295,6 +325,39 @@
             padding: 40px;
             grid-column: 1 / -1;
         }
+
+        /* Danh sách mã nhân viên trong Modal */
+        .staff-code-list {
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ffe5ec;
+            border-radius: 12px;
+            padding: 10px;
+        }
+
+        .staff-code-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-bottom: 1px dashed #f0f0f0;
+        }
+
+        .staff-code-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn-del-code {
+            background: #ffebee;
+            color: #e53935;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+        }
     </style>
 
     <!-- FIREBASE COMPAT SDK VIA CDN -->
@@ -306,6 +369,7 @@
 <div class="admin-container animate__animated animate__fadeIn">
     <header>
         <h1>🛠️ Dashboard Quản Lý Đơn Hàng</h1>
+        <button class="btn-manage-staff" onclick="openStaffModal()">🔑 Quản Lý Mã Nhân Viên</button>
     </header>
 
     <!-- THANH THỐNG KÊ NHANH -->
@@ -334,7 +398,7 @@
     </div>
 </div>
 
-<!-- POPUP MODAL CHỈNH SỬA CHI TIẾT -->
+<!-- POPUP MODAL CHỈNH SỬA CHI TIẾT ĐƠN HÀNG -->
 <div id="edit-modal" class="modal-overlay">
     <div class="edit-modal-box animate__animated animate__zoomIn">
         <div class="modal-title">✏️ Chỉnh Sửa Đơn Hàng</div>
@@ -347,6 +411,10 @@
         <div class="form-group">
             <label>Số điện thoại</label>
             <input type="text" id="edit-cust-phone">
+        </div>
+        <div class="form-group">
+            <label>Mã / Tên Nhân Viên Order</label>
+            <input type="text" id="edit-staff-code" placeholder="Nhập mã hoặc tên nhân viên">
         </div>
         <div class="form-group">
             <label>Số lượng Vé Xanh (80k)</label>
@@ -369,6 +437,34 @@
     </div>
 </div>
 
+<!-- POPUP MODAL QUẢN LÝ MÃ NHÂN VIÊN -->
+<div id="staff-modal" class="modal-overlay">
+    <div class="edit-modal-box animate__animated animate__zoomIn">
+        <div class="modal-title">🔑 Danh Sách Mã Nhân Viên</div>
+        
+        <div class="form-group">
+            <label>Mã Xác Nhận (VD: NV01, 8888)</label>
+            <input type="text" id="new-staff-code" placeholder="Nhập mã xác nhận">
+        </div>
+        <div class="form-group">
+            <label>Tên Nhân Viên</label>
+            <input type="text" id="new-staff-name" placeholder="Nhập tên nhân viên">
+        </div>
+        <button class="btn-save" style="width: 100%; margin-top: 5px;" onclick="addStaffCode()">Thêm Mã Mới</button>
+
+        <div style="margin-top: 20px;">
+            <label style="font-size: 13px; font-weight: 700; color: #6d6875;">Mã Đã Tạo:</label>
+            <div class="staff-code-list" id="staff-code-list-container">
+                <div style="text-align: center; color: #a1a1a1; font-size: 13px;">Đang tải danh sách...</div>
+            </div>
+        </div>
+
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeStaffModal()">Đóng</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // CẤU HÌNH HỆ THỐNG FIREBASE REALTIME CỦA BẠN
     const firebaseConfig = {
@@ -387,6 +483,7 @@
     const database = firebase.database();
 
     let localOrdersCache = {}; // Lưu trữ tạm data local để chỉnh sửa nhanh
+    let localStaffCodes = {}; // Lưu danh sách mã nhân viên
 
     // LẮNG NGHE DỮ LIỆU REALTIME TỪ NODE 'orders'
     function listenToOrders() {
@@ -448,12 +545,16 @@
                     itemsHtml = `<div style="text-align:center; font-style:italic; color:#a1a1a1; font-size:13px;">Khách chưa chọn vé & món</div>`;
                 }
 
+                // Kiểm tra tên / mã nhân viên thực hiện đơn
+                let staffDisplay = order.staffName || order.staffCode || 'Chưa ghi nhận';
+
                 html += `
                     <div class="order-card animate__animated animate__fadeIn">
                         <div>
                             <div class="order-header">
                                 <div class="cust-name">${escapeHtml(order.customerName)}</div>
                                 <div class="cust-phone">📱 ${escapeHtml(order.customerPhone)}</div>
+                                <div class="staff-tag">👤 Nhân viên: ${escapeHtml(staffDisplay)}</div>
                                 <div class="order-time">⏰ ${order.createdAt || 'Không rõ thời gian'}</div>
                             </div>
                             <div class="items-section">
@@ -478,6 +579,68 @@
         }, (error) => {
             console.error("Lỗi đồng bộ Realtime: ", error);
         });
+    }
+
+    // LẮNG NGHE DANH SÁCH MÃ NHÂN VIÊN
+    function listenToStaffCodes() {
+        database.ref('staff_codes').on('value', (snapshot) => {
+            localStaffCodes = snapshot.val() || {};
+            renderStaffCodeList();
+        });
+    }
+
+    function renderStaffCodeList() {
+        const container = document.getElementById('staff-code-list-container');
+        if (!localStaffCodes || Object.keys(localStaffCodes).length === 0) {
+            container.innerHTML = `<div style="text-align: center; color: #a1a1a1; font-size: 13px;">Chưa có mã nhân viên nào.</div>`;
+            return;
+        }
+
+        let html = '';
+        Object.keys(localStaffCodes).forEach(codeKey => {
+            const item = localStaffCodes[codeKey];
+            html += `
+                <div class="staff-code-item">
+                    <div>
+                        <strong style="color: #ff758f;">${escapeHtml(item.code || codeKey)}</strong> - 
+                        <span>${escapeHtml(item.name)}</span>
+                    </div>
+                    <button class="btn-del-code" onclick="deleteStaffCode('${codeKey}')">Xóa</button>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    // THÊM MÃ NHÂN VIÊN MỚI
+    function addStaffCode() {
+        const codeInput = document.getElementById('new-staff-code');
+        const nameInput = document.getElementById('new-staff-name');
+        
+        const code = codeInput.value.trim().toUpperCase();
+        const name = nameInput.value.trim();
+
+        if (!code || !name) {
+            alert("Vui lòng nhập đầy đủ Mã và Tên nhân viên!");
+            return;
+        }
+
+        database.ref('staff_codes/' + code).set({
+            code: code,
+            name: name,
+            createdAt: new Date().toLocaleString('vi-VN')
+        }).then(() => {
+            codeInput.value = '';
+            nameInput.value = '';
+            alert("Đã thêm mã nhân viên thành công!");
+        }).catch(err => alert("Lỗi: " + err));
+    }
+
+    // XÓA MÃ NHÂN VIÊN
+    function deleteStaffCode(codeKey) {
+        if (confirm(`Bạn có chắc muốn xóa mã ${codeKey}?`)) {
+            database.ref('staff_codes/' + codeKey).remove();
+        }
     }
 
     // TÍNH TOÁN & CẬP NHẬT THANH THỐNG KÊ
@@ -516,8 +679,9 @@
         if (!order) return;
 
         document.getElementById('edit-order-id').value = key;
-        document.getElementById('edit-cust-name').value = order.customerName;
-        document.getElementById('edit-cust-phone').value = order.customerPhone;
+        document.getElementById('edit-cust-name').value = order.customerName || '';
+        document.getElementById('edit-cust-phone').value = order.customerPhone || '';
+        document.getElementById('edit-staff-code').value = order.staffName || order.staffCode || '';
         document.getElementById('edit-ticket-green').value = order.ticketGreenQty || 0;
         document.getElementById('edit-ticket-red').value = order.ticketRedQty || 0;
 
@@ -528,6 +692,15 @@
         document.getElementById('edit-modal').style.display = 'none';
     }
 
+    // MỞ / ĐÓNG MODAL QUẢN LÝ MÃ NHÂN VIÊN
+    function openStaffModal() {
+        document.getElementById('staff-modal').style.display = 'flex';
+    }
+
+    function closeStaffModal() {
+        document.getElementById('staff-modal').style.display = 'none';
+    }
+
     // LƯU CÁC THAY ĐỔI NGƯỢC LÊN FIREBASE
     function saveOrderEdits() {
         const key = document.getElementById('edit-order-id').value;
@@ -536,6 +709,7 @@
 
         const updatedName = document.getElementById('edit-cust-name').value.trim();
         const updatedPhone = document.getElementById('edit-cust-phone').value.trim();
+        const updatedStaff = document.getElementById('edit-staff-code').value.trim();
         const updatedGreen = parseInt(document.getElementById('edit-ticket-green').value) || 0;
         const updatedRed = parseInt(document.getElementById('edit-ticket-red').value) || 0;
 
@@ -557,6 +731,8 @@
         const updates = {};
         updates[`/orders/${key}/customerName`] = updatedName;
         updates[`/orders/${key}/customerPhone`] = updatedPhone;
+        updates[`/orders/${key}/staffCode`] = updatedStaff;
+        updates[`/orders/${key}/staffName`] = updatedStaff;
         updates[`/orders/${key}/ticketGreenQty`] = updatedGreen;
         updates[`/orders/${key}/ticketRedQty`] = updatedRed;
         updates[`/orders/${key}/totalAmount`] = newTotalAmount;
@@ -580,6 +756,7 @@
     // Chạy tải hệ thống khi mở trang
     window.onload = function() {
         listenToOrders();
+        listenToStaffCodes();
     };
 </script>
 
