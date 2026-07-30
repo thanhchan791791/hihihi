@@ -56,18 +56,6 @@
             padding-bottom: 110px;
         }
 
-        .decor-bubble {
-            position: absolute;
-            font-size: 24px;
-            opacity: 0.3;
-            animation: float 4s ease-in-out infinite alternate;
-            pointer-events: none;
-        }
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-10px) rotate(15deg); }
-        }
-
         /* KHU VỰC THÀNH PHẦN LOGO QUÁN */
         .logo-wrapper {
             display: flex;
@@ -394,12 +382,16 @@
             display: block;
         }
 
+        /* TÁCH KHU VỰC MENU NƯỚC/THỨC ĂN RA XA KHỎI KHU VỰC VÉ VÀ TẠO ĐƯỜNG PHÂN CÁCH RÕ RÀNG */
         .search-drink-box {
             background: #fff;
             border: 2px solid #ffe5ec;
             border-radius: 20px;
             padding: 15px;
+            margin-top: 28px;
             margin-bottom: 20px;
+            border-top: 2px dashed #ffccd5;
+            padding-top: 18px;
         }
 
         /* --- BỐ CỤC PHÂN CHIA THỨC ĂN & NƯỚC UỐNG --- */
@@ -607,7 +599,6 @@
         }
 
         .success-card { text-align: center; }
-        .success-icon { font-size: 45px; color: #2e7d32; animation: heartBeat 1.5s infinite; margin-bottom: 15px; }
 
         .customer-summary {
             background: #fdf0f2;
@@ -676,22 +667,19 @@
 <body>
 
 <div class="container animate__animated animate__fadeInUp" id="main-container">
-    <div class="decor-bubble" style="top: 10px; left: 15px;">🐾</div>
-    <div class="decor-bubble" style="top: 40px; right: 20px;">🐱</div>
-    <div class="decor-bubble" style="bottom: 20px; left: 20px;">🐶</div>
 
     <!-- BƯỚC 0: CHỌN NGÔN NGỮ -->
     <div id="step-0" class="step active">
         <div class="logo-wrapper">
             <img src="logo.png" class="shop-logo" alt="Logo Quán">
         </div>
-        <h2>Chọn Ngôn Ngữ / Language ✨</h2>
+        <h2>Chọn Ngôn Ngữ / Language</h2>
         <p style="text-align: center; font-size: 14px; color: #8d99ae; margin-bottom: 25px;">Vui lòng chọn ngôn ngữ của bạn / Please select your language</p>
         <button class="lang-option-btn" onclick="selectLanguage('vi')">
-            <span>🇻🇳</span> Tiếng Việt
+            Tiếng Việt
         </button>
         <button class="lang-option-btn" onclick="selectLanguage('en')">
-            <span>🇬🇧</span> English
+            English
         </button>
     </div>
 
@@ -700,7 +688,7 @@
         <div class="logo-wrapper">
             <img src="logo.png" class="shop-logo" alt="Logo Quán">
         </div>
-        <h2 id="txt-step1-title">Chào Bạn Nhỏ! ✨</h2>
+        <h2 id="txt-step1-title">Chào Bạn Nhỏ!</h2>
         <p id="txt-step1-sub" style="text-align: center; font-size: 14px; color: #8d99ae; margin-bottom: 20px;">Điền thông tin đặt lịch hẹn với các bé thú cưng nha!</p>
         <div class="form-group">
             <label for="fullname" id="lbl-fullname">Họ tên của bạn</label>
@@ -710,43 +698,43 @@
             <label for="phone" id="lbl-phone">Số điện thoại (Nhập đúng 10 số)</label>
             <input type="tel" id="phone" placeholder="Ví dụ: 0912345678" autocomplete="off" maxlength="10">
         </div>
-        <button class="btn" id="btn-step1-next" onclick="goToStep2()">Tiếp tục nhận vé ➔</button>
+        <button class="btn" id="btn-step1-next" onclick="goToStep2()">Tiếp tục nhận vé -></button>
     </div>
 
     <!-- BƯỚC 2 -->
     <div id="step-2" class="step">
-        <h2 id="txt-step2-title">Nội Quy Quán Nhỏ 📋</h2>
+        <h2 id="txt-step2-title">Nội Quy Quán Nhỏ</h2>
         <div class="rules-img-container" onclick="openRulesModal()">
             <img id="rules-img-element" src="luuy.png" class="rules-img" alt="Lưu ý quan trọng" onerror="this.src='luuy.jpg'">
-            <p id="txt-rules-zoom-note" style="font-size: 11px; color:#a1a1a1; margin-top:5px; font-weight:bold;">🔍 Bấm vào ảnh để xem lưu ý rõ hơn</p>
+            <p id="txt-rules-zoom-note" style="font-size: 11px; color:#a1a1a1; margin-top:5px; font-weight:bold;">Bấm vào ảnh để xem lưu ý rõ hơn</p>
         </div>
         <label class="checkbox-container">
             <input type="checkbox" id="agree-checkbox" onchange="toggleRuleBtn()">
             <span id="txt-agree-rules">TÔI ĐÃ ĐỌC VÀ HIỂU NỘI QUY</span>
         </label>
-        <button class="btn" id="btn-rule-next" disabled onclick="goToStep3()">Đồng ý & Tiếp tục ➔</button>
+        <button class="btn" id="btn-rule-next" disabled onclick="goToStep3()">Đồng ý & Tiếp tục -></button>
     </div>
 
     <!-- BƯỚC 3 -->
     <div id="step-3" class="step">
-        <h2 id="txt-step3-title">Chọn Vé & Gọi Món 🍕</h2>
+        <h2 id="txt-step3-title">Chọn Vé & Gọi Món</h2>
         <div class="menu-top-section">
             <div class="menu-img-container" onclick="openMenuModal()">
                 <img id="menu-img-element" src="menu.png" class="menu-img" alt="Menu Nước Uống" onerror="this.src='menu.jpg'">
-                <p id="txt-menu-zoom-note" style="font-size: 11px; color:#a1a1a1; margin-top:5px; font-weight:bold;">🔍 Bấm vào ảnh để xem toàn màn hình</p>
+                <p id="txt-menu-zoom-note" style="font-size: 11px; color:#a1a1a1; margin-top:5px; font-weight:bold;">Bấm vào ảnh để xem toàn màn hình</p>
             </div>
         </div>
         <div class="notice-box" id="txt-notice-box">
-            📌 Vé vào cửa KHÔNG BẮT BUỘC mua trước.<br>Nước uống KHÔNG BẮT BUỘC, bạn tùy ý lựa chọn nhé!
+            Vé vào cửa BẮT BUỘC mua trước.<br>Nước uống KHÔNG BẮT BUỘC, bạn tùy ý lựa chọn nhé!
         </div>
 
         <!-- VÉ XANH (COMBO 1) -->
         <div class="ticket-option green animate__animated animate__fadeInLeft">
             <div class="ticket-info green">
-                <h3 id="txt-ticket-green-title">Vé Xanh 🌱 (Combo 1)</h3>
+                <h3 id="txt-ticket-green-title">Vé Xanh (Combo 1)</h3>
                 <span class="ticket-price" id="txt-ticket-green-price">80.000đ / vé</span>
                 <p class="ticket-description" id="txt-ticket-green-desc">
-                    📍 Trải nghiệm: Tham quan tự do, vuốt ve và chơi đùa thoải mái cùng các bé Chó, bé Mèo siêu thân thiện tại sảnh chính của quán.
+                    Trải nghiệm: Tham quan tự do, vuốt ve và chơi đùa thoải mái cùng các bé Chó, bé Mèo siêu thân thiện tại sảnh chính của quán.
                 </p>
                 <div class="included-animals">
                     <span class="animal-tag" id="tag-dog">Chó</span><span class="animal-tag" id="tag-cat">Mèo</span>
@@ -761,12 +749,12 @@
 
         <!-- VÉ ĐỎ (COMBO 2) -->
         <div class="ticket-option red animate__animated animate__fadeInRight">
-            <div class="badge-hot">🔥 HOT</div>
+            <div class="badge-hot">HOT</div>
             <div class="ticket-info red">
-                <h3 id="txt-ticket-red-title">Vé Đỏ 👑 (Combo 2)</h3>
+                <h3 id="txt-ticket-red-title">Vé Đỏ (Combo 2)</h3>
                 <span class="ticket-price" id="txt-ticket-red-price">110.000đ / vé</span>
                 <p class="ticket-description" id="txt-ticket-red-desc">
-                    📍 Trải nghiệm: Đầy đủ khu vực Vé Xanh + Được vào khu VIP vui chơi, ôm ấp "bộ trưởng ngoại giao" Capybara và cho các bé Gấu Mèo (Raccoon) tinh nghịch ăn!
+                    Trải nghiệm: Đầy đủ khu vực Vé Xanh + Được vào khu VIP vui chơi, ôm ấp "bộ trưởng ngoại giao" Capybara và cho các bé Gấu Mèo (Raccoon) tinh nghịch ăn!
                 </p>
                 <div class="included-animals">
                     <span class="animal-tag" id="tag-dog2">Chó</span><span class="animal-tag" id="tag-cat2">Mèo</span><span class="animal-tag">Capybara</span><span class="animal-tag" id="tag-raccoon">Gấu Mèo</span>
@@ -779,30 +767,29 @@
             </div>
         </div>
 
-        <!-- KHU VỰC CHỌN MÓN ĐƯỢC CHIA TẢI 2 TAB THỨC ĂN VÀ NƯỚC UỐNG -->
+        <!-- KHU VỰC CHỌN MÓN ĐƯỢC ĐƯA NƯỚC UỐNG LÊN TRƯỚC VÀ TÁCH TÁCH XA RA -->
         <div class="search-drink-box">
-            <label style="color: #ff758f; margin-bottom: 12px; display: block;" id="lbl-select-drink">🍹 Chọn danh mục món bên dưới:</label>
+            <label style="color: #ff758f; margin-bottom: 12px; display: block;" id="lbl-select-drink">Chọn danh mục món bên dưới:</label>
             
             <div class="menu-tabs">
-                 <button class="menu-tab-btn" id="tab-btn-drinks" onclick="switchMenuTab('drinks')">
-                    🍹 <span id="txt-tab-drinks">NƯỚC UỐNG</span>
+                <button class="menu-tab-btn active" id="tab-btn-drinks" onclick="switchMenuTab('drinks')">
+                    <span id="txt-tab-drinks">NƯỚC UỐNG</span>
                 </button>
-                <button class="menu-tab-btn active" id="tab-btn-food" onclick="switchMenuTab('food')">
-                    🌾 <span id="txt-tab-food">THỨC ĂN THÚ</span>
+                <button class="menu-tab-btn" id="tab-btn-food" onclick="switchMenuTab('food')">
+                    <span id="txt-tab-food">THỨC ĂN THÚ</span>
                 </button>
-               
             </div>
 
-            <div id="tab-content-food" class="menu-tab-content active">
-                <div id="food-categories-container"></div>
-            </div>
-
-            <div id="tab-content-drinks" class="menu-tab-content">
+            <div id="tab-content-drinks" class="menu-tab-content active">
                 <div id="drinks-categories-container"></div>
             </div>
 
+            <div id="tab-content-food" class="menu-tab-content">
+                <div id="food-categories-container"></div>
+            </div>
+
             <div class="selected-drinks-cart" id="selected-cart">
-                <div class="cart-title" id="txt-cart-title">🛒 Món bạn đã chọn:</div>
+                <div class="cart-title" id="txt-cart-title">Món bạn đã chọn:</div>
                 <div id="cart-items-list"></div>
             </div>
         </div>
@@ -815,15 +802,14 @@
 
     <!-- BƯỚC THÀNH CÔNG -->
     <div id="step-success" class="step success-card">
-        <div class="success-icon">❤️</div>
         <h2 id="txt-success-title">Đặt Vé Thành Công!</h2>
         <div class="customer-summary">
-            <p><strong id="lbl-sum-name">👤 Khách hàng:</strong> <span id="summary-name" style="color:#ff758f; font-weight:700;"></span></p>
-            <p><strong id="lbl-sum-phone">📞 Số điện thoại:</strong> <span id="summary-phone" style="font-weight:600;"></span></p>
-            <p><strong id="lbl-sum-time">⏰ Thời gian đặt vé:</strong> <span id="summary-time" style="color: #4f46e5; font-weight:700;"></span></p>
+            <p><strong id="lbl-sum-name">Khách hàng:</strong> <span id="summary-name" style="color:#ff758f; font-weight:700;"></span></p>
+            <p><strong id="lbl-sum-phone">Số điện thoại:</strong> <span id="summary-phone" style="font-weight:600;"></span></p>
+            <p><strong id="lbl-sum-time">Thời gian đặt vé:</strong> <span id="summary-time" style="color: #4f46e5; font-weight:700;"></span></p>
         </div>
         <div class="bill-details">
-            <div class="bill-title" id="txt-bill-title">🧾 CHI TIẾT HÓA ĐƠN</div>
+            <div class="bill-title" id="txt-bill-title">CHI TIẾT HÓA ĐƠN</div>
             <div id="bill-items-container"></div>
             <div class="bill-total-row">
                 <span id="lbl-sum-grand-total">Tổng tiền thanh toán:</span>
@@ -831,20 +817,20 @@
             </div>
         </div>
         <div class="staff-pin-box" id="pin-area">
-            <label for="staff-pin" style="color: #ff4d6d; text-align: left; display: block;" id="lbl-staff-pin">🔑 Nhân viên nhập mã PIN để xác nhận món:</label>
+            <label for="staff-pin" style="color: #ff4d6d; text-align: left; display: block;" id="lbl-staff-pin">Nhân viên nhập mã PIN để xác nhận món:</label>
             <div class="pin-wrapper">
                 <input type="password" id="staff-pin" class="pin-input" placeholder="Nhập số PIN..." pattern="[0-9]*" inputmode="numeric" oninput="checkStaffPin()">
             </div>
             <p id="pin-message" style="font-size: 13px; font-weight: 700; margin-top: 6px; text-align: left; display: none;"></p>
-            <button class="btn" id="btn-back-order" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); margin-top: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" onclick="goBackToOrder()">⬅ Quay lại chọn thêm vé/món</button>
+            <button class="btn" id="btn-back-order" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); margin-top: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" onclick="goBackToOrder()">Quay lại chọn thêm vé/món</button>
         </div>
-        <p class="note-staff" id="txt-note-staff">Hãy xuất trình màn hình hóa đơn này cho nhân viên quầy để đối chiếu và nhận vòng tay nha! ✨</p>
+        <p class="note-staff" id="txt-note-staff">Hãy xuất trình màn hình hóa đơn này cho nhân viên quầy để đối chiếu và nhận vòng tay nha!</p>
     </div>
 </div>
 
 <!-- THANH CỐ ĐỊNH NÚT XÁC NHẬN ĐƠN HÀNG (STICKY BOTTOM) -->
 <div id="sticky-confirm-bar" class="sticky-confirm-wrapper" style="display: none;">
-    <button class="btn btn-sticky" id="btn-sticky-confirm" onclick="handleOrderConfirmation()">Xác nhận đơn hàng ➔</button>
+    <button class="btn btn-sticky" id="btn-sticky-confirm" onclick="handleOrderConfirmation()">Xác nhận đơn hàng -></button>
 </div>
 
 <!-- MODALS -->
@@ -859,7 +845,7 @@
 <!-- MODAL CẢNH BÁO CHƯA MUA VÉ TRƯỚC -->
 <div id="ticket-check-modal" class="modal-overlay" style="background: rgba(0,0,0,0.6);">
     <div class="confirm-alert-box animate__animated animate__bounceIn">
-        <h3 id="txt-modal-tcheck-title">💬 Bạn ơi lưu ý nha!</h3>
+        <h3 id="txt-modal-tcheck-title">Bạn ơi lưu ý nha!</h3>
         <p id="txt-modal-tcheck-desc">Bạn có chắc chắn là mình đã mua vé chưa? Nhấn "Đúng vậy" nếu bạn đã mua vé trước đó, hoặc muốn vào trong rồi order thêm sau nha!</p>
         <div class="confirm-buttons">
             <button class="btn-confirm-no" id="btn-tcheck-no" onclick="closeTicketCheckModal()">Quay lại</button>
@@ -870,7 +856,7 @@
 
 <div id="risk-confirm-modal" class="modal-overlay" style="background: rgba(0,0,0,0.6);">
     <div class="confirm-alert-box animate__animated animate__bounceIn">
-        <h3 id="txt-modal-risk-title">⚠️Một chút lưu ý nhỏ bạn nha!</h3>
+        <h3 id="txt-modal-risk-title">Một chút lưu ý nhỏ bạn nha!</h3>
         <p id="txt-modal-risk-desc">Các bé thú cưng đôi lúc sẽ vô tình cào nhẹ hoặc phản ứng tự vệ nếu chúng ta tương tác sai cách (không đúng nội quy). Để đảm bảo an toàn, bạn vui lòng tự lưu ý và đồng ý chịu trách nhiệm cho các rủi ro va quẹt, trầy xước ngoài ý muốn trong quá trình vui chơi nhé.</p>
         <div class="confirm-buttons">
             <button class="btn-confirm-no" id="btn-risk-no" onclick="closeRiskModal()">Hủy bỏ</button>
@@ -913,7 +899,7 @@
         vi: {
             food: [
                 {
-                    categoryName: "🌾 THỨC ĂN CHO THÚ (PET FOOD)",
+                    categoryName: "THỨC ĂN CHO THÚ (PET FOOD)",
                     drinks: [
                         { id: "pf1", name: "Cỏ cho Capy", price: 20000 },
                         { id: "pf2", name: "Ciao", price: 15000 },
@@ -926,7 +912,7 @@
             ],
             drinks: [
                 {
-                    categoryName: "☕ CÀ PHÊ (COFFEE)",
+                    categoryName: "CÀ PHÊ (COFFEE)",
                     drinks: [
                         { id: "cf1", name: "Espresso đá", price: 40000 },
                         { id: "cf2", name: "Cà phê sữa đá", price: 40000 },
@@ -939,7 +925,7 @@
                     ]
                 },
                 {
-                    categoryName: "🍵 CÁC LOẠI TRÀ (TEA)",
+                    categoryName: "CÁC LOẠI TRÀ (TEA)",
                     drinks: [
                         { id: "te1", name: "Trà đào", price: 40000 },
                         { id: "te2", name: "Trà đào cam sả", price: 40000 },
@@ -951,7 +937,7 @@
                     ]
                 },
                 {
-                    categoryName: "🥤 SODA SẢNG KHOÁI",
+                    categoryName: "SODA SẢNG KHOÁI",
                     drinks: [
                         { id: "sd1", name: "Soda kiwi", price: 40000 },
                         { id: "sd2", name: "Soda blue", price: 40000 },
@@ -961,7 +947,7 @@
                     ]
                 },
                 {
-                    categoryName: "🍧 SỮA CHUA (YOGURT)",
+                    categoryName: "SỮA CHUA (YOGURT)",
                     drinks: [
                         { id: "yg1", name: "Sữa chua đá", price: 40000 },
                         { id: "yg2", name: "Sữa chua trân châu đường đen", price: 40000 },
@@ -971,7 +957,7 @@
                     ]
                 },
                 {
-                    categoryName: "❄️ ĐÁ XAY (ICE BLENDED)",
+                    categoryName: "ĐÁ XAY (ICE BLENDED)",
                     drinks: [
                         { id: "ib1", name: "Sinh tố việt quất", price: 40000 },
                         { id: "ib2", name: "Matcha blend", price: 40000 },
@@ -983,7 +969,7 @@
                     ]
                 },
                 {
-                    categoryName: "🥛 SỮA TƯƠI (MILK)",
+                    categoryName: "SỮA TƯƠI (MILK)",
                     drinks: [
                         { id: "mk1", name: "Sữa tươi chocolate", price: 40000 },
                         { id: "mk2", name: "Sữa tươi matcha", price: 40000 },
@@ -993,7 +979,7 @@
                     ]
                 },
                 {
-                    categoryName: "🧋 TRÀ SỮA (MILK TEA)",
+                    categoryName: "TRÀ SỮA (MILK TEA)",
                     drinks: [
                         { id: "mt1", name: "Trà sữa truyền thống", price: 40000 },
                         { id: "mt2", name: "Trà sữa trân châu đường đen", price: 40000 },
@@ -1003,7 +989,7 @@
                     ]
                 },
                 {
-                    categoryName: "🥫 NƯỚC NGỌT & NƯỚC SUỐI",
+                    categoryName: "NƯỚC NGỌT & NƯỚC SUỐI",
                     drinks: [
                         { id: "nn1", name: "Coca-7up", price: 40000 },
                         { id: "nn2", name: "Sting", price: 40000 },
@@ -1015,7 +1001,7 @@
         en: {
             food: [
                 {
-                    categoryName: "🌾 PET FOOD",
+                    categoryName: "PET FOOD",
                     drinks: [
                         { id: "pf1", name: "Grass for Capybara", price: 20000 },
                         { id: "pf2", name: "Ciao Treats", price: 15000 },
@@ -1028,7 +1014,7 @@
             ],
             drinks: [
                 {
-                    categoryName: "☕ COFFEE",
+                    categoryName: "COFFEE",
                     drinks: [
                         { id: "cf1", name: "Iced Espresso", price: 40000 },
                         { id: "cf2", name: "Iced Condensed Milk Coffee", price: 40000 },
@@ -1041,7 +1027,7 @@
                     ]
                 },
                 {
-                    categoryName: "🍵 TEA SELECTION",
+                    categoryName: "TEA SELECTION",
                     drinks: [
                         { id: "te1", name: "Peach Tea", price: 40000 },
                         { id: "te2", name: "Peach Orange Lemongrass Tea", price: 40000 },
@@ -1053,7 +1039,7 @@
                     ]
                 },
                 {
-                    categoryName: "🥤 REFRESHING SODA",
+                    categoryName: "REFRESHING SODA",
                     drinks: [
                         { id: "sd1", name: "Kiwi Soda", price: 40000 },
                         { id: "sd2", name: "Blue Curacao Soda", price: 40000 },
@@ -1063,7 +1049,7 @@
                     ]
                 },
                 {
-                    categoryName: "🍧 YOGURT",
+                    categoryName: "YOGURT",
                     drinks: [
                         { id: "yg1", name: "Iced Yogurt", price: 40000 },
                         { id: "yg2", name: "Yogurt with Black Sugar Boba", price: 40000 },
@@ -1073,7 +1059,7 @@
                     ]
                 },
                 {
-                    categoryName: "❄️ ICE BLENDED",
+                    categoryName: "ICE BLENDED",
                     drinks: [
                         { id: "ib1", name: "Blueberry Smoothie", price: 40000 },
                         { id: "ib2", name: "Matcha Blend", price: 40000 },
@@ -1085,7 +1071,7 @@
                     ]
                 },
                 {
-                    categoryName: "🥛 FRESH MILK",
+                    categoryName: "FRESH MILK",
                     drinks: [
                         { id: "mk1", name: "Chocolate Fresh Milk", price: 40000 },
                         { id: "mk2", name: "Matcha Fresh Milk", price: 40000 },
@@ -1095,7 +1081,7 @@
                     ]
                 },
                 {
-                    categoryName: "🧋 MILK TEA",
+                    categoryName: "MILK TEA",
                     drinks: [
                         { id: "mt1", name: "Traditional Milk Tea", price: 40000 },
                         { id: "mt2", name: "Black Sugar Boba Milk Tea", price: 40000 },
@@ -1105,7 +1091,7 @@
                     ]
                 },
                 {
-                    categoryName: "🥫 SOFT DRINKS & WATER",
+                    categoryName: "SOFT DRINKS & WATER",
                     drinks: [
                         { id: "nn1", name: "Coca-Cola / 7Up", price: 40000 },
                         { id: "nn2", name: "Sting Energy Drink", price: 40000 },
@@ -1130,118 +1116,118 @@
         vi: {
             rulesImg: "luuy.png",
             menuImg: "menu.png",
-            step1Title: "Chào Bạn Nhỏ! ✨",
+            step1Title: "Chào Bạn Nhỏ!",
             step1Sub: "Điền thông tin đặt lịch hẹn với các bé thú cưng nha!",
             lblFullname: "Họ tên của bạn",
             placeholderName: "Ví dụ: Nguyễn Văn A",
             lblPhone: "Số điện thoại (Nhập đúng 10 số)",
             placeholderPhone: "Ví dụ: 0912345678",
-            btnStep1Next: "Tiếp tục nhận vé ➔",
-            step2Title: "Nội Quy Quán Nhỏ 📋",
-            rulesZoomNote: "🔍 Bấm vào ảnh để xem lưu ý rõ hơn",
+            btnStep1Next: "Tiếp tục nhận vé ->",
+            step2Title: "Nội Quy Quán Nhỏ",
+            rulesZoomNote: "Bấm vào ảnh để xem lưu ý rõ hơn",
             agreeRules: "TÔI ĐÃ ĐỌC VÀ HIỂU NỘI QUY",
-            btnRuleNext: "Đồng ý & Tiếp tục ➔",
-            step3Title: "Chọn Vé & Gọi Món 🍕",
-            menuZoomNote: "🔍 Bấm vào ảnh để xem toàn màn hình",
-            noticeBox: "📌 Vé vào cửa KHÔNG BẮT BUỘC mua trước.<br>Nước uống KHÔNG BẮT BUỘC, bạn tùy ý lựa chọn nhé!",
-            ticketGreenTitle: "Vé Xanh 🌱 (Combo 1)",
+            btnRuleNext: "Đồng ý & Tiếp tục ->",
+            step3Title: "Chọn Vé & Gọi Món",
+            menuZoomNote: "Bấm vào ảnh để xem toàn màn hình",
+            noticeBox: "Vé vào cửa BẮT BUỘC mua trước.<br>Nước uống KHÔNG BẮT BUỘC, bạn tùy ý lựa chọn nhé!",
+            ticketGreenTitle: "Vé Xanh (Combo 1)",
             ticketGreenPrice: "80.000đ / vé",
-            ticketGreenDesc: "📍 Trải nghiệm: Tham quan tự do, vuốt ve và chơi đùa thoải mái cùng các bé Chó, bé Mèo siêu thân thiện tại sảnh chính của quán.",
+            ticketGreenDesc: "Trải nghiệm: Tham quan tự do, vuốt ve và chơi đùa thoải mái cùng các bé Chó, bé Mèo siêu thân thiện tại sảnh chính của quán.",
             tagDog: "Chó",
             tagCat: "Mèo",
             tagRaccoon: "Gấu Mèo",
-            ticketRedTitle: "Vé Đỏ 👑 (Combo 2)",
+            ticketRedTitle: "Vé Đỏ (Combo 2)",
             ticketRedPrice: "110.000đ / vé",
-            ticketRedDesc: "📍 Trải nghiệm: Đầy đủ khu vực Vé Xanh + Được vào khu VIP vui chơi, ôm ấp \"bộ trưởng ngoại giao\" Capybara và cho các bé Gấu Mèo (Raccoon) tinh nghịch ăn!",
-            selectDrink: "🍹 Chọn danh mục món bên dưới:",
+            ticketRedDesc: "Trải nghiệm: Đầy đủ khu vực Vé Xanh + Được vào khu VIP vui chơi, ôm ấp \"bộ trưởng ngoại giao\" Capybara và cho các bé Gấu Mèo (Raccoon) tinh nghịch ăn!",
+            selectDrink: "Chọn danh mục món bên dưới:",
             tabFood: "THỨC ĂN THÚ",
             tabDrinks: "NƯỚC UỐNG",
-            cartTitle: "🛒 Món bạn đã chọn:",
+            cartTitle: "Món bạn đã chọn:",
             totalLabel: "TỔNG CỘNG:",
-            stickyConfirm: "Xác nhận đơn hàng ➔",
+            stickyConfirm: "Xác nhận đơn hàng ->",
             successTitle: "Đặt Vé Thành Công!",
-            sumName: "👤 Khách hàng:",
-            sumPhone: "📞 Số điện thoại:",
-            sumTime: "⏰ Thời gian đặt vé:",
-            billTitle: "🧾 CHI TIẾT HÓA ĐƠN",
+            sumName: "Khách hàng:",
+            sumPhone: "Số điện thoại:",
+            sumTime: "Thời gian đặt vé:",
+            billTitle: "CHI TIẾT HÓA ĐƠN",
             sumGrandTotal: "Tổng tiền thanh toán:",
-            staffPin: "🔑 Nhân viên nhập mã PIN để xác nhận món:",
+            staffPin: "Nhân viên nhập mã PIN để xác nhận món:",
             pinPlaceholder: "Nhập số PIN...",
-            btnBackOrder: "⬅ Quay lại chọn thêm vé/món",
-            noteStaff: "Hãy xuất trình màn hình hóa đơn này cho nhân viên quầy để đối chiếu và nhận vòng tay nha! ✨",
-            tcheckTitle: "💬 Bạn ơi lưu ý nha!",
+            btnBackOrder: "Quay lại chọn thêm vé/món",
+            noteStaff: "Hãy xuất trình màn hình hóa đơn này cho nhân viên quầy để đối chiếu và nhận vòng tay nha!",
+            tcheckTitle: "Bạn ơi lưu ý nha!",
             tcheckDesc: "Bạn có chắc chắn là mình đã mua vé chưa? Nhấn \"Đúng vậy\" nếu bạn đã mua vé trước đó, hoặc muốn vào trong rồi order thêm sau nha!",
             tcheckNo: "Quay lại",
             tcheckYes: "Đúng vậy",
-            riskTitle: "⚠️Một chút lưu ý nhỏ bạn nha!",
+            riskTitle: "Một chút lưu ý nhỏ bạn nha!",
             riskDesc: "Các bé thú cưng đôi lúc sẽ vô tình cào nhẹ hoặc phản ứng tự vệ nếu chúng ta tương tác sai cách (không đúng nội quy). Để đảm bảo an toàn, bạn vui lòng tự lưu ý và đồng ý chịu trách nhiệm cho các rủi ro va quẹt, trầy xước ngoài ý muốn trong quá trình vui chơi nhé.",
             riskNo: "Hủy bỏ",
             riskYes: "Tớ đồng ý",
-            alertFillInfo: "Bạn vui lòng nhập đầy đủ Họ tên và Số điện thoại nhé! 🥰",
-            alertPhoneFormat: "Số điện thoại không đúng cấu trúc rồi ạ (Yêu cầu 10 số, bắt đầu bằng số 0)! 📱",
-            ticketGreenBillName: "🌿 Vé Xanh (Combo 1)",
-            ticketRedBillName: "👑 Vé Đỏ (Combo 2)",
+            alertFillInfo: "Bạn vui lòng nhập đầy đủ Họ tên và Số điện thoại nhé!",
+            alertPhoneFormat: "Số điện thoại không đúng cấu trúc rồi ạ (Yêu cầu 10 số, bắt đầu bằng số 0)!",
+            ticketGreenBillName: "Vé Xanh (Combo 1)",
+            ticketRedBillName: "Vé Đỏ (Combo 2)",
             noTicketBillNote: "Chưa chọn vé & món (Sẽ gọi thêm khi vào trong)",
-            pinSuccess: "✅ Mã PIN chính xác! Đơn hàng đã được xác nhận.",
-            pinError: "❌ Mã PIN không đúng, vui lòng thử lại."
+            pinSuccess: "Mã PIN chính xác! Đơn hàng đã được xác nhận.",
+            pinError: "Mã PIN không đúng, vui lòng thử lại."
         },
         en: {
             rulesImg: "luuy2.png",
             menuImg: "menu2.png",
-            step1Title: "Welcome Friend! ✨",
+            step1Title: "Welcome Friend!",
             step1Sub: "Please fill in your information to book a date with our pets!",
             lblFullname: "Your Full Name",
             placeholderName: "Example: John Doe",
             lblPhone: "Phone Number (10 digits)",
             placeholderPhone: "Example: 0912345678",
-            btnStep1Next: "Continue to Tickets ➔",
-            step2Title: "House Rules 📋",
-            rulesZoomNote: "🔍 Tap on the image to enlarge guidelines",
+            btnStep1Next: "Continue to Tickets ->",
+            step2Title: "House Rules",
+            rulesZoomNote: "Tap on the image to enlarge guidelines",
             agreeRules: "I HAVE READ & AGREE TO THE RULES",
-            btnRuleNext: "Agree & Continue ➔",
-            step3Title: "Select Tickets & Drinks 🍕",
-            menuZoomNote: "🔍 Tap on the image to view full screen menu",
-            noticeBox: "📌 Entrance tickets are NOT required in advance.<br>Drinks are OPTIONAL, feel free to choose!",
-            ticketGreenTitle: "Green Ticket 🌱 (Combo 1)",
+            btnRuleNext: "Agree & Continue ->",
+            step3Title: "Select Tickets & Drinks",
+            menuZoomNote: "Tap on the image to view full screen menu",
+            noticeBox: "Entrance tickets are REQUIRED in advance.<br>Drinks are OPTIONAL, feel free to choose!",
+            ticketGreenTitle: "Green Ticket (Combo 1)",
             ticketGreenPrice: "80,000 VND / ticket",
-            ticketGreenDesc: "📍 Experience: Free walk-through, pet and play with friendly Dogs and Cats in the main lobby.",
+            ticketGreenDesc: "Experience: Free walk-through, pet and play with friendly Dogs and Cats in the main lobby.",
             tagDog: "Dog",
             tagCat: "Cat",
             tagRaccoon: "Raccoon",
-            ticketRedTitle: "Red Ticket 👑 (Combo 2)",
+            ticketRedTitle: "Red Ticket (Combo 2)",
             ticketRedPrice: "110,000 VND / ticket",
-            ticketRedDesc: "📍 Experience: Includes all Green Ticket areas + VIP area access to hug Capybaras and feed playful Raccoons!",
-            selectDrink: "🍹 Select item category below:",
+            ticketRedDesc: "Experience: Includes all Green Ticket areas + VIP area access to hug Capybaras and feed playful Raccoons!",
+            selectDrink: "Select item category below:",
             tabFood: "PET FOOD",
             tabDrinks: "DRINKS",
-            cartTitle: "🛒 Selected Items:",
+            cartTitle: "Selected Items:",
             totalLabel: "TOTAL:",
-            stickyConfirm: "Confirm Order ➔",
+            stickyConfirm: "Confirm Order ->",
             successTitle: "Booking Successful!",
-            sumName: "👤 Customer:",
-            sumPhone: "📞 Phone Number:",
-            sumTime: "⏰ Booking Time:",
-            billTitle: "🧾 BILL DETAILS",
+            sumName: "Customer:",
+            sumPhone: "Phone Number:",
+            sumTime: "Booking Time:",
+            billTitle: "BILL DETAILS",
             sumGrandTotal: "Total Amount Due:",
-            staffPin: "🔑 Staff PIN verification:",
+            staffPin: "Staff PIN verification:",
             pinPlaceholder: "Enter PIN...",
-            btnBackOrder: "⬅ Go back to modify order",
-            noteStaff: "Please present this invoice screen to our staff at the counter to get your wristband! ✨",
-            tcheckTitle: "💬 Friendly Reminder!",
+            btnBackOrder: "Go back to modify order",
+            noteStaff: "Please present this invoice screen to our staff at the counter to get your wristband!",
+            tcheckTitle: "Friendly Reminder!",
             tcheckDesc: "Are you sure you haven't selected any tickets? Tap \"Yes\" if you bought tickets earlier or wish to order inside later!",
             tcheckNo: "Go Back",
             tcheckYes: "Yes, I understand",
-            riskTitle: "⚠️ Important Safety Note!",
+            riskTitle: "Important Safety Note!",
             riskDesc: "Our pets may accidentally scratch or react defensively if handled incorrectly. For safety, please be careful and accept personal responsibility for any accidental scratches during playtime.",
             riskNo: "Cancel",
             riskYes: "I Agree",
-            alertFillInfo: "Please enter your full Name and Phone number! 🥰",
-            alertPhoneFormat: "Invalid phone number format (10 digits required, starting with 0)! 📱",
-            ticketGreenBillName: "🌿 Green Ticket (Combo 1)",
-            ticketRedBillName: "👑 Red Ticket (Combo 2)",
+            alertFillInfo: "Please enter your full Name and Phone number!",
+            alertPhoneFormat: "Invalid phone number format (10 digits required, starting with 0)!",
+            ticketGreenBillName: "Green Ticket (Combo 1)",
+            ticketRedBillName: "Red Ticket (Combo 2)",
             noTicketBillNote: "No ticket/drink selected (Will order inside)",
-            pinSuccess: "✅ Correct PIN! Order verified successfully.",
-            pinError: "❌ Incorrect PIN, please try again."
+            pinSuccess: "Correct PIN! Order verified successfully.",
+            pinError: "Incorrect PIN, please try again."
         }
     };
 
@@ -1437,7 +1423,7 @@
             if (drink) {
                 html += `
                     <div style="display:flex; justify-content:space-between; font-size:13.5px; margin-top:5px; color:#5c5552;">
-                        <span>🛒 <strong>${drink.name}</strong> (x${orderState.drinks[id]})</span>
+                        <span><strong>${drink.name}</strong> (x${orderState.drinks[id]})</span>
                         <span style="font-weight:700; color:#ff758f;">${(drink.price * orderState.drinks[id]).toLocaleString('vi-VN')}đ</span>
                     </div>
                 `;
@@ -1641,7 +1627,7 @@
             if (drink) {
                 billHtml += `
                     <div class="bill-row">
-                        <span>🛒 ${drink.name} x ${qty}</span>
+                        <span>${drink.name} x ${qty}</span>
                         <span>${(drink.price * qty).toLocaleString('vi-VN')}đ</span>
                     </div>
                 `;
