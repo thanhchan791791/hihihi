@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Quản Lý Đơn Hàng - Admin</title>
+    <title>Hệ Thống Quản Lý Đơn Hàng - Multi-Branch Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         :root {
@@ -15,6 +15,8 @@
             --green-pastel: #52796f;
             --red-pastel: #d90429;
             --ios-radius: 16px;
+            --branch1-color: #2b6cb0;
+            --branch2-color: #6b46c1;
         }
 
         * {
@@ -35,7 +37,7 @@
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
             border-radius: var(--ios-radius);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
@@ -49,9 +51,15 @@
             align-items: center;
             border-bottom: 1px solid #ffe5ec;
             padding-bottom: 20px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             gap: 15px;
+        }
+
+        .header-title-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         h1 {
@@ -59,6 +67,12 @@
             font-weight: 700;
             color: #2b2d42;
             letter-spacing: -0.3px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
         .btn-manage-staff {
@@ -75,6 +89,53 @@
 
         .btn-manage-staff:hover {
             background: #1d1e2c;
+        }
+
+        /* BRANCH TABS CONTROL */
+        .branch-tabs-container {
+            display: flex;
+            background: #f1f3f9;
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            gap: 6px;
+        }
+
+        .branch-tab {
+            flex: 1;
+            padding: 11px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 99px;
+            font-weight: 700;
+            font-size: 13.5px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .branch-tab.active {
+            background: white;
+            color: #1e293b;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .branch-tab .badge {
+            background: #e2e8f0;
+            color: #475569;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11.5px;
+        }
+
+        .branch-tab.active .badge {
+            background: #ffe5ec;
+            color: #ff758f;
         }
 
         .stats-bar {
@@ -137,6 +198,34 @@
             margin-bottom: 12px;
         }
 
+        .order-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .branch-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .branch-badge.b1 {
+            background: #ebf8ff;
+            color: #2b6cb0;
+            border: 1px solid #bee3f8;
+        }
+
+        .branch-badge.b2 {
+            background: #faf5ff;
+            color: #6b46c1;
+            border: 1px solid #e9d8fd;
+        }
+
         .cust-name {
             font-size: 17px;
             font-weight: 700;
@@ -169,7 +258,6 @@
             font-weight: 500;
         }
 
-        /* Nút toggle mở rộng chi tiết */
         .btn-toggle-details {
             width: 100%;
             padding: 9px 12px;
@@ -193,7 +281,6 @@
             border-color: #ffccd5;
         }
 
-        /* Khung chứa các món chi tiết xổ xuống */
         .items-section {
             font-size: 13.5px;
             line-height: 1.5;
@@ -287,7 +374,7 @@
         .edit-modal-box {
             background: white;
             width: 90%;
-            max-width: 440px;
+            max-width: 460px;
             border-radius: 16px;
             padding: 24px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.12);
@@ -411,9 +498,29 @@
 
 <div class="admin-container animate__animated animate__fadeIn">
     <header>
-        <h1>Dashboard Quản Lý Đơn Hàng</h1>
-        <button class="btn-manage-staff" onclick="openStaffModal()">Quản Lý Mã Nhân Viên</button>
+        <div class="header-title-box">
+            <h1>Dashboard Quản Lý Đơn Hàng (2 Chi Nhánh)</h1>
+        </div>
+        <div class="header-actions">
+            <button class="btn-manage-staff" onclick="openStaffModal()">Quản Lý Mã Nhân Viên</button>
+        </div>
     </header>
+
+    <!-- THANH CHỌN CHI NHÁNH (TAB CONTROL) -->
+    <div class="branch-tabs-container">
+        <button class="branch-tab active" id="tab-all" onclick="switchBranch('all')">
+            <span>Tất Cả Chi Nhánh</span>
+            <span class="badge" id="badge-all">0</span>
+        </button>
+        <button class="branch-tab" id="tab-branch1" onclick="switchBranch('branch1')">
+            <span>Chi Nhánh 1 (orders)</span>
+            <span class="badge" id="badge-branch1">0</span>
+        </button>
+        <button class="branch-tab" id="tab-branch2" onclick="switchBranch('branch2')">
+            <span>Chi Nhánh 2 (orders_branch2)</span>
+            <span class="badge" id="badge-branch2">0</span>
+        </button>
+    </div>
 
     <!-- THANH THỐNG KÊ NHANH -->
     <div class="stats-bar">
@@ -446,7 +553,16 @@
     <div class="edit-modal-box animate__animated animate__zoomIn">
         <div class="modal-title">Chỉnh Sửa Đơn Hàng</div>
         <input type="hidden" id="edit-order-id">
+        <input type="hidden" id="edit-order-branch">
         
+        <div class="form-group">
+            <label>Chi Nhánh Quản Lý</label>
+            <select id="edit-branch-select">
+                <option value="orders">Chi Nhánh 1 (orders)</option>
+                <option value="orders_branch2">Chi Nhánh 2 (orders_branch2)</option>
+            </select>
+        </div>
+
         <div class="form-group">
             <label>Họ tên khách hàng</label>
             <input type="text" id="edit-cust-name">
@@ -469,7 +585,7 @@
         </div>
 
         <div style="border-top: 1px solid #edf2f7; margin: 15px 0; padding-top: 10px;">
-            <p style="font-size: 12px; color: #a0aec0; font-weight: 500;">Lưu ý: Để chỉnh sửa chi tiết món nước, vui lòng thao tác trên Firebase Console.</p>
+            <p style="font-size: 12px; color: #a0aec0; font-weight: 500;">Lưu ý: Thay đổi Chi Nhánh sẽ tự động chuyển đơn hàng sang Node tương ứng trên Firebase.</p>
         </div>
 
         <div class="modal-buttons">
@@ -508,7 +624,7 @@
 </div>
 
 <script>
-    // CẤU HÌNH HỆ THỐNG FIREBASE REALTIME CỦA BẠN
+    // CẤU HÌNH HỆ THỐNG FIREBASE REALTIME
     const firebaseConfig = {
         apiKey: "AIzaSyAV7r-rjXo6U62LX1AA7c7DAHb8GhOOOsg",
         authDomain: "saigon-dalat.firebaseapp.com",
@@ -524,117 +640,172 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    let localOrdersCache = {}; // Lưu trữ tạm data local để chỉnh sửa nhanh
-    let localStaffCodes = {}; // Lưu danh sách mã nhân viên
+    // Dữ liệu cache theo từng chi nhánh
+    let rawOrdersBranch1 = {};
+    let rawOrdersBranch2 = {};
+    let activeBranchTab = 'all'; // 'all', 'branch1', 'branch2'
+    let localStaffCodes = {};
 
-    // LẮNG NGHE DỮ LIỆU REALTIME TỪ NODE 'orders'
-    function listenToOrders() {
+    // LẮNG NGHE REALTIME CHO CẢ 2 CHI NHÁNH
+    function listenToAllBranches() {
+        // Chi nhánh 1: 'orders'
         database.ref('orders').on('value', (snapshot) => {
-            const data = snapshot.val();
-            const gridContainer = document.getElementById('orders-display-grid');
-            
-            if (!data) {
-                gridContainer.innerHTML = `<div class="loading-text">Hiện tại chưa có đơn hàng nào được ghi nhận.</div>`;
-                updateStatistics({});
-                return;
-            }
+            rawOrdersBranch1 = snapshot.val() || {};
+            renderUI();
+        }, (err) => console.error("Lỗi sync orders Branch 1: ", err));
 
-            localOrdersCache = data;
-            updateStatistics(data);
-
-            let html = '';
-            // Chuyển object Firebase thành mảng và đảo ngược để đơn hàng mới nhất hiện lên đầu
-            const sortedKeys = Object.keys(data).reverse();
-
-            sortedKeys.forEach(key => {
-                const order = data[key];
-                let itemsHtml = '';
-
-                // Hiển thị Vé Xanh
-                if (order.ticketGreenQty > 0) {
-                    itemsHtml += `
-                        <div class="item-row ticket">
-                            <span>Vé Xanh (Combo 1)</span>
-                            <span>x${order.ticketGreenQty}</span>
-                        </div>
-                    `;
-                }
-
-                // Hiển thị Vé Đỏ
-                if (order.ticketRedQty > 0) {
-                    itemsHtml += `
-                        <div class="item-row ticket-red">
-                            <span>Vé Đỏ (Combo 2)</span>
-                            <span>x${order.ticketRedQty}</span>
-                        </div>
-                    `;
-                }
-
-                // Hiển thị danh sách nước uống nếu có
-                if (order.drinks) {
-                    Object.keys(order.drinks).forEach(drinkId => {
-                        const drink = order.drinks[drinkId];
-                        itemsHtml += `
-                            <div class="item-row">
-                                <span>${escapeHtml(drink.name)}</span>
-                                <span>x${drink.quantity}</span>
-                            </div>
-                        `;
-                    });
-                }
-
-                if (itemsHtml === '') {
-                    itemsHtml = `<div style="text-align:center; font-style:italic; color:#a0aec0; font-size:12.5px;">Khách chưa chọn vé & món</div>`;
-                }
-
-                // Kiểm tra tên / mã nhân viên thực hiện đơn
-                let staffDisplay = order.confirmedBy || order.confirmedByCode || order.staffName || order.staffCode || 'Chưa ghi nhận';
-
-                html += `
-                    <div class="order-card animate__animated animate__fadeIn">
-                        <div>
-                            <div class="order-header">
-                                <div class="cust-name">${escapeHtml(order.customerName)}</div>
-                                <div class="cust-phone">${escapeHtml(order.customerPhone)}</div>
-                                <div class="staff-tag">Nhân viên: ${escapeHtml(staffDisplay)}</div>
-                                <div class="order-time">${order.createdAt || 'Không rõ thời gian'}</div>
-                            </div>
-                            
-                            <!-- Nút bấm Xổ xuống / Thu gọn chi tiết -->
-                            <button class="btn-toggle-details" onclick="toggleOrderDetails('${key}')">
-                                <span>Chi tiết món order</span>
-                                <span id="arrow-${key}">▼</span>
-                            </button>
-
-                            <!-- Khu vực chứa chi tiết (ẩn mặc định) -->
-                            <div class="items-section" id="details-${key}">
-                                ${itemsHtml}
-                            </div>
-                        </div>
-                        <div>
-                            <div class="total-row">
-                                <span>TỔNG CỘNG:</span>
-                                <span>${parseInt(order.totalAmount || 0).toLocaleString('vi-VN')}đ</span>
-                            </div>
-                            <div class="actions-wrapper">
-                                <button class="btn-action btn-edit" onclick="openEditModal('${key}')">Sửa thông tin</button>
-                                <button class="btn-action btn-delete" onclick="deleteOrder('${key}')">Xóa đơn</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            gridContainer.innerHTML = html;
-        }, (error) => {
-            console.error("Lỗi đồng bộ Realtime: ", error);
-        });
+        // Chi nhánh 2: 'orders_branch2'
+        database.ref('orders_branch2').on('value', (snapshot) => {
+            rawOrdersBranch2 = snapshot.val() || {};
+            renderUI();
+        }, (err) => console.error("Lỗi sync orders Branch 2: ", err));
     }
 
-    // HÀM TOGGLE ĐỂ XỔ XUỐNG HOẶC THU GỌN CHI TIẾT ĐƠN HÀNG
-    function toggleOrderDetails(key) {
-        const detailsContainer = document.getElementById(`details-${key}`);
-        const arrow = document.getElementById(`arrow-${key}`);
+    // CHUYỂN ĐỔI TAB CHI NHÁNH
+    function switchBranch(branchKey) {
+        activeBranchTab = branchKey;
+        
+        document.querySelectorAll('.branch-tab').forEach(tab => tab.classList.remove('active'));
+        document.getElementById(`tab-${branchKey}`).classList.add('active');
+
+        renderUI();
+    }
+
+    // HIỂN THỊ DỮ LIỆU & CẬP NHẬT GIAO DIỆN
+    function renderUI() {
+        // Cập nhật badges số lượng trên Tabs
+        const countB1 = Object.keys(rawOrdersBranch1).length;
+        const countB2 = Object.keys(rawOrdersBranch2).length;
+        document.getElementById('badge-branch1').innerText = countB1;
+        document.getElementById('badge-branch2').innerText = countB2;
+        document.getElementById('badge-all').innerText = countB1 + countB2;
+
+        // Chuẩn bị danh sách đơn hàng lọc theo Tab đang chọn
+        let combinedList = [];
+
+        if (activeBranchTab === 'all' || activeBranchTab === 'branch1') {
+            Object.keys(rawOrdersBranch1).forEach(id => {
+                combinedList.push({
+                    id: id,
+                    branchNode: 'orders',
+                    branchName: 'Chi Nhánh 1',
+                    branchCss: 'b1',
+                    ...rawOrdersBranch1[id]
+                });
+            });
+        }
+
+        if (activeBranchTab === 'all' || activeBranchTab === 'branch2') {
+            Object.keys(rawOrdersBranch2).forEach(id => {
+                combinedList.push({
+                    id: id,
+                    branchNode: 'orders_branch2',
+                    branchName: 'Chi Nhánh 2',
+                    branchCss: 'b2',
+                    ...rawOrdersBranch2[id]
+                });
+            });
+        }
+
+        // Cập nhật thanh thống kê
+        updateStatistics(combinedList);
+
+        // Đảo ngược thứ tự để đơn hàng mới nhất hiện lên đầu
+        combinedList.reverse();
+
+        const gridContainer = document.getElementById('orders-display-grid');
+
+        if (combinedList.length === 0) {
+            gridContainer.innerHTML = `<div class="loading-text">Chưa có đơn hàng nào thuộc chi nhánh này.</div>`;
+            return;
+        }
+
+        let html = '';
+        combinedList.forEach(order => {
+            let itemsHtml = '';
+
+            // Vé Xanh
+            if (order.ticketGreenQty > 0) {
+                itemsHtml += `
+                    <div class="item-row ticket">
+                        <span>Vé Xanh (Combo 1)</span>
+                        <span>x${order.ticketGreenQty}</span>
+                    </div>
+                `;
+            }
+
+            // Vé Đỏ
+            if (order.ticketRedQty > 0) {
+                itemsHtml += `
+                    <div class="item-row ticket-red">
+                        <span>Vé Đỏ (Combo 2)</span>
+                        <span>x${order.ticketRedQty}</span>
+                    </div>
+                `;
+            }
+
+            // Danh sách nước uống
+            if (order.drinks) {
+                Object.keys(order.drinks).forEach(drinkId => {
+                    const drink = order.drinks[drinkId];
+                    itemsHtml += `
+                        <div class="item-row">
+                            <span>${escapeHtml(drink.name)}</span>
+                            <span>x${drink.quantity}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            if (itemsHtml === '') {
+                itemsHtml = `<div style="text-align:center; font-style:italic; color:#a0aec0; font-size:12.5px;">Khách chưa chọn vé & món</div>`;
+            }
+
+            let staffDisplay = order.confirmedBy || order.confirmedByCode || order.staffName || order.staffCode || 'Chưa ghi nhận';
+
+            html += `
+                <div class="order-card animate__animated animate__fadeIn">
+                    <div>
+                        <div class="order-header">
+                            <div class="order-top-bar">
+                                <span class="branch-badge ${order.branchCss}">${order.branchName}</span>
+                                <div class="order-time">${order.createdAt || 'Không rõ giờ'}</div>
+                            </div>
+                            <div class="cust-name">${escapeHtml(order.customerName)}</div>
+                            <div class="cust-phone">${escapeHtml(order.customerPhone)}</div>
+                            <div class="staff-tag">Nhân viên: ${escapeHtml(staffDisplay)}</div>
+                        </div>
+                        
+                        <button class="btn-toggle-details" onclick="toggleOrderDetails('${order.id}')">
+                            <span>Chi tiết món order</span>
+                            <span id="arrow-${order.id}">▼</span>
+                        </button>
+
+                        <div class="items-section" id="details-${order.id}">
+                            ${itemsHtml}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="total-row">
+                            <span>TỔNG CỘNG:</span>
+                            <span>${parseInt(order.totalAmount || 0).toLocaleString('vi-VN')}đ</span>
+                        </div>
+                        <div class="actions-wrapper">
+                            <button class="btn-action btn-edit" onclick="openEditModal('${order.id}', '${order.branchNode}')">Sửa thông tin</button>
+                            <button class="btn-action btn-delete" onclick="deleteOrder('${order.id}', '${order.branchNode}')">Xóa đơn</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        gridContainer.innerHTML = html;
+    }
+
+    // TOGGLE XỔ XUỐNG CHI TIẾT
+    function toggleOrderDetails(id) {
+        const detailsContainer = document.getElementById(`details-${id}`);
+        const arrow = document.getElementById(`arrow-${id}`);
         
         if (detailsContainer.classList.contains('expanded')) {
             detailsContainer.classList.remove('expanded');
@@ -645,7 +816,123 @@
         }
     }
 
-    // LẮNG NGHE DANH SÁCH MÃ NHÂN VIÊN
+    // TÍNH TOÁN & CẬP NHẬT THANH THỐNG KÊ
+    function updateStatistics(orderList) {
+        let totalOrders = orderList.length;
+        let totalRevenue = 0;
+        let totalGreen = 0;
+        let totalRed = 0;
+
+        orderList.forEach(order => {
+            totalRevenue += parseInt(order.totalAmount || 0);
+            totalGreen += parseInt(order.ticketGreenQty || 0);
+            totalRed += parseInt(order.ticketRedQty || 0);
+        });
+
+        document.getElementById('stat-total-orders').innerText = totalOrders;
+        document.getElementById('stat-total-revenue').innerText = totalRevenue.toLocaleString('vi-VN') + 'đ';
+        document.getElementById('stat-green-tickets').innerText = totalGreen;
+        document.getElementById('stat-red-tickets').innerText = totalRed;
+    }
+
+    // XÓA ĐƠN HÀNG DỰA TRÊN ID VÀ BRANCH NODE
+    function deleteOrder(id, branchNode) {
+        const branchLabel = branchNode === 'orders' ? 'Chi Nhánh 1' : 'Chi Nhánh 2';
+        if (confirm(`Bạn có chắc chắn muốn xóa đơn hàng này thuộc ${branchLabel}? Thao tác không thể hoàn tác!`)) {
+            database.ref(`${branchNode}/${id}`).remove()
+                .then(() => alert("Đã xóa đơn hàng thành công!"))
+                .catch(err => alert("Có lỗi xảy ra khi xóa: " + err));
+        }
+    }
+
+    // MỞ POPUP CHỈNH SỬA
+    function openEditModal(id, branchNode) {
+        const sourceData = branchNode === 'orders' ? rawOrdersBranch1 : rawOrdersBranch2;
+        const order = sourceData[id];
+        if (!order) return;
+
+        document.getElementById('edit-order-id').value = id;
+        document.getElementById('edit-order-branch').value = branchNode;
+        document.getElementById('edit-branch-select').value = branchNode;
+
+        document.getElementById('edit-cust-name').value = order.customerName || '';
+        document.getElementById('edit-cust-phone').value = order.customerPhone || '';
+        document.getElementById('edit-staff-code').value = order.confirmedBy || order.confirmedByCode || order.staffName || order.staffCode || '';
+        document.getElementById('edit-ticket-green').value = order.ticketGreenQty || 0;
+        document.getElementById('edit-ticket-red').value = order.ticketRedQty || 0;
+
+        document.getElementById('edit-modal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('edit-modal').style.display = 'none';
+    }
+
+    // LƯU THÔNG TIN CHỈNH SỬA (CÓ THỂ CHUYỂN CHI NHÁNH MỚI)
+    function saveOrderEdits() {
+        const id = document.getElementById('edit-order-id').value;
+        const oldBranchNode = document.getElementById('edit-order-branch').value;
+        const newBranchNode = document.getElementById('edit-branch-select').value;
+
+        const sourceData = oldBranchNode === 'orders' ? rawOrdersBranch1 : rawOrdersBranch2;
+        const currentOrder = sourceData[id];
+        if (!currentOrder) return;
+
+        const updatedName = document.getElementById('edit-cust-name').value.trim();
+        const updatedPhone = document.getElementById('edit-cust-phone').value.trim();
+        const updatedStaff = document.getElementById('edit-staff-code').value.trim();
+        const updatedGreen = parseInt(document.getElementById('edit-ticket-green').value) || 0;
+        const updatedRed = parseInt(document.getElementById('edit-ticket-red').value) || 0;
+
+        if (!updatedName || !updatedPhone) {
+            alert("Tên và số điện thoại không được để trống!");
+            return;
+        }
+
+        // Tính tiền nước cũ nếu có
+        let drinksCost = 0;
+        if (currentOrder.drinks) {
+            Object.keys(currentOrder.drinks).forEach(dId => {
+                drinksCost += parseInt(currentOrder.drinks[dId].subtotal || 0);
+            });
+        }
+        const newTotalAmount = (updatedGreen * 80000) + (updatedRed * 110000) + drinksCost;
+
+        const updatedOrderObj = {
+            ...currentOrder,
+            customerName: updatedName,
+            customerPhone: updatedPhone,
+            confirmedBy: updatedStaff,
+            staffName: updatedStaff,
+            ticketGreenQty: updatedGreen,
+            ticketRedQty: updatedRed,
+            totalAmount: newTotalAmount
+        };
+
+        if (oldBranchNode !== newBranchNode) {
+            // Trường hợp chuyển chi nhánh: Xóa ở node cũ, set ở node mới
+            const updates = {};
+            updates[`/${oldBranchNode}/${id}`] = null;
+            updates[`/${newBranchNode}/${id}`] = updatedOrderObj;
+
+            database.ref().update(updates)
+                .then(() => {
+                    alert("Đã chuyển đơn hàng sang Chi Nhánh mới và cập nhật thành công!");
+                    closeEditModal();
+                })
+                .catch(err => alert("Lỗi khi chuyển chi nhánh: " + err));
+        } else {
+            // Cập nhật bình thường trên node hiện tại
+            database.ref(`${oldBranchNode}/${id}`).set(updatedOrderObj)
+                .then(() => {
+                    alert("Cập nhật thông tin đơn hàng thành công!");
+                    closeEditModal();
+                })
+                .catch(err => alert("Lỗi khi cập nhật dữ liệu: " + err));
+        }
+    }
+
+    // LẮNG NGHE MÃ NHÂN VIÊN
     function listenToStaffCodes() {
         database.ref('staff_codes').on('value', (snapshot) => {
             localStaffCodes = snapshot.val() || {};
@@ -676,7 +963,6 @@
         container.innerHTML = html;
     }
 
-    // THÊM MÃ NHÂN VIÊN MỚI
     function addStaffCode() {
         const codeInput = document.getElementById('new-staff-code');
         const nameInput = document.getElementById('new-staff-name');
@@ -700,63 +986,12 @@
         }).catch(err => alert("Lỗi: " + err));
     }
 
-    // XÓA MÃ NHÂN VIÊN
     function deleteStaffCode(codeKey) {
         if (confirm(`Bạn có chắc muốn xóa mã ${codeKey}?`)) {
             database.ref('staff_codes/' + codeKey).remove();
         }
     }
 
-    // TÍNH TOÁN & CẬP NHẬT THANH THỐNG KÊ
-    function updateStatistics(data) {
-        let totalOrders = 0;
-        let totalRevenue = 0;
-        let totalGreen = 0;
-        let totalRed = 0;
-
-        Object.keys(data).forEach(key => {
-            const order = data[key];
-            totalOrders++;
-            totalRevenue += parseInt(order.totalAmount || 0);
-            totalGreen += parseInt(order.ticketGreenQty || 0);
-            totalRed += parseInt(order.ticketRedQty || 0);
-        });
-
-        document.getElementById('stat-total-orders').innerText = totalOrders;
-        document.getElementById('stat-total-revenue').innerText = totalRevenue.toLocaleString('vi-VN') + 'đ';
-        document.getElementById('stat-green-tickets').innerText = totalGreen;
-        document.getElementById('stat-red-tickets').innerText = totalRed;
-    }
-
-    // XÓA ĐƠN HÀNG
-    function deleteOrder(key) {
-        if (confirm("Bạn có chắc chắn muốn xóa đơn hàng này khỏi hệ thống không? Đã xóa là không thể hoàn tác!")) {
-            database.ref('orders/' + key).remove()
-                .then(() => alert("Đã xóa đơn hàng thành công!"))
-                .catch(err => alert("Có lỗi xảy ra khi xóa: " + err));
-        }
-    }
-
-    // MỞ BẢNG CHỈNH SỬA CHI TIẾT ĐƠN HÀNG
-    function openEditModal(key) {
-        const order = localOrdersCache[key];
-        if (!order) return;
-
-        document.getElementById('edit-order-id').value = key;
-        document.getElementById('edit-cust-name').value = order.customerName || '';
-        document.getElementById('edit-cust-phone').value = order.customerPhone || '';
-        document.getElementById('edit-staff-code').value = order.confirmedBy || order.confirmedByCode || order.staffName || order.staffCode || '';
-        document.getElementById('edit-ticket-green').value = order.ticketGreenQty || 0;
-        document.getElementById('edit-ticket-red').value = order.ticketRedQty || 0;
-
-        document.getElementById('edit-modal').style.display = 'flex';
-    }
-
-    function closeEditModal() {
-        document.getElementById('edit-modal').style.display = 'none';
-    }
-
-    // MỞ / ĐÓNG MODAL QUẢN LÝ MÃ NHÂN VIÊN
     function openStaffModal() {
         document.getElementById('staff-modal').style.display = 'flex';
     }
@@ -765,61 +1000,13 @@
         document.getElementById('staff-modal').style.display = 'none';
     }
 
-    // LƯU CÁC THAY ĐỔI NGƯỢC LÊN FIREBASE
-    function saveOrderEdits() {
-        const key = document.getElementById('edit-order-id').value;
-        const currentOrder = localOrdersCache[key];
-        if (!currentOrder) return;
-
-        const updatedName = document.getElementById('edit-cust-name').value.trim();
-        const updatedPhone = document.getElementById('edit-cust-phone').value.trim();
-        const updatedStaff = document.getElementById('edit-staff-code').value.trim();
-        const updatedGreen = parseInt(document.getElementById('edit-ticket-green').value) || 0;
-        const updatedRed = parseInt(document.getElementById('edit-ticket-red').value) || 0;
-
-        if (!updatedName || !updatedPhone) {
-            alert("Tên và số điện thoại không được để trống!");
-            return;
-        }
-
-        // Tính toán lại tổng tiền dựa trên số lượng vé mới + giá trị tiền nước đã lưu trước đó
-        let drinksCost = 0;
-        if (currentOrder.drinks) {
-            Object.keys(currentOrder.drinks).forEach(dId => {
-                drinksCost += parseInt(currentOrder.drinks[dId].subtotal || 0);
-            });
-        }
-        const newTotalAmount = (updatedGreen * 80000) + (updatedRed * 110000) + drinksCost;
-
-        // Tiến hành cập nhật các node chỉ định lên Firebase
-        const updates = {};
-        updates[`/orders/${key}/customerName`] = updatedName;
-        updates[`/orders/${key}/customerPhone`] = updatedPhone;
-        updates[`/orders/${key}/confirmedBy`] = updatedStaff;
-        updates[`/orders/${key}/staffName`] = updatedStaff;
-        updates[`/orders/${key}/ticketGreenQty`] = updatedGreen;
-        updates[`/orders/${key}/ticketRedQty`] = updatedRed;
-        updates[`/orders/${key}/totalAmount`] = newTotalAmount;
-
-        database.ref().update(updates)
-            .then(() => {
-                alert("Cập nhật thông tin đơn hàng thành công!");
-                closeEditModal();
-            })
-            .catch(err => {
-                alert("Lỗi khi cập nhật dữ liệu: " + err);
-            });
-    }
-
-    // Bảo mật chống XSS mã độc khi render text
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    // Chạy tải hệ thống khi mở trang
     window.onload = function() {
-        listenToOrders();
+        listenToAllBranches();
         listenToStaffCodes();
     };
 </script>
