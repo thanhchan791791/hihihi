@@ -508,11 +508,7 @@
 
     <!-- THANH CHỌN CHI NHÁNH (TAB CONTROL) -->
     <div class="branch-tabs-container">
-        <button class="branch-tab active" id="tab-all" onclick="switchBranch('all')">
-            <span>Tất Cả Chi Nhánh</span>
-            <span class="badge" id="badge-all">0</span>
-        </button>
-        <button class="branch-tab" id="tab-branch1" onclick="switchBranch('branch1')">
+        <button class="branch-tab active" id="tab-branch1" onclick="switchBranch('branch1')">
             <span>Chi Nhánh 1 (orders)</span>
             <span class="badge" id="badge-branch1">0</span>
         </button>
@@ -643,7 +639,7 @@
     // Dữ liệu cache theo từng chi nhánh
     let rawOrdersBranch1 = {};
     let rawOrdersBranch2 = {};
-    let activeBranchTab = 'all'; // 'all', 'branch1', 'branch2'
+    let activeBranchTab = 'branch1'; // 'branch1', 'branch2'
     let localStaffCodes = {};
 
     // LẮNG NGHE REALTIME CHO CẢ 2 CHI NHÁNH
@@ -678,12 +674,11 @@
         const countB2 = Object.keys(rawOrdersBranch2).length;
         document.getElementById('badge-branch1').innerText = countB1;
         document.getElementById('badge-branch2').innerText = countB2;
-        document.getElementById('badge-all').innerText = countB1 + countB2;
 
         // Chuẩn bị danh sách đơn hàng lọc theo Tab đang chọn
         let combinedList = [];
 
-        if (activeBranchTab === 'all' || activeBranchTab === 'branch1') {
+        if (activeBranchTab === 'branch1') {
             Object.keys(rawOrdersBranch1).forEach(id => {
                 combinedList.push({
                     id: id,
@@ -695,7 +690,7 @@
             });
         }
 
-        if (activeBranchTab === 'all' || activeBranchTab === 'branch2') {
+        if (activeBranchTab === 'branch2') {
             Object.keys(rawOrdersBranch2).forEach(id => {
                 combinedList.push({
                     id: id,
