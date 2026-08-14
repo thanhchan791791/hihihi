@@ -168,6 +168,85 @@
             margin-top: 6px;
         }
 
+        /* THỐNG KÊ THEO NGÀY STYLES */
+        .daily-stats-section {
+            background: white;
+            border-radius: var(--ios-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #eef0f2;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .daily-stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .daily-stats-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2b2d42;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .daily-stats-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .daily-stats-filter label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .daily-stats-filter input[type="date"] {
+            padding: 6px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            color: #2b2d42;
+            font-weight: 600;
+        }
+
+        .daily-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .daily-stat-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 15px;
+        }
+
+        .daily-stat-box span {
+            display: block;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .daily-stat-box strong {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            color: #2b2d42;
+            margin-top: 4px;
+        }
+
         .orders-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -538,6 +617,37 @@
         </div>
     </div>
 
+    <!-- PHẦN THỐNG KÊ CHI TIẾT ĐƠN THEO NGÀY -->
+    <div class="daily-stats-section">
+        <div class="daily-stats-header">
+            <div class="daily-stats-title">
+                📊 Thống Kê Chi Tiết Đơn Theo Ngày
+            </div>
+            <div class="daily-stats-filter">
+                <label for="filter-date">Chọn Ngày:</label>
+                <input type="date" id="filter-date" onchange="renderUI()">
+            </div>
+        </div>
+        <div class="daily-stats-grid">
+            <div class="daily-stat-box">
+                <span>Số Đơn Trong Ngày</span>
+                <strong id="daily-total-orders">0</strong>
+            </div>
+            <div class="daily-stat-box">
+                <span>Doanh Thu Trong Ngày</span>
+                <strong id="daily-total-revenue" style="color: #2b2d42;">0đ</strong>
+            </div>
+            <div class="daily-stat-box">
+                <span>Vé Xanh Trong Ngày</span>
+                <strong id="daily-green-tickets" style="color: #2b6cb0;">0</strong>
+            </div>
+            <div class="daily-stat-box">
+                <span>Vé Đỏ Trong Ngày</span>
+                <strong id="daily-red-tickets" style="color: #c53030;">0</strong>
+            </div>
+        </div>
+    </div>
+
     <!-- MẠNG LƯỚI HIỂN THỊ ĐƠN HÀNG -->
     <div class="orders-grid" id="orders-display-grid">
         <div class="loading-text">Đang tải dữ liệu từ hệ thống...</div>
@@ -667,6 +777,31 @@
         renderUI();
     }
 
+    // CHUẨN HÓA CHUỖI NGÀY THÁNG VỀ DẠNG YYYY-MM-DD
+    function parseOrderDateStr(dateStr) {
+        if (!dateStr) return null;
+        // Dạng ISO: YYYY-MM-DD...
+        if (dateStr.includes('-')) {
+            const parts = dateStr.split('T')[0].split('-');
+            if (parts.length === 3) {
+                return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+            }
+        }
+        // Dạng vi-VN: HH:MM:SS DD/MM/YYYY hoặc DD/MM/YYYY
+        if (dateStr.includes('/')) {
+            const spaceParts = dateStr.trim().split(' ');
+            const datePart = spaceParts.find(p => p.includes('/')) || spaceParts[0];
+            const dParts = datePart.split('/');
+            if (dParts.length === 3) {
+                const day = dParts[0].padStart(2, '0');
+                const month = dParts[1].padStart(2, '0');
+                const year = dParts[2];
+                return `${year}-${month}-${day}`;
+            }
+        }
+        return null;
+    }
+
     // HIỂN THỊ DỮ LIỆU & CẬP NHẬT GIAO DIỆN
     function renderUI() {
         // Cập nhật badges số lượng trên Tabs
@@ -702,8 +837,11 @@
             });
         }
 
-        // Cập nhật thanh thống kê
+        // Cập nhật thanh thống kê tổng
         updateStatistics(combinedList);
+
+        // Cập nhật thống kê chi tiết theo ngày
+        updateDailyStatistics(combinedList);
 
         // Đảo ngược thứ tự để đơn hàng mới nhất hiện lên đầu
         combinedList.reverse();
@@ -811,7 +949,7 @@
         }
     }
 
-    // TÍNH TOÁN & CẬP NHẬT THANH THỐNG KÊ
+    // TÍNH TOÁN & CẬP NHẬT THANH THỐNG KÊ TỔNG
     function updateStatistics(orderList) {
         let totalOrders = orderList.length;
         let totalRevenue = 0;
@@ -828,6 +966,34 @@
         document.getElementById('stat-total-revenue').innerText = totalRevenue.toLocaleString('vi-VN') + 'đ';
         document.getElementById('stat-green-tickets').innerText = totalGreen;
         document.getElementById('stat-red-tickets').innerText = totalRed;
+    }
+
+    // TÍNH TOÁN & CẬP NHẬT THỐNG KÊ THEO NGÀY
+    function updateDailyStatistics(orderList) {
+        const datePicker = document.getElementById('filter-date');
+        const selectedDate = datePicker.value;
+
+        let dailyOrders = 0;
+        let dailyRevenue = 0;
+        let dailyGreen = 0;
+        let dailyRed = 0;
+
+        if (selectedDate) {
+            orderList.forEach(order => {
+                const orderFormattedDate = parseOrderDateStr(order.createdAt);
+                if (orderFormattedDate === selectedDate) {
+                    dailyOrders++;
+                    dailyRevenue += parseInt(order.totalAmount || 0);
+                    dailyGreen += parseInt(order.ticketGreenQty || 0);
+                    dailyRed += parseInt(order.ticketRedQty || 0);
+                }
+            });
+        }
+
+        document.getElementById('daily-total-orders').innerText = dailyOrders;
+        document.getElementById('daily-total-revenue').innerText = dailyRevenue.toLocaleString('vi-VN') + 'đ';
+        document.getElementById('daily-green-tickets').innerText = dailyGreen;
+        document.getElementById('daily-red-tickets').innerText = dailyRed;
     }
 
     // XÓA ĐƠN HÀNG DỰA TRÊN ID VÀ BRANCH NODE
@@ -1001,6 +1167,10 @@
     }
 
     window.onload = function() {
+        // Tự động đặt ngày chọn mặc định là hôm nay
+        const todayStr = new Date().toISOString().split('T')[0];
+        document.getElementById('filter-date').value = todayStr;
+
         listenToAllBranches();
         listenToStaffCodes();
     };
