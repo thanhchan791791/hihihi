@@ -138,6 +138,44 @@
             color: #ff758f;
         }
 
+        /* THANH TÌM KIẾM KHÁCH HÀNG */
+        .search-bar-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 13px 18px 13px 42px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14.5px;
+            font-weight: 600;
+            color: #2b2d42;
+            background: #ffffff;
+            outline: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .search-input:focus {
+            border-color: #ff8fa3;
+            box-shadow: 0 4px 12px rgba(255, 143, 163, 0.25);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            font-size: 16px;
+            color: #a0aec0;
+            pointer-events: none;
+        }
+
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -597,6 +635,14 @@
         </button>
     </div>
 
+    <!-- THANH TÌM KIẾM KHÁCH HÀNG (TÊN HOẶC SĐT) -->
+    <div class="search-bar-container">
+        <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="customer-search-input" class="search-input" placeholder="Tìm kiếm theo tên hoặc số điện thoại khách hàng..." oninput="handleSearchInput(this)">
+        </div>
+    </div>
+
     <!-- THANH THỐNG KÊ NHANH -->
     <div class="stats-bar">
         <div class="stat-card">
@@ -752,6 +798,25 @@
     let activeBranchTab = 'branch1'; // 'branch1', 'branch2'
     let localStaffCodes = {};
 
+    // HÀM CHUYỂN ĐỔI CHUỖI VỀ KHÔNG DẤU, KHÔNG KHOẢNG TRẮNG, VIẾT THƯỜNG
+    function normalizeSearchKey(str) {
+        if (!str) return '';
+        return str.toString()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/đ/g, "d")
+            .replace(/Đ/g, "d")
+            .replace(/\s+/g, "")
+            .toLowerCase();
+    }
+
+    // XỬ LÝ SỰ KIỆN KHI NHẬP VÀO THANH TÌM KIẾM
+    function handleSearchInput(input) {
+        const normalized = normalizeSearchKey(input.value);
+        input.value = normalized;
+        renderUI();
+    }
+
     // LẮNG NGHE REALTIME CHO CẢ 2 CHI NHÁNH
     function listenToAllBranches() {
         // Chi nhánh 1: 'orders'
@@ -843,13 +908,29 @@
         // Cập nhật thống kê chi tiết theo ngày
         updateDailyStatistics(combinedList);
 
+        // LỌC THEO THANH TÌM KIẾM (TÊN HOẶC SỐ ĐIỆN THOẠI)
+        const searchInput = document.getElementById('customer-search-input');
+        const keyword = searchInput ? normalizeSearchKey(searchInput.value) : '';
+
+        if (keyword) {
+            combinedList = combinedList.filter(order => {
+                const normalizedName = normalizeSearchKey(order.customerName);
+                const normalizedPhone = normalizeSearchKey(order.customerPhone);
+                return normalizedName.includes(keyword) || normalizedPhone.includes(keyword);
+            });
+        }
+
         // Đảo ngược thứ tự để đơn hàng mới nhất hiện lên đầu
         combinedList.reverse();
 
         const gridContainer = document.getElementById('orders-display-grid');
 
         if (combinedList.length === 0) {
-            gridContainer.innerHTML = `<div class="loading-text">Chưa có đơn hàng nào thuộc chi nhánh này.</div>`;
+            if (keyword) {
+                gridContainer.innerHTML = `<div class="loading-text">Không tìm thấy khách hàng hoặc đơn hàng nào phù hợp với từ khóa "${keyword}".</div>`;
+            } else {
+                gridContainer.innerHTML = `<div class="loading-text">Chưa có đơn hàng nào thuộc chi nhánh này.</div>`;
+            }
             return;
         }
 
