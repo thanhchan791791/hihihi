@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sweet Pink Puzzle 24 Mảnh</title>
+    <!-- Lucide Icons Library -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --pink-main: #ff758c;
+            --pink-hover: #ff4b6e;
+            --pink-light: #fff0f5;
+            --pink-card: #ffffff;
+            --pink-subtext: #8e7dbe;
+            --text-dark: #4a3e56;
+            --shadow-soft: 0 10px 25px rgba(255, 117, 140, 0.15);
+            --shadow-card: 0 8px 20px rgba(200, 150, 180, 0.12);
+            --radius-round: 28px;
+            --radius-medium: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Quicksand", "Nunito", "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(180deg, #ffe6eb 0%, #fff5f7 100%);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* Header Cute */
+        .pink-header {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #ffe1e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pink-header h1 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--pink-main);
+            margin: 0;
+            letter-spacing: -0.3px;
+        }
+
+        .pink-header i {
+            color: var(--pink-main);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Stats Card */
+        .stats-card {
+            width: 100%;
+            background: var(--pink-card);
+            border-radius: var(--radius-round);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: var(--shadow-card);
+            border: 2px solid #ffffff;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #b08ebb;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--pink-main);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Action Buttons */
+        .controls {
+            width: 100%;
+            display: flex;
+            gap: 12px;
+        }
+
+        .cute-btn {
+            flex: 1;
+            padding: 12px 18px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: var(--radius-medium);
+            border: none;
+            background: linear-gradient(135deg, #ff758c 0%, #ff8fa3 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 15px rgba(255, 117, 140, 0.3);
+        }
+
+        .cute-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(255, 117, 140, 0.2);
+        }
+
+        .cute-btn-secondary {
+            background: #ffffff;
+            color: #8c739d;
+            border: 2px solid #ffe1e8;
+            box-shadow: var(--shadow-card);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Preview Card */
+        .preview-card {
+            width: 100%;
+            background: var(--pink-card);
+            border-radius: var(--radius-round);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: var(--shadow-card);
+            border: 2px solid #ffffff;
+        }
+
+        #preview-img {
+            width: 85px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 2px solid #ffe1e8;
+        }
+
+        .preview-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .preview-desc {
+            font-size: 12px;
+            color: #a392b5;
+            margin-top: 2px;
+        }
+
+        /* Titles */
+        .section-title {
+            width: 100%;
+            font-size: 13px;
+            color: #b08ebb;
+            font-weight: 800;
+            margin-left: 10px;
+            margin-bottom: -6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Board */
+        #board {
+            width: 100%;
+            aspect-ratio: 3 / 2;
+            background-color: #ffd6e0;
+            border-radius: var(--radius-round);
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 2px;
+            padding: 6px;
+            box-shadow: inset 0 3px 8px rgba(255, 117, 140, 0.15), var(--shadow-card);
+            border: 3px solid #ffffff;
+            overflow: hidden;
+        }
+
+        .drop-zone {
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 6px;
+        }
+
+        /* Pieces Pool */
+        #pieces-pool {
+            width: 100%;
+            min-height: 170px;
+            background: var(--pink-card);
+            border-radius: var(--radius-round);
+            padding: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            align-content: flex-start;
+            box-shadow: var(--shadow-card);
+            border: 2px solid #ffffff;
+        }
+
+        /* Piece */
+        .piece {
+            cursor: grab;
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(180, 120, 150, 0.2);
+            touch-action: none;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .piece.dragging {
+            opacity: 0.9;
+            transform: scale(1.12);
+            z-index: 1000 !important;
+            position: fixed !important;
+            pointer-events: none;
+            box-shadow: 0 10px 20px rgba(255, 117, 140, 0.4);
+        }
+
+        /* Cute Custom Modal */
+        #cute-alert {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(74, 62, 86, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-box {
+            width: 290px;
+            background: #ffffff;
+            border-radius: 32px;
+            text-align: center;
+            padding: 24px 20px 20px 20px;
+            box-shadow: 0 15px 35px rgba(255, 117, 140, 0.25);
+            border: 3px solid #ffe1e8;
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popUp {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .alert-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background: #fff0f3;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px auto;
+            color: var(--pink-main);
+        }
+
+        .alert-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .alert-message {
+            font-size: 13px;
+            color: #8c739d;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .alert-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff758c 0%, #ff8fa3 100%);
+            border: none;
+            border-radius: var(--radius-medium);
+            color: white;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 117, 140, 0.3);
+        }
+
+        .alert-btn:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="pink-header">
+        <i data-lucide="sparkles"></i>
+        <h1>Sweet Puzzle</h1>
+    </div>
+
+    <div class="container">
+        <!-- Stats -->
+        <div class="stats-card">
+            <div class="stat-item">
+                <div class="stat-header">
+                    <i data-lucide="clock" size="14"></i>
+                    <span>Thời Gian</span>
+                </div>
+                <span class="stat-value" id="timer">00:00</span>
+            </div>
+            <div style="width: 2px; height: 28px; background: #ffe1e8; border-radius: 2px;"></div>
+            <div class="stat-item">
+                <div class="stat-header">
+                    <i data-lucide="footprints" size="14"></i>
+                    <span>Số Bước</span>
+                </div>
+                <span class="stat-value" id="moves">0</span>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="controls">
+            <label for="image-input" class="cute-btn">
+                <i data-lucide="image-plus" size="18"></i>
+                <span>Thay Ảnh</span>
+            </label>
+            <input type="file" id="image-input" accept="image/*">
+            
+            <button class="cute-btn cute-btn-secondary" onclick="initGame()">
+                <i data-lucide="rotate-cw" size="18"></i>
+                <span>Chơi Lại</span>
+            </button>
+        </div>
+
+        <!-- Preview Card -->
+        <div class="preview-card">
+            <img id="preview-img" src="" alt="Ảnh mẫu">
+            <div class="preview-info">
+                <span class="preview-title">Bức Ảnh Mẫu</span>
+                <span class="preview-desc">Kéo 24 mảnh ghép bên dưới vào khung</span>
+            </div>
+        </div>
+
+        <!-- Board -->
+        <span class="section-title">
+            <i data-lucide="grid" size="14"></i> Khung Xếp Hình
+        </span>
+        <div id="board"></div>
+
+        <!-- Pieces Pool -->
+        <span class="section-title">
+            <i data-lucide="shapes" size="14"></i> Kho Mảnh Ghép
+        </span>
+        <div id="pieces-pool"></div>
+    </div>
+
+    <!-- Cute Alert -->
+    <div id="cute-alert">
+        <div class="alert-box">
+            <div class="alert-icon-wrapper">
+                <i data-lucide="party-popper" size="32"></i>
+            </div>
+            <div class="alert-title">Xuất Sắc Quá!</div>
+            <div class="alert-message" id="alert-msg">Bạn đã hoàn thành bức ảnh siêu đẹp này rồi!</div>
+            <button class="alert-btn" onclick="closeAlert()">Nhận Quả Ngay</button>
+        </div>
+    </div>
+
+    <script>
+        const COLS = 6;
+        const ROWS = 4;
+        const TOTAL_PIECES = COLS * ROWS;
+
+        let currentImageSrc = 'https://picsum.photos/id/1025/600/400';
+
+        const board = document.getElementById('board');
+        const piecesPool = document.getElementById('pieces-pool');
+        const imageInput = document.getElementById('image-input');
+        const previewImg = document.getElementById('preview-img');
+        const timerElement = document.getElementById('timer');
+        const movesElement = document.getElementById('moves');
+
+        let moveCount = 0;
+        let timerInterval = null;
+        let secondsPassed = 0;
+        let isGameActive = false;
+
+        let boardWidth, boardHeight, pieceWidth, pieceHeight;
+
+        function updateDimensions() {
+            boardWidth = board.clientWidth;
+            boardHeight = board.clientHeight;
+            pieceWidth = boardWidth / COLS;
+            pieceHeight = boardHeight / ROWS;
+        }
+
+        window.addEventListener('resize', () => {
+            if (isGameActive) {
+                updateDimensions();
+                renderPiecesSizes();
+            }
+        });
+
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    currentImageSrc = event.target.result;
+                    initGame();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            secondsPassed = 0;
+            timerElement.innerText = '00:00';
+            timerInterval = setInterval(() => {
+                secondsPassed++;
+                const mins = Math.floor(secondsPassed / 60).toString().padStart(2, '0');
+                const secs = (secondsPassed % 60).toString().padStart(2, '0');
+                timerElement.innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function initGame() {
+            board.innerHTML = '';
+            piecesPool.innerHTML = '';
+            previewImg.src = currentImageSrc;
+            moveCount = 0;
+            movesElement.innerText = moveCount;
+            isGameActive = true;
+
+            updateDimensions();
+            startTimer();
+
+            const pieces = [];
+
+            for (let i = 0; i < TOTAL_PIECES; i++) {
+                const zone = document.createElement('div');
+                zone.classList.add('drop-zone');
+                zone.dataset.index = i;
+                board.appendChild(zone);
+
+                const piece = document.createElement('div');
+                piece.classList.add('piece');
+                piece.dataset.correctIndex = i;
+
+                const row = Math.floor(i / COLS);
+                const col = i % COLS;
+
+                piece.dataset.row = row;
+                piece.dataset.col = col;
+
+                setupPieceStyle(piece, row, col);
+                addTouchAndDragEvents(piece);
+
+                pieces.push(piece);
+            }
+
+            pieces.sort(() => Math.random() - 0.5);
+            pieces.forEach(p => piecesPool.appendChild(p));
+            
+            // Re-render Lucide Icons
+            lucide.createIcons();
+        }
+
+        function setupPieceStyle(piece, row, col) {
+            const bgX = -col * pieceWidth;
+            const bgY = -row * pieceHeight;
+
+            piece.style.width = `${pieceWidth}px`;
+            piece.style.height = `${pieceHeight}px`;
+            piece.style.backgroundImage = `url('${currentImageSrc}')`;
+            piece.style.backgroundSize = `${boardWidth}px ${boardHeight}px`;
+            piece.style.backgroundPosition = `${bgX}px ${bgY}px`;
+        }
+
+        function renderPiecesSizes() {
+            document.querySelectorAll('.piece').forEach(piece => {
+                const row = parseInt(piece.dataset.row);
+                const col = parseInt(piece.dataset.col);
+                setupPieceStyle(piece, row, col);
+            });
+        }
+
+        let activePiece = null;
+        let touchOffsetX = 0, touchOffsetY = 0;
+
+        function addTouchAndDragEvents(piece) {
+            piece.addEventListener('touchstart', e => {
+                if (!isGameActive) return;
+                activePiece = piece;
+                const touch = e.touches[0];
+                const rect = piece.getBoundingClientRect();
+                
+                touchOffsetX = touch.clientX - rect.left;
+                touchOffsetY = touch.clientY - rect.top;
+
+                piece.classList.add('dragging');
+                moveAt(touch.clientX, touch.clientY);
+            }, { passive: false });
+
+            piece.addEventListener('touchmove', e => {
+                if (!activePiece) return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                moveAt(touch.clientX, touch.clientY);
+            }, { passive: false });
+
+            piece.addEventListener('touchend', e => {
+                if (!activePiece) return;
+                const touch = e.changedTouches[0];
+                piece.classList.remove('dragging');
+                piece.style.left = '';
+                piece.style.top = '';
+
+                const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                handlePieceDrop(piece, elemBelow);
+
+                activePiece = null;
+            });
+        }
+
+        function moveAt(pageX, pageY) {
+            if (!activePiece) return;
+            activePiece.style.left = `${pageX - touchOffsetX}px`;
+            activePiece.style.top = `${pageY - touchOffsetY}px`;
+        }
+
+        function handlePieceDrop(piece, targetElem) {
+            if (!targetElem) return;
+
+            const zone = targetElem.closest('.drop-zone');
+            const pool = targetElem.closest('#pieces-pool');
+
+            if (zone && zone.children.length === 0) {
+                zone.appendChild(piece);
+                moveCount++;
+                movesElement.innerText = moveCount;
+                checkWin();
+            } else if (pool) {
+                pool.appendChild(piece);
+            }
+        }
+
+        function checkWin() {
+            const zones = document.querySelectorAll('.drop-zone');
+            let isWin = true;
+
+            zones.forEach(zone => {
+                const piece = zone.querySelector('.piece');
+                if (!piece || piece.dataset.correctIndex !== zone.dataset.index) {
+                    isWin = false;
+                }
+            });
+
+            if (isWin) {
+                isGameActive = false;
+                stopTimer();
+                showAlert(`Bạn đã hoàn thành trong ${timerElement.innerText} với ${moveCount} bước ghép!`);
+            }
+        }
+
+        function showAlert(msg) {
+            document.getElementById('alert-msg').innerText = msg;
+            document.getElementById('cute-alert').style.display = 'flex';
+        }
+
+        function closeAlert() {
+            document.getElementById('cute-alert').style.display = 'none';
+        }
+
+        window.onload = () => {
+            initGame();
+        };
+    </script>
+</body>
+</html>
