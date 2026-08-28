@@ -366,15 +366,15 @@
 
         <!-- Buttons -->
         <div class="controls">
-            <label for="image-input" class="cute-btn">
+            <label for="image-input" class="cute-btn cute-btn-secondary">
                 <i data-lucide="image-plus" size="18"></i>
                 <span>Thay Ảnh</span>
             </label>
             <input type="file" id="image-input" accept="image/*">
             
-            <button class="cute-btn cute-btn-secondary" onclick="initGame()">
-                <i data-lucide="rotate-cw" size="18"></i>
-                <span>Chơi Lại</span>
+            <button class="cute-btn" id="main-action-btn" onclick="handleMainAction()">
+                <i data-lucide="play" size="18"></i>
+                <span id="btn-text">Bắt Đầu</span>
             </button>
         </div>
 
@@ -383,7 +383,7 @@
             <img id="preview-img" src="" alt="Ảnh mẫu">
             <div class="preview-info">
                 <span class="preview-title">Bức Ảnh Mẫu</span>
-                <span class="preview-desc">Kéo 24 mảnh ghép bên dưới vào khung</span>
+                <span class="preview-desc" id="preview-desc">Xem trước hình hoàn chỉnh bên dưới</span>
             </div>
         </div>
 
@@ -408,7 +408,7 @@
             </div>
             <div class="alert-title">Xuất Sắc Quá!</div>
             <div class="alert-message" id="alert-msg">Bạn đã hoàn thành bức ảnh siêu đẹp này rồi!</div>
-            <button class="alert-btn" onclick="closeAlert()">Nhận Quả Ngay</button>
+            <button class="alert-btn" onclick="closeAlert()">Nhận Quà Ngay</button>
         </div>
     </div>
 
@@ -425,11 +425,15 @@
         const previewImg = document.getElementById('preview-img');
         const timerElement = document.getElementById('timer');
         const movesElement = document.getElementById('moves');
+        const mainActionBtn = document.getElementById('main-action-btn');
+        const btnText = document.getElementById('btn-text');
+        const previewDesc = document.getElementById('preview-desc');
 
         let moveCount = 0;
         let timerInterval = null;
         let secondsPassed = 0;
         let isGameActive = false;
+        let isPreparedState = true;
 
         let boardWidth, boardHeight, pieceWidth, pieceHeight;
 
@@ -441,10 +445,8 @@
         }
 
         window.addEventListener('resize', () => {
-            if (isGameActive) {
-                updateDimensions();
-                renderPiecesSizes();
-            }
+            updateDimensions();
+            renderPiecesSizes();
         });
 
         imageInput.addEventListener('change', function(e) {
@@ -453,7 +455,7 @@
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     currentImageSrc = event.target.result;
-                    initGame();
+                    loadPreviewState();
                 };
                 reader.readAsDataURL(file);
             }
@@ -475,24 +477,28 @@
             clearInterval(timerInterval);
         }
 
-        function initGame() {
+        // Xếp sẵn mảnh đúng vị trí ban đầu
+        function loadPreviewState() {
+            stopTimer();
+            isGameActive = false;
+            isPreparedState = true;
+            
             board.innerHTML = '';
             piecesPool.innerHTML = '';
             previewImg.src = currentImageSrc;
             moveCount = 0;
             movesElement.innerText = moveCount;
-            isGameActive = true;
+            timerElement.innerText = '00:00';
 
+            btnText.innerText = 'Bắt Đầu';
+            previewDesc.innerText = 'Nhấn Bắt Đầu để xáo trộn các mảnh ghép';
+            
             updateDimensions();
-            startTimer();
-
-            const pieces = [];
 
             for (let i = 0; i < TOTAL_PIECES; i++) {
                 const zone = document.createElement('div');
                 zone.classList.add('drop-zone');
                 zone.dataset.index = i;
-                board.appendChild(zone);
 
                 const piece = document.createElement('div');
                 piece.classList.add('piece');
@@ -507,13 +513,35 @@
                 setupPieceStyle(piece, row, col);
                 addTouchAndDragEvents(piece);
 
-                pieces.push(piece);
+                zone.appendChild(piece);
+                board.appendChild(zone);
             }
 
+            lucide.createIcons();
+        }
+
+        function handleMainAction() {
+            if (isPreparedState) {
+                startGame();
+            } else {
+                loadPreviewState();
+            }
+        }
+
+        // Xáo trộn mảnh ghép và bắt đầu tính giờ
+        function startGame() {
+            isPreparedState = false;
+            isGameActive = true;
+            btnText.innerText = 'Chơi Lại';
+            previewDesc.innerText = 'Kéo 24 mảnh ghép bên dưới vào khung';
+
+            const pieces = Array.from(document.querySelectorAll('.piece'));
             pieces.sort(() => Math.random() - 0.5);
+
+            piecesPool.innerHTML = '';
             pieces.forEach(p => piecesPool.appendChild(p));
-            
-            // Re-render Lucide Icons
+
+            startTimer();
             lucide.createIcons();
         }
 
@@ -624,7 +652,7 @@
         }
 
         window.onload = () => {
-            initGame();
+            loadPreviewState();
         };
     </script>
 </body>
