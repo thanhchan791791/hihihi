@@ -79,7 +79,86 @@
             gap: 16px;
         }
 
-        /* Stats Card */
+        /* Screen 1: Selection Screen */
+        .selection-screen {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .cat-tab {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #ffe1e8;
+            background: white;
+            border-radius: var(--radius-medium);
+            font-size: 15px;
+            font-weight: 800;
+            color: #8c739d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.2s ease;
+        }
+
+        .cat-tab.active {
+            background: linear-gradient(135deg, #ff758c 0%, #ff8fa3 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 6px 15px rgba(255, 117, 140, 0.3);
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            width: 100%;
+        }
+
+        .image-card {
+            background: white;
+            border-radius: var(--radius-medium);
+            padding: 10px;
+            box-shadow: var(--shadow-card);
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            text-align: center;
+            border: 2px solid #ffe1e8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .image-card:active {
+            transform: scale(0.95);
+        }
+
+        .image-card img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid #ffe1e8;
+        }
+
+        .image-card span {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Screen 2: Game Board */
         .stats-card {
             width: 100%;
             background: var(--pink-card);
@@ -151,10 +230,6 @@
             color: #8c739d;
             border: 2px solid #ffe1e8;
             box-shadow: var(--shadow-card);
-        }
-
-        input[type="file"] {
-            display: none;
         }
 
         /* Preview Card */
@@ -336,6 +411,10 @@
         .alert-btn:active {
             transform: scale(0.96);
         }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -346,70 +425,86 @@
     </div>
 
     <div class="container">
-        <!-- Stats -->
-        <div class="stats-card">
-            <div class="stat-item">
-                <div class="stat-header">
-                    <i data-lucide="clock" size="14"></i>
-                    <span>Thời Gian</span>
+        <!-- Screen 1: Choose Image -->
+        <div id="selection-screen" class="selection-screen">
+            <div class="category-tabs">
+                <button class="cat-tab active" onclick="switchCategory('cat')">
+                    <i data-lucide="cat" size="18"></i> Mèo Cute
+                </button>
+                <button class="cat-tab" onclick="switchCategory('capy')">
+                    <i data-lucide="smile" size="18"></i> Capybara
+                </button>
+            </div>
+
+            <div id="image-grid" class="image-grid"></div>
+        </div>
+
+        <!-- Screen 2: Game Board -->
+        <div id="game-screen" class="selection-screen hidden">
+            <!-- Stats -->
+            <div class="stats-card">
+                <div class="stat-item">
+                    <div class="stat-header">
+                        <i data-lucide="clock" size="14"></i>
+                        <span>Còn Lại</span>
+                    </div>
+                    <span class="stat-value" id="timer">15:00</span>
                 </div>
-                <span class="stat-value" id="timer">00:00</span>
-            </div>
-            <div style="width: 2px; height: 28px; background: #ffe1e8; border-radius: 2px;"></div>
-            <div class="stat-item">
-                <div class="stat-header">
-                    <i data-lucide="footprints" size="14"></i>
-                    <span>Số Bước</span>
+                <div style="width: 2px; height: 28px; background: #ffe1e8; border-radius: 2px;"></div>
+                <div class="stat-item">
+                    <div class="stat-header">
+                        <i data-lucide="footprints" size="14"></i>
+                        <span>Số Bước</span>
+                    </div>
+                    <span class="stat-value" id="moves">0</span>
                 </div>
-                <span class="stat-value" id="moves">0</span>
             </div>
-        </div>
 
-        <!-- Buttons -->
-        <div class="controls">
-            <label for="image-input" class="cute-btn cute-btn-secondary">
-                <i data-lucide="image-plus" size="18"></i>
-                <span>Thay Ảnh</span>
-            </label>
-            <input type="file" id="image-input" accept="image/*">
-            
-            <button class="cute-btn" id="main-action-btn" onclick="handleMainAction()">
-                <i data-lucide="play" size="18"></i>
-                <span id="btn-text">Bắt Đầu</span>
-            </button>
-        </div>
-
-        <!-- Preview Card -->
-        <div class="preview-card">
-            <img id="preview-img" src="" alt="Ảnh mẫu">
-            <div class="preview-info">
-                <span class="preview-title">Bức Ảnh Mẫu</span>
-                <span class="preview-desc" id="preview-desc">Xem trước hình hoàn chỉnh bên dưới</span>
+            <!-- Buttons -->
+            <div class="controls">
+                <button class="cute-btn cute-btn-secondary" onclick="showSelectionScreen()">
+                    <i data-lucide="arrow-left" size="18"></i>
+                    <span>Đổi Ảnh</span>
+                </button>
+                
+                <button class="cute-btn" id="start-btn" onclick="startShuffleAndPlay()">
+                    <i data-lucide="play" size="18"></i>
+                    <span>Bắt Đầu Xếp</span>
+                </button>
             </div>
+
+            <!-- Preview Card -->
+            <div class="preview-card">
+                <img id="preview-img" src="" alt="Ảnh mẫu">
+                <div class="preview-info">
+                    <span class="preview-title" id="preview-title">Ảnh Mẫu Hoàn Chỉnh</span>
+                    <span class="preview-desc" id="preview-desc">Bấm "Bắt Đầu Xếp" để xáo trộn mảnh ghép</span>
+                </div>
+            </div>
+
+            <!-- Board -->
+            <span class="section-title">
+                <i data-lucide="grid" size="14"></i> Khung Xếp Hình (5x5)
+            </span>
+            <div id="board"></div>
+
+            <!-- Pieces Pool -->
+            <span class="section-title">
+                <i data-lucide="shapes" size="14"></i> Kho Mảnh Ghép
+            </span>
+            <div id="pieces-pool"></div>
         </div>
-
-        <!-- Board -->
-        <span class="section-title">
-            <i data-lucide="grid" size="14"></i> Khung Xếp Hình (5x5)
-        </span>
-        <div id="board"></div>
-
-        <!-- Pieces Pool -->
-        <span class="section-title">
-            <i data-lucide="shapes" size="14"></i> Kho Mảnh Ghép
-        </span>
-        <div id="pieces-pool"></div>
     </div>
 
     <!-- Cute Alert -->
     <div id="cute-alert">
         <div class="alert-box">
-            <div class="alert-icon-wrapper">
+            <div class="alert-icon-wrapper" id="alert-icon">
                 <i data-lucide="party-popper" size="32"></i>
             </div>
-            <div class="alert-title">Xuất Sắc Quá!</div>
+            <div class="alert-title" id="alert-title">Xuất Sắc Quá!</div>
             <div class="alert-message" id="alert-msg">Bạn đã hoàn thành bức ảnh siêu đẹp này rồi!</div>
-            <button class="alert-btn" onclick="closeAlert()">Nhận Quà Ngay</button>
+            <button class="alert-btn" onclick="closeAlert()">Đóng</button>
         </div>
     </div>
 
@@ -417,25 +512,76 @@
         const COLS = 5;
         const ROWS = 5;
         const TOTAL_PIECES = COLS * ROWS;
+        const GAME_DURATION = 15 * 60; // 15 phút tính theo giây
 
-        let currentImageSrc = 'https://picsum.photos/id/1025/500/500';
+        const catImages = [
+            { id: 1, src: 'img1.jpg', title: 'Mèo 1' },
+            { id: 2, src: 'img2.jpg', title: 'Mèo 2' },
+            { id: 3, src: 'img3.jpg', title: 'Mèo 3' },
+            { id: 4, src: 'img4.jpg', title: 'Mèo 4' },
+            { id: 5, src: 'img5.jpg', title: 'Mèo 5' },
+            { id: 6, src: 'img6.jpg', title: 'Mèo 6' },
+            { id: 7, src: 'img7.jpg', title: 'Mèo 7' },
+            { id: 8, src: 'img8.jpg', title: 'Mèo 8' },
+        ];
+
+        const capyImages = [
+            { id: 9, src: 'img9.jpg', title: 'Capybara 1' },
+            { id: 10, src: 'img10.jpg', title: 'Capybara 2' },
+        ];
+
+        let currentImageSrc = '';
+        let currentCategory = 'cat';
 
         const board = document.getElementById('board');
         const piecesPool = document.getElementById('pieces-pool');
-        const imageInput = document.getElementById('image-input');
         const previewImg = document.getElementById('preview-img');
         const timerElement = document.getElementById('timer');
         const movesElement = document.getElementById('moves');
-        const btnText = document.getElementById('btn-text');
-        const previewDesc = document.getElementById('preview-desc');
 
         let moveCount = 0;
         let timerInterval = null;
-        let secondsPassed = 0;
+        let timeRemaining = GAME_DURATION;
         let isGameActive = false;
-        let isPreparedState = true;
 
         let boardWidth, boardHeight, pieceWidth, pieceHeight;
+
+        function switchCategory(category) {
+            currentCategory = category;
+            const tabs = document.querySelectorAll('.cat-tab');
+            tabs[0].classList.toggle('active', category === 'cat');
+            tabs[1].classList.toggle('active', category === 'capy');
+
+            const grid = document.getElementById('image-grid');
+            grid.innerHTML = '';
+
+            const list = category === 'cat' ? catImages : capyImages;
+            list.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                card.onclick = () => selectImageAndStart(item.src);
+                card.innerHTML = `
+                    <img src="${item.src}" alt="${item.title}" onerror="this.src='https://picsum.photos/id/1025/300/300'">
+                    <span>${item.title}</span>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function showSelectionScreen() {
+            stopTimer();
+            isGameActive = false;
+            document.getElementById('selection-screen').classList.remove('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+        }
+
+        function selectImageAndStart(src) {
+            currentImageSrc = src;
+            document.getElementById('selection-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            showPreviewBoard(src);
+        }
 
         function updateDimensions() {
             boardWidth = board.clientWidth;
@@ -449,50 +595,23 @@
             renderPiecesSizes();
         });
 
-        imageInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    currentImageSrc = event.target.result;
-                    loadPreviewState();
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        function startTimer() {
-            clearInterval(timerInterval);
-            secondsPassed = 0;
-            timerElement.innerText = '00:00';
-            timerInterval = setInterval(() => {
-                secondsPassed++;
-                const mins = Math.floor(secondsPassed / 60).toString().padStart(2, '0');
-                const secs = (secondsPassed % 60).toString().padStart(2, '0');
-                timerElement.innerText = `${mins}:${secs}`;
-            }, 1000);
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-        }
-
-        // Tạo trạng thái xếp sẵn 25 mảnh đúng vị trí
-        function loadPreviewState() {
+        /* Bước 1: Hiển thị hình hoàn chỉnh đúng vị trí cho khách hình dung */
+        function showPreviewBoard(src) {
             stopTimer();
             isGameActive = false;
-            isPreparedState = true;
-            
             board.innerHTML = '';
             piecesPool.innerHTML = '';
-            previewImg.src = currentImageSrc;
+            previewImg.src = src;
             moveCount = 0;
             movesElement.innerText = moveCount;
-            timerElement.innerText = '00:00';
+            timerElement.innerText = "15:00";
 
-            btnText.innerText = 'Bắt Đầu';
-            previewDesc.innerText = 'Nhấn Bắt Đầu để xáo trộn 25 mảnh ghép';
+            document.getElementById('preview-title').innerText = "Hình Mẫu Ban Đầu";
+            document.getElementById('preview-desc').innerText = "Xem kĩ hình rồi nhấn 'Bắt Đầu Xếp' nhé!";
             
+            const startBtn = document.getElementById('start-btn');
+            startBtn.innerHTML = `<i data-lucide="play" size="18"></i><span>Bắt Đầu Xếp</span>`;
+
             updateDimensions();
 
             for (let i = 0; i < TOTAL_PIECES; i++) {
@@ -511,38 +630,85 @@
                 piece.dataset.col = col;
 
                 setupPieceStyle(piece, row, col);
-                addTouchAndDragEvents(piece);
-
                 zone.appendChild(piece);
                 board.appendChild(zone);
             }
-
             lucide.createIcons();
         }
 
-        function handleMainAction() {
-            if (isPreparedState) {
-                startGame();
-            } else {
-                loadPreviewState();
-            }
-        }
-
-        // Xáo trộn 25 mảnh vào kho
-        function startGame() {
-            isPreparedState = false;
-            isGameActive = true;
-            btnText.innerText = 'Chơi Lại';
-            previewDesc.innerText = 'Kéo 25 mảnh ghép bên dưới vào khung';
-
-            const pieces = Array.from(document.querySelectorAll('.piece'));
-            pieces.sort(() => Math.random() - 0.5);
-
+        /* Bước 2: Khi bấm 'Bắt Đầu Xếp' -> Xáo trộn mảnh ghép vào kho và tính giờ */
+        function startShuffleAndPlay() {
+            board.innerHTML = '';
             piecesPool.innerHTML = '';
-            pieces.forEach(p => piecesPool.appendChild(p));
+            moveCount = 0;
+            movesElement.innerText = moveCount;
+            isGameActive = true;
 
+            document.getElementById('preview-title').innerText = "Bức Ảnh Mẫu";
+            document.getElementById('preview-desc').innerText = "Kéo 25 mảnh ghép bên dưới vào khung";
+
+            const startBtn = document.getElementById('start-btn');
+            startBtn.innerHTML = `<i data-lucide="rotate-cw" size="18"></i><span>Xáo Trộn Lại</span>`;
+
+            updateDimensions();
             startTimer();
+
+            const pieces = [];
+
+            for (let i = 0; i < TOTAL_PIECES; i++) {
+                const zone = document.createElement('div');
+                zone.classList.add('drop-zone');
+                zone.dataset.index = i;
+                board.appendChild(zone);
+
+                const piece = document.createElement('div');
+                piece.classList.add('piece');
+                piece.dataset.correctIndex = i;
+
+                const row = Math.floor(i / ROWS);
+                const col = i % COLS;
+
+                piece.dataset.row = row;
+                piece.dataset.col = col;
+
+                setupPieceStyle(piece, row, col);
+                addTouchAndDragEvents(piece);
+
+                pieces.push(piece);
+            }
+
+            // Xáo trộn ngẫu nhiên vào Kho
+            pieces.sort(() => Math.random() - 0.5);
+            pieces.forEach(p => piecesPool.appendChild(p));
+            
             lucide.createIcons();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeRemaining = GAME_DURATION;
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+
+                if (timeRemaining <= 0) {
+                    stopTimer();
+                    isGameActive = false;
+                    showAlert('Thất Bại!', 'Rất tiếc! Đã hết thời gian 15 phút mất rồi.', false);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+            const secs = (timeRemaining % 60).toString().padStart(2, '0');
+            timerElement.innerText = `${mins}:${secs}`;
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
         }
 
         function setupPieceStyle(piece, row, col) {
@@ -638,21 +804,35 @@
             if (isWin) {
                 isGameActive = false;
                 stopTimer();
-                showAlert(`Bạn đã hoàn thành 25 mảnh ghép trong ${timerElement.innerText} với ${moveCount} bước!`);
+                const timeSpentSeconds = GAME_DURATION - timeRemaining;
+                const mins = Math.floor(timeSpentSeconds / 60);
+                const secs = timeSpentSeconds % 60;
+                showAlert('Xuất Sắc Quá!', `Thành công! Bạn đã xếp xong 25 mảnh ghép trong ${mins} phút ${secs} giây với ${moveCount} bước!`, true);
             }
         }
 
-        function showAlert(msg) {
+        function showAlert(title, msg, isSuccess = true) {
+            document.getElementById('alert-title').innerText = title;
             document.getElementById('alert-msg').innerText = msg;
+            
+            const iconWrapper = document.getElementById('alert-icon');
+            iconWrapper.innerHTML = isSuccess 
+                ? '<i data-lucide="party-popper" size="32"></i>'
+                : '<i data-lucide="frown" size="32"></i>';
+            
             document.getElementById('cute-alert').style.display = 'flex';
+            lucide.createIcons();
         }
 
         function closeAlert() {
             document.getElementById('cute-alert').style.display = 'none';
+            if (!isGameActive) {
+                showSelectionScreen();
+            }
         }
 
         window.onload = () => {
-            loadPreviewState();
+            switchCategory('cat');
         };
     </script>
 </body>
