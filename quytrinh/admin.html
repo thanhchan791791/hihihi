@@ -946,7 +946,7 @@
         return list;
     }
 
-    // HÀM XUẤT FILE CSV CHỈ GỒM: TÊN, SĐT, GIỜ ORDER
+    // HÀM XUẤT FILE chuẩn cấu trúc bảng Excel Khachhang.xls (Có MS-002 dòng 1, 20 cột chuẩn)
     function exportCustomersToCSV(filteredOnly = false) {
         const orderList = getAllOrdersList(filteredOnly);
 
@@ -955,17 +955,69 @@
             return;
         }
 
-        // Chỉ chứa 3 cột yêu cầu: Tên, Số Điện Thoại, Giờ Order
-        const headers = ["Tên Khách Hàng", "Số Điện Thoại", "Giờ Order"];
+        // Cấu trúc 20 cột theo đúng file Excel mẫu
+        const headers = [
+            "Mã khách hàng (*)",
+            "Tên khách hàng (*)",
+            "Mã thẻ thành viên",
+            "Hạng thẻ",
+            "Nhóm khách hàng",
+            "Số điện thoại",
+            "Ngày sinh",
+            "Giới tính",
+            "CCCD",
+            "Số hộ chiếu",
+            "Tên công ty",
+            "Mã số thuế",
+            "MSĐVCQHVNS",
+            "Email",
+            "Địa chỉ",
+            "Ghi chú",
+            "Mã thẻ cũ",
+            "Ngày phát hành",
+            "Ngày hết hạn",
+            "Nghề nghiệp"
+        ];
 
         let csvRows = [];
+        
+        // Dòng 1: Mã tiêu đề hệ thống (MS-002) + 19 cột trống
+        let row1 = ['"MS-002"'];
+        for (let i = 1; i < 20; i++) {
+            row1.push('""');
+        }
+        csvRows.push(row1.join(","));
+
+        // Dòng 2: Tên các cột tiêu đề
         csvRows.push(headers.map(h => `"${h}"`).join(","));
 
-        orderList.forEach((order) => {
+        // Dòng 3 trở đi: Dữ liệu khách hàng
+        orderList.forEach((order, index) => {
+            const customerCode = `KH${String(index + 1).padStart(5, '0')}`;
+            const name = (order.customerName || '').replace(/"/g, '""');
+            const phone = (order.customerPhone || '').replace(/"/g, '""');
+
             const row = [
-                `"${(order.customerName || '').replace(/"/g, '""')}"`,
-                `"${(order.customerPhone || '').replace(/"/g, '""')}"`,
-                `"${(order.createdAt || '').replace(/"/g, '""')}"`
+                `"${customerCode}"`,       // 1. Mã khách hàng (*)
+                `"${name}"`,               // 2. Tên khách hàng (*)
+                '""',                      // 3. Mã thẻ thành viên
+                '""',                      // 4. Hạng thẻ
+                '""',                      // 5. Nhóm khách hàng
+                `"${phone}"`,              // 6. Số điện thoại
+                '""',                      // 7. Ngày sinh
+                '""',                      // 8. Giới tính
+                '""',                      // 9. CCCD
+                '""',                      // 10. Số hộ chiếu
+                '""',                      // 11. Tên công ty
+                '""',                      // 12. Mã số thuế
+                '""',                      // 13. MSĐVCQHVNS
+                '""',                      // 14. Email
+                '""',                      // 15. Địa chỉ
+                '""',                      // 16. Ghi chú
+                '""',                      // 17. Mã thẻ cũ
+                '""',                      // 18. Ngày phát hành
+                '""',                      // 19. Ngày hết hạn
+                '""'                       // 20. Nghề nghiệp
             ];
 
             csvRows.push(row.join(","));
