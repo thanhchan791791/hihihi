@@ -73,6 +73,7 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .btn-manage-staff {
@@ -89,6 +90,25 @@
 
         .btn-manage-staff:hover {
             background: #1d1e2c;
+        }
+
+        .btn-export-excel {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-export-excel:hover {
+            background: #219653;
         }
 
         /* BRANCH TABS CONTROL */
@@ -141,12 +161,16 @@
         /* THANH TÌM KIẾM KHÁCH HÀNG */
         .search-bar-container {
             margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
         .search-input-wrapper {
             position: relative;
             display: flex;
             align-items: center;
+            flex: 1;
         }
 
         .search-input {
@@ -619,6 +643,9 @@
             <h1>Dashboard Quản Lý Đơn Hàng (2 Chi Nhánh)</h1>
         </div>
         <div class="header-actions">
+            <button class="btn-export-excel" onclick="exportCustomersToCSV(false)">
+                📥 Xuất File Khách Hàng (Tên, SĐT, Giờ)
+            </button>
             <button class="btn-manage-staff" onclick="openStaffModal()">Quản Lý Mã Nhân Viên</button>
         </div>
     </header>
@@ -641,6 +668,9 @@
             <span class="search-icon">🔍</span>
             <input type="text" id="customer-search-input" class="search-input" placeholder="Tìm kiếm theo tên hoặc số điện thoại khách hàng..." oninput="handleSearchInput(this)">
         </div>
+        <button class="btn-export-excel" style="background: #3182ce;" onclick="exportCustomersToCSV(true)" title="Xuất danh sách theo kết quả tìm kiếm hiện tại">
+            📄 Xuất Dữ Liệu Lọc
+        </button>
     </div>
 
     <!-- THANH THỐNG KÊ NHANH -->
@@ -865,6 +895,97 @@
             }
         }
         return null;
+    }
+
+    // LẤY DANH SÁCH ĐƠN HÀNG
+    function getAllOrdersList(filteredOnly = false) {
+        let list = [];
+
+        // Chi nhánh 1
+        Object.keys(rawOrdersBranch1).forEach(id => {
+            list.push({
+                id: id,
+                branchNode: 'orders',
+                branchName: 'Chi Nhánh 1',
+                branchCss: 'b1',
+                ...rawOrdersBranch1[id]
+            });
+        });
+
+        // Chi nhánh 2
+        Object.keys(rawOrdersBranch2).forEach(id => {
+            list.push({
+                id: id,
+                branchNode: 'orders_branch2',
+                branchName: 'Chi Nhánh 2',
+                branchCss: 'b2',
+                ...rawOrdersBranch2[id]
+            });
+        });
+
+        if (filteredOnly) {
+            // Lọc theo tab active hiện tại
+            if (activeBranchTab === 'branch1') {
+                list = list.filter(item => item.branchNode === 'orders');
+            } else if (activeBranchTab === 'branch2') {
+                list = list.filter(item => item.branchNode === 'orders_branch2');
+            }
+
+            // Lọc theo từ khóa ô tìm kiếm
+            const searchInput = document.getElementById('customer-search-input');
+            const keyword = searchInput ? normalizeSearchKey(searchInput.value) : '';
+            if (keyword) {
+                list = list.filter(order => {
+                    const normalizedName = normalizeSearchKey(order.customerName);
+                    const normalizedPhone = normalizeSearchKey(order.customerPhone);
+                    return normalizedName.includes(keyword) || normalizedPhone.includes(keyword);
+                });
+            }
+        }
+
+        return list;
+    }
+
+    // HÀM XUẤT FILE CSV CHỈ GỒM: TÊN, SĐT, GIỜ ORDER
+    function exportCustomersToCSV(filteredOnly = false) {
+        const orderList = getAllOrdersList(filteredOnly);
+
+        if (!orderList || orderList.length === 0) {
+            alert("Không có dữ liệu khách hàng nào để xuất!");
+            return;
+        }
+
+        // Chỉ chứa 3 cột yêu cầu: Tên, Số Điện Thoại, Giờ Order
+        const headers = ["Tên Khách Hàng", "Số Điện Thoại", "Giờ Order"];
+
+        let csvRows = [];
+        csvRows.push(headers.map(h => `"${h}"`).join(","));
+
+        orderList.forEach((order) => {
+            const row = [
+                `"${(order.customerName || '').replace(/"/g, '""')}"`,
+                `"${(order.customerPhone || '').replace(/"/g, '""')}"`,
+                `"${(order.createdAt || '').replace(/"/g, '""')}"`
+            ];
+
+            csvRows.push(row.join(","));
+        });
+
+        // Thêm UTF-8 BOM (\uFEFF) để hiển thị đúng tiếng Việt trong Excel
+        const csvString = "\uFEFF" + csvRows.join("\n");
+        const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        const nowStr = new Date().toISOString().split('T')[0];
+        const filename = filteredOnly ? `danh_sach_khach_hang_loc_${nowStr}.csv` : `danh_sach_tat_ca_khach_hang_${nowStr}.csv`;
+
+        link.setAttribute("href", url);
+        link.setAttribute("download", filename);
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     // HIỂN THỊ DỮ LIỆU & CẬP NHẬT GIAO DIỆN
@@ -1110,7 +1231,7 @@
         document.getElementById('edit-modal').style.display = 'none';
     }
 
-    // LƯU THÔNG TIN CHỈNH SỬA (CÓ THỂ CHUYỂN CHI NHÁNH MỚI)
+    // LƯU THÔNG TIN CHỈNH SỬA
     function saveOrderEdits() {
         const id = document.getElementById('edit-order-id').value;
         const oldBranchNode = document.getElementById('edit-order-branch').value;
