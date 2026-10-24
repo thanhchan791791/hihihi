@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -45,7 +43,6 @@
     </script>
 
     <style>
-        /* Custom iOS & Dreamy Aesthetic Styling */
         body {
             font-family: 'Nunito', sans-serif;
             -webkit-tap-highlight-color: transparent;
@@ -54,7 +51,6 @@
             touch-action: manipulation;
         }
 
-        /* Dreamy Soft Background Transitions */
         .theme-pink-cloud {
             background: linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%);
         }
@@ -68,7 +64,6 @@
             background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 50%, #B2DFDB 100%);
         }
 
-        /* Iridescent / Holographic Glassmorphism Card */
         .dream-card {
             background: rgba(255, 255, 255, 0.65);
             backdrop-filter: blur(20px);
@@ -102,7 +97,6 @@
             100% { filter: hue-rotate(360deg); }
         }
 
-        /* Floating Particles (Hearts, Sakura, Sparkles) */
         .falling-particle {
             position: fixed;
             top: -50px;
@@ -114,20 +108,11 @@
         }
 
         @keyframes fallAndSway {
-            0% {
-                transform: translateY(0) translateX(0) rotate(0deg) scale(0.8);
-                opacity: 1;
-            }
-            50% {
-                transform: translateY(50vh) translateX(30px) rotate(180deg) scale(1.1);
-            }
-            100% {
-                transform: translateY(110vh) translateX(-20px) rotate(360deg) scale(0.6);
-                opacity: 0;
-            }
+            0% { transform: translateY(0) translateX(0) rotate(0deg) scale(0.8); opacity: 1; }
+            50% { transform: translateY(50vh) translateX(30px) rotate(180deg) scale(1.1); }
+            100% { transform: translateY(110vh) translateX(-20px) rotate(360deg) scale(0.6); opacity: 0; }
         }
 
-        /* Pulse Heart Beat Animation */
         @keyframes softPulse {
             0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255, 133, 161, 0.6)); }
             50% { transform: scale(1.18); filter: drop-shadow(0 0 15px rgba(255, 133, 161, 0.9)); }
@@ -136,7 +121,6 @@
             animation: softPulse 1.6s infinite ease-in-out;
         }
 
-        /* Gentle Sparkle Floating Animation */
         @keyframes sparkleFloat {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-6px) rotate(12deg); }
@@ -145,7 +129,6 @@
             animation: sparkleFloat 3s infinite ease-in-out;
         }
 
-        /* iOS Button Interactive Touch Feedback */
         .ios-btn {
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -153,7 +136,6 @@
             transform: scale(0.90);
         }
 
-        /* Music Vinyl Spin */
         @keyframes spinSlow {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -162,7 +144,6 @@
             animation: spinSlow 8s linear infinite;
         }
 
-        /* Sợi dây treo ảnh */
         .photo-rope {
             position: relative;
         }
@@ -177,19 +158,13 @@
             z-index: 1;
         }
 
-        /* Hide scrollbars for slick look */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="theme-pink-cloud min-h-screen text-gray-800 transition-all duration-700 relative flex justify-center items-center p-0 sm:p-4" id="appBody">
 
-    <!-- Particle Container for Falling Hearts & Stars -->
+    <!-- Particle Container -->
     <div id="particlesContainer" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
 
     <!-- iOS Mobile Main Shell Frame -->
@@ -201,19 +176,16 @@
                 <div class="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center shadow-sm text-pink-500 animate-heartbeat">
                     <i class="fa-solid fa-heart text-sm"></i>
                 </div>
-                <span class="font-dreamy text-2xl text-pink-600 tracking-wide drop-shadow-sm">Iu pé Bảo Như ❤️</span>
+                <span id="headerTitle" class="font-dreamy text-2xl text-pink-600 tracking-wide drop-shadow-sm">Iu pé Bảo Như ❤️</span>
             </div>
 
             <div class="flex items-center space-x-2">
-                <!-- Theme Modal Button -->
                 <button onclick="openThemeModal()" class="w-10 h-10 rounded-2xl bg-white/80 shadow-md flex items-center justify-center text-pink-500 ios-btn hover:bg-white" title="Đổi giao diện">
                     <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
                 </button>
-                <!-- Export Image Button -->
                 <button onclick="exportStoryCard()" class="w-10 h-10 rounded-2xl bg-white/80 shadow-md flex items-center justify-center text-pink-500 ios-btn hover:bg-white" title="Lưu ảnh kỷ niệm">
                     <i class="fa-solid fa-camera-retro text-sm"></i>
                 </button>
-                <!-- Settings Button -->
                 <button onclick="openSettingsModal()" class="w-10 h-10 rounded-2xl bg-white/80 shadow-md flex items-center justify-center text-pink-500 ios-btn hover:bg-white" title="Cài đặt">
                     <i class="fa-solid fa-gear text-sm"></i>
                 </button>
@@ -229,10 +201,9 @@
                 <div class="absolute -left-8 -bottom-8 w-28 h-28 bg-purple-300/30 rounded-full blur-2xl"></div>
 
                 <div class="flex justify-around items-center relative z-10">
-                    <!-- Partner 1 (Nam) -->
+                    <!-- Partner 1 -->
                     <div class="flex flex-col items-center group">
                         <div class="relative cursor-pointer ios-btn" onclick="triggerUpload('p1')">
-                            <!-- Bow Decoration -->
                             <span class="absolute -top-3 left-1/2 -translate-x-1/2 z-20 text-pink-400 text-lg animate-sparkle">🎀</span>
                             <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-1 shimmer-border shadow-md">
                                 <img id="p1Img" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300&auto=format&fit=crop&q=80" alt="Male Partner" class="w-full h-full rounded-full object-cover border-2 border-white">
@@ -246,7 +217,7 @@
                         </div>
                     </div>
 
-                    <!-- Center Heart Animated Emblem -->
+                    <!-- Center Heart -->
                     <div class="flex flex-col items-center justify-center">
                         <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-pink-400 to-rose-400 flex items-center justify-center shadow-lg text-white text-lg animate-heartbeat">
                             <i class="fa-solid fa-heart"></i>
@@ -254,10 +225,9 @@
                         <span class="text-[10px] font-bold text-pink-500 mt-1 uppercase tracking-widest font-cute">Bên Nhau</span>
                     </div>
 
-                    <!-- Partner 2 (Nữ) -->
+                    <!-- Partner 2 -->
                     <div class="flex flex-col items-center group">
                         <div class="relative cursor-pointer ios-btn" onclick="triggerUpload('p2')">
-                            <!-- Bow Decoration -->
                             <span class="absolute -top-3 left-1/2 -translate-x-1/2 z-20 text-pink-400 text-lg animate-sparkle">🎀</span>
                             <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-1 shimmer-border shadow-md">
                                 <img id="p2Img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" alt="Female Partner" class="w-full h-full rounded-full object-cover border-2 border-white">
@@ -272,12 +242,11 @@
                     </div>
                 </div>
 
-                <!-- Hidden Image Inputs -->
                 <input type="file" id="p1Input" class="hidden" accept="image/*" onchange="handleImageUpload(event, 'p1')">
                 <input type="file" id="p2Input" class="hidden" accept="image/*" onchange="handleImageUpload(event, 'p2')">
             </section>
 
-            <!-- 1.5 Sợi Dây Treo 10 Ảnh Kỷ Niệm Gần Nhất (Giao diện chính) -->
+            <!-- 1.5 Dây Treo 10 Ảnh Kỷ Niệm Gần Nhất -->
             <section class="dream-card-inner rounded-3xl p-4 shadow-sm relative overflow-hidden">
                 <div class="flex justify-between items-center mb-3">
                     <h4 class="font-cute font-bold text-gray-700 text-xs flex items-center gap-1.5">
@@ -288,11 +257,8 @@
                     </button>
                 </div>
 
-                <!-- Dây Treo Ảnh (Horizontal Scroll) -->
                 <div class="photo-rope pt-4 pb-2">
-                    <div id="ropePhotoContainer" class="flex gap-3 overflow-x-auto no-scrollbar px-1 items-start min-h-[135px]">
-                        <!-- Render 10 ảnh gần nhất tại đây -->
-                    </div>
+                    <div id="ropePhotoContainer" class="flex gap-3 overflow-x-auto no-scrollbar px-1 items-start min-h-[135px]"></div>
                 </div>
             </section>
 
@@ -304,19 +270,16 @@
                     <i class="fa-solid fa-sparkles text-amber-400"></i>
                 </div>
 
-                <!-- Big Main Days Badge -->
                 <div class="my-2 flex justify-center items-baseline space-x-1">
                     <span id="totalDays" class="text-6xl sm:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-rose-500 tracking-tight font-cute">0</span>
                     <span class="text-xl font-bold text-pink-500 font-cute">Ngày</span>
                 </div>
 
-                <!-- Breakdown Y - M - D -->
                 <div class="text-xs font-bold text-pink-700 bg-pink-100/80 rounded-2xl py-1.5 px-4 inline-block mb-3 shadow-inner">
                     <i class="fa-solid fa-calendar-heart mr-1.5 text-pink-500"></i>
                     <span id="detailedDateStr">0 Năm 0 Tháng 0 Ngày</span>
                 </div>
 
-                <!-- Real-time Clock (HH : MM : SS) -->
                 <div class="grid grid-cols-3 gap-2 max-w-xs mx-auto">
                     <div class="bg-white/80 p-2 rounded-2xl shadow-sm border border-white">
                         <span id="hours" class="block text-lg font-extrabold text-pink-600 font-cute">00</span>
@@ -332,7 +295,6 @@
                     </div>
                 </div>
 
-                <!-- Date Info Bottom Bar -->
                 <div class="mt-4 pt-3 border-t border-pink-100/80 flex justify-between items-center text-xs text-gray-500 font-semibold">
                     <span class="flex items-center gap-1">
                         <i class="fa-solid fa-gift text-pink-400"></i> Ngày bắt đầu: <strong id="startDateDisplay" class="text-gray-700">01/01/2023</strong>
@@ -352,7 +314,6 @@
                     <span id="nextMilestoneTarget" class="text-[11px] font-extrabold text-purple-600 bg-purple-100 px-2.5 py-0.5 rounded-full">100 Ngày</span>
                 </div>
 
-                <!-- Progress Bar -->
                 <div class="w-full bg-white/80 rounded-full h-3.5 mb-2 p-0.5 shadow-inner border border-pink-100">
                     <div id="milestoneProgressBar" class="bg-gradient-to-r from-pink-400 via-purple-400 to-rose-400 h-2.5 rounded-full transition-all duration-700" style="width: 0%"></div>
                 </div>
@@ -404,17 +365,15 @@
                     </div>
                 </div>
                 <textarea id="loveNote" rows="2" class="w-full bg-white/70 rounded-2xl p-3 text-sm text-gray-700 font-handwrite text-base focus:outline-none focus:ring-2 focus:ring-pink-300 resize-none border border-white" placeholder="Viết những câu ngọt ngào dành riêng cho người ấy..."></textarea>
-                <p id="saveNoteToast" class="text-[10px] text-emerald-600 font-extrabold mt-1 hidden text-right"><i class="fa-solid fa-check-circle"></i> Đã lưu kỷ niệm vào máy!</p>
+                <p id="saveNoteToast" class="text-[10px] text-emerald-600 font-extrabold mt-1 hidden text-right"><i class="fa-solid fa-check-circle"></i> Đã lưu kỷ niệm lên Realtime Database!</p>
             </section>
 
         </main>
 
-        <!-- Audio element for background music simulation -->
         <audio id="bgAudio" loop preload="none">
             <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
         </audio>
 
-        <!-- Footer -->
         <footer class="text-center pt-3 text-[11px] text-pink-600/80 font-bold font-cute">
             Forever & Always <i class="fa-solid fa-heart text-pink-500 animate-heartbeat"></i> Handcrafted with Love
         </footer>
@@ -435,7 +394,6 @@
                 </button>
             </div>
 
-            <!-- Form Đăng Ảnh Mới -->
             <div class="bg-pink-50/70 p-3 rounded-2xl border border-pink-200 mb-3">
                 <div class="flex items-center space-x-3 mb-2">
                     <div id="locketPreviewBox" onclick="document.getElementById('locketImageInput').click()" class="w-16 h-16 rounded-2xl bg-white border-2 border-dashed border-pink-300 flex flex-col items-center justify-center cursor-pointer overflow-hidden shadow-sm relative group shrink-0">
@@ -455,10 +413,7 @@
                 </button>
             </div>
 
-            <!-- Danh Sách Khoảnh Khắc (Full Feed) -->
-            <div class="flex-1 overflow-y-auto no-scrollbar space-y-3 pr-1" id="locketFeedContainer">
-                <!-- Javascript render danh sách tại đây -->
-            </div>
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-3 pr-1" id="locketFeedContainer"></div>
         </div>
     </div>
 
@@ -511,17 +466,14 @@
                     <span class="w-6 h-6 rounded-full bg-pink-300 border border-white shadow"></span>
                     <span class="text-xs font-bold text-gray-700">Pink Cloud</span>
                 </button>
-
                 <button onclick="setTheme('theme-lavender-dream')" class="p-3 rounded-2xl bg-gradient-to-br from-purple-100 to-blue-100 border-2 border-purple-300 flex items-center gap-2.5 ios-btn">
                     <span class="w-6 h-6 rounded-full bg-purple-300 border border-white shadow"></span>
                     <span class="text-xs font-bold text-gray-700">Lavender</span>
                 </button>
-
                 <button onclick="setTheme('theme-peach-blossom')" class="p-3 rounded-2xl bg-gradient-to-br from-rose-100 to-pink-200 border-2 border-rose-300 flex items-center gap-2.5 ios-btn">
                     <span class="w-6 h-6 rounded-full bg-rose-300 border border-white shadow"></span>
                     <span class="text-xs font-bold text-gray-700">Peach Rose</span>
                 </button>
-
                 <button onclick="setTheme('theme-mint-icecream')" class="p-3 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 border-2 border-emerald-300 flex items-center gap-2.5 ios-btn">
                     <span class="w-6 h-6 rounded-full bg-emerald-300 border border-white shadow"></span>
                     <span class="text-xs font-bold text-gray-700">Mint Sweet</span>
@@ -530,29 +482,48 @@
         </div>
     </div>
 
-    <!-- Notification Toast -->
+    <!-- Toast Notification -->
     <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-white/90 border border-pink-200 text-pink-600 text-xs font-bold px-5 py-2.5 rounded-full shadow-xl backdrop-blur-md z-50 flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none">
         <i class="fa-solid fa-sparkles text-amber-400" id="toastIcon"></i>
         <span id="toastMsg">Thông báo</span>
     </div>
 
-    <!-- JavaScript Logic -->
+    <!-- Firebase SDKs (Compat v10) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+    <!-- JavaScript & Firebase Integration Logic -->
     <script>
-        // --- State Initialization ---
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyB4S6E-Gl6k5mG57otkF8WUh3iuvqq-pWw",
+            authDomain: "member-ffd77.firebaseapp.com",
+            databaseURL: "https://member-ffd77-default-rtdb.firebaseio.com",
+            projectId: "member-ffd77",
+            storageBucket: "member-ffd77.firebasestorage.app",
+            messagingSenderId: "375537857518",
+            appId: "1:375537857518:web:86449f4419f0ab5f6954ff",
+            measurementId: "G-JF4ZDWKBQ5"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // --- Default App State ---
         const DEFAULT_START_DATE = new Date(Date.now() - (520 * 24 * 60 * 60 * 1000)).toISOString().slice(0, 16);
         let appState = {
-            startDate: localStorage.getItem('love_start_date') || DEFAULT_START_DATE,
-            p1Name: localStorage.getItem('love_p1_name') || 'Anh Béo 💖',
-            p2Name: localStorage.getItem('love_p2_name') || 'Bé Bún 🎀',
-            p1Img: localStorage.getItem('love_p1_img') || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300&auto=format&fit=crop&q=80',
-            p2Img: localStorage.getItem('love_p2_img') || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
-            loveNote: localStorage.getItem('love_note') || 'Cảm ơn bé yêu vì đã đến bên anh, làm thế giới của anh lúc nào cũng ngọt ngào như kẹo bông! 🌸✨',
-            theme: localStorage.getItem('love_theme') || 'theme-pink-cloud',
-            locketPosts: JSON.parse(localStorage.getItem('love_locket_posts')) || []
+            startDate: DEFAULT_START_DATE,
+            p1Name: 'Anh Béo 💖',
+            p2Name: 'Bé Bún 🎀',
+            p1Img: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300&auto=format&fit=crop&q=80',
+            p2Img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
+            loveNote: 'Cảm ơn bé yêu vì đã đến bên anh, làm thế giới của anh lúc nào cũng ngọt ngào như kẹo bông! 🌸✨',
+            theme: 'theme-pink-cloud',
+            locketPosts: []
         };
 
         const keyMilestones = [100, 200, 365, 500, 700, 1000, 1500, 2000, 3000];
-
         const romanticQuotes = [
             "Cảm ơn bé yêu vì đã đến bên anh, làm thế giới của anh ngọt ngào như kẹo bông! 🌸✨",
             "Trên đời có hàng vạn nụ cười, nhưng nụ cười của em là xinh đẹp nhất! 💖",
@@ -572,18 +543,44 @@
         let isPlaying = false;
         let currentTempLocketImage = '';
 
-        // --- On Document Load ---
+        // --- Realtime Data Synchronization from Firebase ---
         window.addEventListener('DOMContentLoaded', () => {
-            loadSavedData();
-            startCounter();
             initFallingParticles();
-            setTheme(appState.theme, false);
-            updateRopePhotos();
+            startCounter();
+
+            // Lắng nghe thay đổi dữ liệu thời gian thực từ Realtime Database
+            db.ref('loveDiary').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    appState.startDate = data.startDate || appState.startDate;
+                    appState.p1Name = data.p1Name || appState.p1Name;
+                    appState.p2Name = data.p2Name || appState.p2Name;
+                    appState.p1Img = data.p1Img || appState.p1Img;
+                    appState.p2Img = data.p2Img || appState.p2Img;
+                    appState.loveNote = data.loveNote || appState.loveNote;
+                    appState.theme = data.theme || appState.theme;
+                    appState.locketPosts = data.locketPosts ? Object.values(data.locketPosts) : [];
+                } else {
+                    // Dữ liệu mẫu khởi tạo lần đầu lên Firebase nếu chưa có
+                    syncDataToFirebase();
+                }
+                
+                // Cập nhật giao diện khi có dữ liệu mới từ Database
+                loadSavedDataToUI();
+                setTheme(appState.theme, false);
+                renderLocketFeed();
+                updateRopePhotos();
+            });
         });
 
-        function loadSavedData() {
+        function syncDataToFirebase() {
+            db.ref('loveDiary').set(appState);
+        }
+
+        function loadSavedDataToUI() {
             document.getElementById('p1Name').innerText = appState.p1Name;
             document.getElementById('p2Name').innerText = appState.p2Name;
+            document.getElementById('headerTitle').innerText = `Iu pé ${appState.p2Name.replace(/[^\w\sà-ỹÀ-Ỹ]/gi, '').trim()} ❤️`;
             document.getElementById('p1Img').src = appState.p1Img;
             document.getElementById('p2Img').src = appState.p2Img;
             document.getElementById('loveNote').value = appState.loveNote;
@@ -601,16 +598,12 @@
         function updateCounter() {
             const start = new Date(appState.startDate);
             const now = new Date();
-
             if (isNaN(start.getTime())) return;
 
             const diffMs = Math.max(0, now - start);
-
-            // Total Days
             const totalDaysVal = Math.floor(diffMs / (1000 * 60 * 60 * 24));
             document.getElementById('totalDays').innerText = totalDaysVal;
 
-            // Y / M / D Breakdown
             let years = now.getFullYear() - start.getFullYear();
             let months = now.getMonth() - start.getMonth();
             let days = now.getDate() - start.getDate();
@@ -631,11 +624,9 @@
             detailedStr += `${days} Ngày`;
             document.getElementById('detailedDateStr').innerText = detailedStr;
 
-            // Display formatted Start Date
             const formattedStartDate = `${padZero(start.getDate())}/${padZero(start.getMonth() + 1)}/${start.getFullYear()}`;
             document.getElementById('startDateDisplay').innerText = formattedStartDate;
 
-            // Time HH : MM : SS
             const hoursVal = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
             const minutesVal = Math.floor((diffMs / (1000 * 60)) % 60);
             const secondsVal = Math.floor((diffMs / 1000) % 60);
@@ -644,7 +635,6 @@
             document.getElementById('minutes').innerText = padZero(minutesVal);
             document.getElementById('seconds').innerText = padZero(secondsVal);
 
-            // Update Milestones
             updateMilestones(totalDaysVal);
         }
 
@@ -652,12 +642,9 @@
             return num < 10 ? '0' + num : num;
         }
 
-        // --- Milestone Calculations ---
         function updateMilestones(currentDays) {
             let next = keyMilestones.find(m => m > currentDays);
-            if (!next) {
-                next = Math.ceil((currentDays + 1) / 500) * 500;
-            }
+            if (!next) next = Math.ceil((currentDays + 1) / 500) * 500;
 
             let prev = 0;
             for (let i = keyMilestones.length - 1; i >= 0; i--) {
@@ -677,7 +664,7 @@
             document.getElementById('milestoneCountDown').innerText = `Còn ${daysLeft} ngày nữa`;
         }
 
-        // --- Image Upload ---
+        // --- Image Upload (Avatars) ---
         function triggerUpload(partner) {
             document.getElementById(`${partner}Input`).click();
         }
@@ -688,19 +675,19 @@
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const base64Img = e.target.result;
-                    document.getElementById(`${partner}Img`).src = base64Img;
                     appState[`${partner}Img`] = base64Img;
-                    localStorage.setItem(`love_${partner}_img`, base64Img);
-                    showToast('Đã đổi ảnh đại diện cưng xỉu! ✨');
+                    db.ref('loveDiary').update({
+                        [`${partner}Img`]: base64Img
+                    });
+                    showToast('Đã cập nhật ảnh đại diện lên Database! ✨');
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        // --- Khoảnh Khắc Đôi & Dây Treo 10 Ảnh ---
+        // --- Locket Posts (Dây Treo Ảnh & Khoảnh Khắc) ---
         function openLocketModal() {
             document.getElementById('locketModal').classList.remove('hidden');
-            renderLocketFeed();
         }
         function closeLocketModal() {
             document.getElementById('locketModal').classList.add('hidden');
@@ -728,42 +715,41 @@
                 return;
             }
 
+            const newPostId = Date.now();
             const newPost = {
-                id: Date.now(),
+                id: newPostId,
                 img: currentTempLocketImage,
                 caption: caption || 'Khoảnh khắc ngọt ngào bên nhau 💕',
                 time: new Date().toLocaleDateString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }),
                 hearts: 0
             };
 
-            appState.locketPosts.unshift(newPost);
-            localStorage.setItem('love_locket_posts', JSON.stringify(appState.locketPosts));
-
-            // Reset input
-            currentTempLocketImage = '';
-            document.getElementById('locketImgPreview').src = '';
-            document.getElementById('locketImgPreview').classList.add('hidden');
-            document.getElementById('locketUploadPlaceholder').classList.remove('hidden');
-            document.getElementById('locketCaptionInput').value = '';
-
-            renderLocketFeed();
-            updateRopePhotos();
-            showToast('Đã đăng khoảnh khắc thành công! ✨');
+            // Đẩy lên Firebase Realtime Database tại node locketPosts
+            db.ref(`loveDiary/locketPosts/${newPostId}`).set(newPost).then(() => {
+                currentTempLocketImage = '';
+                document.getElementById('locketImgPreview').src = '';
+                document.getElementById('locketImgPreview').classList.add('hidden');
+                document.getElementById('locketUploadPlaceholder').classList.remove('hidden');
+                document.getElementById('locketCaptionInput').value = '';
+                showToast('Đã đăng khoảnh khắc lên Database! ✨');
+            });
         }
 
         function renderLocketFeed() {
             const container = document.getElementById('locketFeedContainer');
-            if (appState.locketPosts.length === 0) {
+            const posts = appState.locketPosts.slice().reverse(); // Mới nhất lên đầu
+
+            if (posts.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-6 text-gray-400 text-xs font-semibold">
                         <i class="fa-solid fa-camera-rotate text-2xl mb-1 text-pink-300"></i>
-                        <p>Chưa có khoảnh khắc nào được đăng.<br>Hãy thêm ảnh đầu tiên nhé!</p>
+                        <p>Chưa có khoảnh khắc nào.<br>Hãy đăng ảnh đầu tiên lên Database nhé!</p>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = appState.locketPosts.map(post => `
+            container.innerHTML = posts.map(post => `
                 <div class="bg-white rounded-2xl p-3 shadow-sm border border-pink-100 relative group">
                     <button onclick="deleteLocketPost(${post.id})" class="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 text-gray-400 hover:text-red-500 flex items-center justify-center text-xs transition-colors z-10">
                         <i class="fa-solid fa-trash"></i>
@@ -774,7 +760,7 @@
                     <p class="font-handwrite text-gray-800 text-base mb-1 px-1">${post.caption}</p>
                     <div class="flex justify-between items-center text-[10px] text-gray-400 px-1 pt-1 border-t border-gray-50">
                         <span><i class="fa-regular fa-clock mr-1"></i>${post.time}</span>
-                        <button onclick="likeLocketPost(${post.id})" class="text-pink-500 font-bold flex items-center gap-1 ios-btn">
+                        <button onclick="likeLocketPost(${post.id}, ${post.hearts || 0})" class="text-pink-500 font-bold flex items-center gap-1 ios-btn">
                             <i class="fa-solid fa-heart text-xs"></i> <span>${post.hearts || 0}</span> Thả tim
                         </button>
                     </div>
@@ -782,35 +768,28 @@
             `).join('');
         }
 
-        function likeLocketPost(id) {
-            const post = appState.locketPosts.find(p => p.id === id);
-            if (post) {
-                post.hearts = (post.hearts || 0) + 1;
-                localStorage.setItem('love_locket_posts', JSON.stringify(appState.locketPosts));
-                renderLocketFeed();
-                updateRopePhotos();
-                showToast('Đã thả tim khoảnh khắc! 💖');
-            }
+        function likeLocketPost(id, currentHearts) {
+            db.ref(`loveDiary/locketPosts/${id}`).update({
+                hearts: currentHearts + 1
+            });
+            showToast('Đã đồng bộ lượt thả tim lên Database! 💖');
         }
 
         function deleteLocketPost(id) {
-            appState.locketPosts = appState.locketPosts.filter(p => p.id !== id);
-            localStorage.setItem('love_locket_posts', JSON.stringify(appState.locketPosts));
-            renderLocketFeed();
-            updateRopePhotos();
-            showToast('Đã xóa khoảnh khắc!');
+            db.ref(`loveDiary/locketPosts/${id}`).remove().then(() => {
+                showToast('Đã xóa khoảnh khắc khỏi Database!');
+            });
         }
 
-        // Cập nhật 10 ảnh gần nhất treo lên dây ở màn hình chính
         function updateRopePhotos() {
             const container = document.getElementById('ropePhotoContainer');
-            const latestPosts = appState.locketPosts.slice(0, 10);
+            const latestPosts = appState.locketPosts.slice().reverse().slice(0, 10);
 
             if (latestPosts.length === 0) {
                 container.innerHTML = `
                     <div class="w-full text-center py-4 text-gray-400 text-xs font-semibold">
                         <i class="fa-regular fa-image text-xl mb-1 text-pink-300"></i>
-                        <p>Chưa có ảnh nào trên dây. Nhấn "Đăng ảnh mới" để treo khoảnh khắc nhé! ✨</p>
+                        <p>Chưa có ảnh trên dây. Nhấn "Đăng ảnh mới" nhé! ✨</p>
                     </div>
                 `;
                 return;
@@ -818,7 +797,6 @@
 
             container.innerHTML = latestPosts.map(post => `
                 <div onclick="openLocketModal()" class="shrink-0 w-24 bg-white p-1.5 pb-2 rounded-lg shadow-md border border-pink-100 cursor-pointer ios-btn relative transform hover:-translate-y-1 transition-transform">
-                    <!-- Kẹp gỗ treo ảnh -->
                     <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 w-3 h-4 bg-amber-200 border border-amber-300 rounded-sm z-10 shadow-sm"></div>
                     <div class="w-full h-20 bg-gray-50 rounded overflow-hidden flex items-center justify-center mb-1">
                         <img src="${post.img}" alt="Trev Photo" class="w-full h-full object-contain">
@@ -829,62 +807,49 @@
             `).join('');
         }
 
-        // --- Modals Logic ---
-        function openSettingsModal() {
-            document.getElementById('settingsModal').classList.remove('hidden');
-        }
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.add('hidden');
-        }
+        // --- Settings & Themes ---
+        function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
 
         function saveSettings() {
             const dateVal = document.getElementById('startDateInput').value;
             const p1Val = document.getElementById('p1NameInput').value.trim() || 'Anh Béo 💖';
             const p2Val = document.getElementById('p2NameInput').value.trim() || 'Bé Bún 🎀';
 
-            if (dateVal) {
-                appState.startDate = dateVal;
-                localStorage.setItem('love_start_date', dateVal);
-            }
+            const updates = {
+                p1Name: p1Val,
+                p2Name: p2Val
+            };
+            if (dateVal) updates.startDate = dateVal;
 
-            appState.p1Name = p1Val;
-            appState.p2Name = p2Val;
-            localStorage.setItem('love_p1_name', p1Val);
-            localStorage.setItem('love_p2_name', p2Val);
-
-            loadSavedData();
-            updateCounter();
-            closeSettingsModal();
-            showToast('Đã lưu thông tin kỷ niệm! 💕');
+            db.ref('loveDiary').update(updates).then(() => {
+                closeSettingsModal();
+                showToast('Đã lưu thông tin lên Database! 💕');
+            });
         }
 
-        function openThemeModal() {
-            document.getElementById('themeModal').classList.remove('hidden');
-        }
-        function closeThemeModal() {
-            document.getElementById('themeModal').classList.add('hidden');
-        }
+        function openThemeModal() { document.getElementById('themeModal').classList.remove('hidden'); }
+        function closeThemeModal() { document.getElementById('themeModal').classList.add('hidden'); }
 
         function setTheme(themeClass, notify = true) {
             appState.theme = themeClass;
-            localStorage.setItem('love_theme', themeClass);
+            db.ref('loveDiary').update({ theme: themeClass });
 
             const body = document.getElementById('appBody');
             body.className = `${themeClass} min-h-screen text-gray-800 transition-all duration-700 relative flex justify-center items-center p-0 sm:p-4`;
 
             closeThemeModal();
-            if (notify) showToast('Đã thay đổi theme mơ mộng! 🌸');
+            if (notify) showToast('Đã lưu theme mới lên Database! 🌸');
         }
 
         // --- Love Notes & Quotes ---
         function saveLoveNote() {
             const note = document.getElementById('loveNote').value;
-            appState.loveNote = note;
-            localStorage.setItem('love_note', note);
-
-            const toast = document.getElementById('saveNoteToast');
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 2500);
+            db.ref('loveDiary').update({ loveNote: note }).then(() => {
+                const toast = document.getElementById('saveNoteToast');
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 2500);
+            });
         }
 
         function randomQuote() {
@@ -927,13 +892,11 @@
             document.getElementById('musicArtist').innerText = current.artist;
             audio.src = current.src;
 
-            if (isPlaying) {
-                audio.play();
-            }
+            if (isPlaying) audio.play();
             showToast('Đã đổi bài hát tiếp theo 🎵');
         }
 
-        // --- Falling Romantic Particles (Hearts, Sakura, Sparkles) ---
+        // --- Particles ---
         function initFallingParticles() {
             const container = document.getElementById('particlesContainer');
             const particleIcons = ['🌸', '💖', '✨', '💕', '🎀', '⭐', '💗'];
@@ -947,14 +910,11 @@
                 particle.style.animationDuration = (Math.random() * 3 + 5) + 's';
 
                 container.appendChild(particle);
-
-                setTimeout(() => {
-                    particle.remove();
-                }, 7500);
+                setTimeout(() => particle.remove(), 7500);
             }, 500);
         }
 
-        // --- Export Card Image ---
+        // --- Export Image ---
         function exportStoryCard() {
             showToast('Đang tạo ảnh kỷ niệm xinh xắn... ✨');
             const captureArea = document.getElementById('captureArea');
@@ -976,12 +936,11 @@
             });
         }
 
-        // --- Toast Helper ---
+        // --- Toast ---
         function showToast(msg) {
             const toast = document.getElementById('toast');
             document.getElementById('toastMsg').innerText = msg;
             toast.classList.remove('opacity-0', 'pointer-events-none');
-
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'pointer-events-none');
             }, 2800);
@@ -989,4 +948,3 @@
     </script>
 </body>
 </html>
-
