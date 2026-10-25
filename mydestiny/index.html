@@ -248,7 +248,7 @@
                             </span>
                         </div>
                         <div class="mt-2 text-center">
-                            <span id="p1Name" class="font-cute font-bold text-gray-800 text-sm sm:text-base block">Anh Béo 💖</span>
+                            <span id="p1Name" class="font-cute font-bold text-gray-800 text-sm sm:text-base block">Anh Iu 💖</span>
                         </div>
                     </div>
 
@@ -272,13 +272,46 @@
                             </span>
                         </div>
                         <div class="mt-2 text-center">
-                            <span id="p2Name" class="font-cute font-bold text-gray-800 text-sm sm:text-base block">Bé Bún 🎀</span>
+                            <span id="p2Name" class="font-cute font-bold text-gray-800 text-sm sm:text-base block">Bé Iu  🎀</span>
                         </div>
                     </div>
                 </div>
 
                 <input type="file" id="p1Input" class="hidden" accept="image/*" onchange="handleImageUpload(event, 'p1')">
                 <input type="file" id="p2Input" class="hidden" accept="image/*" onchange="handleImageUpload(event, 'p2')">
+            </section>
+
+            <!-- 1.2 All-in-One Commemorative & Special Events Countdown (Gôm sinh nhật, 8/3, lễ lạt các thứ) -->
+            <section class="dream-card-inner rounded-3xl p-4 shadow-sm relative overflow-hidden">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-cute font-bold text-gray-700 text-xs flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-days text-pink-500"></i> Sự Kiện & Ngày Lễ Sắp Tới ✨
+                    </h4>
+                    <span id="nextEventName" class="text-[10px] bg-pink-500 text-white font-bold px-2.5 py-0.5 rounded-full animate-pulse">Đang tải...</span>
+                </div>
+                
+                <div class="bg-white/80 p-3 rounded-2xl border border-pink-100 shadow-inner flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div id="nextEventIcon" class="w-10 h-10 rounded-xl bg-pink-100 flex items-center justify-center text-pink-500 text-lg shadow-sm">
+                            <i class="fa-solid fa-gift"></i>
+                        </div>
+                        <div>
+                            <span id="nextEventTitle" class="block text-xs font-extrabold text-gray-800 font-cute">Sắp tới ngày đặc biệt</span>
+                            <span id="nextEventDateStr" class="text-[10px] text-gray-500 font-semibold">Đang cập nhật thời gian...</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span id="nextEventCountdownNum" class="block text-lg font-extrabold text-pink-600 font-cute">0</span>
+                        <span class="text-[9px] uppercase font-bold text-pink-400">Ngày nữa</span>
+                    </div>
+                </div>
+
+                <!-- Nút mở danh sách tất cả các ngày lễ / sinh nhật -->
+                <div class="mt-2.5 text-center">
+                    <button onclick="openEventsModal()" class="text-[11px] text-pink-600 font-bold hover:underline flex items-center justify-center gap-1 mx-auto ios-btn">
+                        <i class="fa-solid fa-list-check"></i> Xem danh sách tất cả Sinh nhật & Ngày lễ <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                    </button>
+                </div>
             </section>
 
             <!-- 1.5 Dây Treo 10 Ảnh Kỷ Niệm Gần Nhất -->
@@ -412,6 +445,26 @@
         <footer class="text-center pt-3 text-[11px] text-pink-600/80 font-bold font-cute">
             Forever & Always <i class="fa-solid fa-heart text-pink-500 animate-heartbeat"></i> Handcrafted with Love
         </footer>
+    </div>
+
+    <!-- MODAL: Danh sách tất cả các ngày lễ, ngày phụ nữ, sinh nhật -->
+    <div id="eventsModal" class="fixed inset-0 bg-black/40 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="dream-card rounded-[36px] p-5 w-full max-w-sm shadow-2xl relative bg-white/95 max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center mb-3">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center text-pink-500">
+                        <i class="fa-solid fa-calendar-star"></i>
+                    </div>
+                    <h3 class="font-cute font-bold text-sm text-gray-800">Tất Cả Ngày Lễ & Sinh Nhật 🌸</h3>
+                </div>
+                <button onclick="closeEventsModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-2.5 pr-1" id="eventsListContainer">
+                <!-- Được render tự động qua JS -->
+            </div>
+        </div>
     </div>
 
     <!-- MODAL: Đăng & Quản Lý Khoảnh Khắc Đôi -->
@@ -569,6 +622,16 @@
             "Mỗi khoảnh khắc có em là một món quà tuyệt vời nhất đời anh🎁❤️"
         ];
 
+        // --- Danh sách toàn bộ các ngày lễ, ngày phụ nữ, sinh nhật chung ---
+        const specialEvents = [
+            { name: "Sinh Nhật Bé iu 🎀", month: 5, day: 20, icon: "fa-cake-candles", desc: "Ngày công chúa ra đời (20/05/2006)" },
+            { name: "Ngày Quốc Tế Phụ Nữ ", month: 3, day: 8, icon: "fa-child-reaching", desc: "Tôn vinh một nửa thế giới xinh đẹp (08/03)" },
+            { name: "Lễ Tình Nhân Valentine ", month: 2, day: 14, icon: "fa-heart", desc: "Ngày lễ tình yêu ngọt ngào (14/02)" },
+            { name: "Ngày Phụ Nữ Việt Nam ", month: 10, day: 20, icon: "fa-wand-magic-sparkles", desc: "Ngày của những người phụ nữ tuyệt vời (20/10)" },
+            { name: "Sinh Nhật Anh Iu 💖", month: 12, day: 25, icon: "fa-gift", desc: "Ngày chàng trai của em ra đời (25/12/2002)" },
+            { name: "Giáng Sinh Ấm Áp ", month: 12, day: 25, icon: "fa-tree", desc: "Đêm Noel trọn vẹn bên nhau (25/12)" }
+        ];
+
         const musicPlaylist = [
             { title: "Cùng Anh Qua Bao Đại Dương ❤️", artist: "Giai điệu lãng mạn Lofi Chill", src: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" },
             { title: "Sweet Love Acoustic 🌸", artist: "Guitar lãng mạn nhẹ nhàng", src: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a70a31.mp3?filename=sweet-love-10903.mp3" },
@@ -671,6 +734,62 @@
             document.getElementById('seconds').innerText = padZero(secondsVal);
 
             updateMilestones(totalDaysVal);
+            updateUpcomingEvents();
+        }
+
+        // --- Tính toán sự kiện, sinh nhật & ngày lễ sắp tới gần nhất ---
+        function updateUpcomingEvents() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Tính số ngày tới cho từng sự kiện
+            let calculatedEvents = specialEvents.map(ev => {
+                let targetDate = new Date(today.getFullYear(), ev.month - 1, ev.day);
+                targetDate.setHours(0, 0, 0, 0);
+                if (targetDate < today) {
+                    targetDate.setFullYear(today.getFullYear() + 1);
+                }
+                const diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
+                return { ...ev, targetDate, diffDays };
+            });
+
+            // Sắp xếp sự kiện nào gần nhất lên đầu
+            calculatedEvents.sort((a, b) => a.diffDays - b.diffDays);
+
+            const nearest = calculatedEvents[0];
+            if (nearest) {
+                document.getElementById('nextEventName').innerText = nearest.name;
+                document.getElementById('nextEventTitle').innerText = nearest.name;
+                document.getElementById('nextEventDateStr').innerText = nearest.desc;
+                document.getElementById('nextEventCountdownNum').innerText = nearest.diffDays;
+                document.getElementById('nextEventIcon').innerHTML = `<i class="fa-solid ${nearest.icon}"></i>`;
+            }
+
+            // Render modal danh sách tất cả các ngày lễ / sinh nhật
+            const listContainer = document.getElementById('eventsListContainer');
+            listContainer.innerHTML = calculatedEvents.map(ev => `
+                <div class="bg-white p-3 rounded-2xl shadow-sm border border-pink-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-xl bg-pink-100 flex items-center justify-center text-pink-500 text-base shadow-sm">
+                            <i class="fa-solid ${ev.icon}"></i>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-extrabold text-gray-800 font-cute">${ev.name}</span>
+                            <span class="text-[10px] text-gray-500">${ev.desc}</span>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0 bg-pink-50 px-2.5 py-1 rounded-xl border border-pink-100">
+                        <span class="block text-xs font-extrabold text-pink-600 font-cute">Còn ${ev.diffDays} ngày</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openEventsModal() {
+            document.getElementById('eventsModal').classList.remove('hidden');
+        }
+        function closeEventsModal() {
+            document.getElementById('eventsModal').classList.add('hidden');
         }
 
         function padZero(num) {
