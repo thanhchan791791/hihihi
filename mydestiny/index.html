@@ -6,7 +6,7 @@
     
     <!-- iOS Web App & App Icon Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Love Diary">
     
     <!-- Apple Touch Icons (logo.jpg) -->
@@ -70,16 +70,20 @@
             user-select: none;
             overflow-x: hidden;
             touch-action: manipulation;
-            /* Xử lý vùng an toàn chuẩn iOS cho toàn bộ trang */
-            padding-top: env(safe-area-inset-top, 0px);
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-            padding-left: env(safe-area-inset-left, 0px);
-            padding-right: env(safe-area-inset-right, 0px);
         }
 
+        /* Xử lý triệt để khoảng cách an toàn cho Dynamic Island & Notch */
         .ios-safe-padding {
-            padding-top: max(16px, env(safe-area-inset-top, 16px));
-            padding-bottom: max(32px, env(safe-area-inset-bottom, 32px));
+            padding-top: max(24px, env(safe-area-inset-top, 24px));
+            padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
+        }
+
+        /* Cấu hình đặc biệt khi lưu về Màn hình chính (PWA Standalone Mode) */
+        @media all and (display-mode: standalone), (display-mode: fullscreen) {
+            .ios-safe-padding {
+                padding-top: max(54px, calc(env(safe-area-inset-top, 54px) + 10px)) !important;
+                padding-bottom: max(34px, env(safe-area-inset-bottom, 34px)) !important;
+            }
         }
 
         .theme-pink-cloud {
@@ -199,7 +203,7 @@
     <div id="particlesContainer" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
 
     <!-- iOS Mobile Main Shell Frame -->
-    <div class="w-full max-w-md min-h-screen sm:min-h-[850px] sm:h-[92vh] sm:max-h-[920px] sm:rounded-[48px] sm:shadow-[0_25px_60px_-15px_rgba(255,182,193,0.5)] sm:border-[8px] sm:border-white/80 overflow-y-auto no-scrollbar relative flex flex-col justify-between z-10 dream-card backdrop-blur-2xl p-4 sm:p-5 ios-safe-padding" id="captureArea">
+    <div class="w-full max-w-md min-h-screen sm:min-h-[850px] sm:h-[92vh] sm:max-h-[920px] sm:rounded-[48px] sm:shadow-[0_25px_60px_-15px_rgba(255,182,193,0.5)] sm:border-[8px] sm:border-white/80 overflow-y-auto no-scrollbar relative flex flex-col justify-between z-10 dream-card backdrop-blur-2xl px-4 sm:px-5 ios-safe-padding" id="captureArea">
         
         <!-- Top Navigation Bar -->
         <header class="flex justify-between items-center z-20 py-2 px-1 mb-2">
@@ -514,7 +518,7 @@
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-white/90 border border-pink-200 text-pink-600 text-xs font-bold px-5 py-2.5 rounded-full shadow-xl backdrop-blur-md z-50 flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none" style="top: max(20px, calc(env(safe-area-inset-top, 0px) + 12px));">
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-white/90 border border-pink-200 text-pink-600 text-xs font-bold px-5 py-2.5 rounded-full shadow-xl backdrop-blur-md z-50 flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none" style="top: max(20px, calc(env(safe-area-inset-top, 0px) + 20px));">
         <i class="fa-solid fa-sparkles text-amber-400" id="toastIcon"></i>
         <span id="toastMsg">Thông báo</span>
     </div>
